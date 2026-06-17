@@ -260,6 +260,14 @@ export interface VillainAbilityHook {
   keywords: VillainEffectKeyword[];
   /** Executable effect descriptors applied left-to-right by the executor. */
   effects: VillainEffectDescriptor[];
+  // why: WP-257 / D-24034 — raw `[effect:X]` marker tokens the parser SAW but
+  // resolved to neither a legacy keyword NOR a parameterized descriptor. Hooks
+  // otherwise carry parsed descriptors only, so an unresolved marker would be
+  // indistinguishable from a line with no effect marker at all; surfacing the raw
+  // token here is what makes `parse-unrecognized` detectable at the Fight/Ambush/
+  // Escape fire sites. Additive optional: absent or empty means "no unresolved
+  // marker".
+  unresolvedMarkers?: string[];
 }
 
 // ---------------------------------------------------------------------------

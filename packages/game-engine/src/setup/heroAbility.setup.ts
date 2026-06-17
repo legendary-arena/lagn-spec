@@ -159,6 +159,19 @@ const REVEAL_COUNT_PATTERN = /\[keyword:reveal-count:(\d+)\]/g;
 // the parser and the translation function share one source of truth.
 const REVEAL_KEYWORD_SET: ReadonlySet<HeroKeyword> = new Set<HeroKeyword>(REVEAL_KEYWORDS);
 
+// why: WP-257 / D-24034 — a `[keyword:X]` token whose X is NOT a HeroKeyword and
+// NOT a composition marker is normally an unresolved marker (→ parse-unrecognized).
+// But a few `[keyword:...]` tokens are recognized MODIFIER markers consumed by a
+// dedicated pattern, not by KEYWORD_PATTERN's keyword arm. `reveal-count` is the
+// one whose first segment (a bare hyphenated word + `:<n>`) ALSO matches
+// KEYWORD_PATTERN, so the unresolved-marker scan must exclude it to avoid a false
+// flag. (`attack-per-count` / `optional-ko-reward` / the parameterized `reveal:...`
+// tokens carry extra colon segments that KEYWORD_PATTERN cannot match, so they
+// never reach the keyword arm; only `reveal-count` needs listing here.)
+const RECOGNIZED_NON_KEYWORD_MARKERS: ReadonlySet<string> = new Set<string>([
+  'reveal-count',
+]);
+
 // why: D-24019 — the reward of an optional-ko-reward effect is dispatched to an
 // ALREADY-BUILT reward executor; only these four are seeded. An unseeded reward
 // (e.g. a not-yet-built gain-shard) emits no descriptor — such a marker can
@@ -224,6 +237,7 @@ function parseAbilityText(abilityText: string): {
   conditions: HeroCondition[];
   effects: HeroEffectDescriptor[];
   primitiveEffects: EffectNode[];
+  unresolvedMarkers: string[];
   timing: HeroAbilityTiming;
 } {
   const keywords: HeroKeyword[] = [];
@@ -233,6 +247,10 @@ function parseAbilityText(abilityText: string): {
   // why: D-24031 — composition markers (Berserk) accumulate here as deep copies of their
   // registry AST, kept separate from `keywords`/`effects` (the open mechanic space).
   const primitiveEffects: EffectNode[] = [];
+  // why: WP-257 / D-24034 — raw `[keyword:X]` tokens that resolve to no keyword,
+  // composition, or recognized modifier. The hollow detector reads this so an
+  // unresolved marker flags `parse-unrecognized` while flavor text (no marker) does not.
+  const unresolvedMarkers: string[] = [];
 
   // Step 1a: Extract [hc:X] condition markup
   // why: defense-in-depth normalization on already-validated hc values — pipeline
@@ -288,6 +306,13 @@ function parseAbilityText(abilityText: string): {
       if (composition !== undefined) {
         primitiveEffects.push(structuredClone(composition));
       }
+    } else if (!RECOGNIZED_NON_KEYWORD_MARKERS.has(normalizedKeyword)) {
+      // why: WP-257 / D-24034 — a `[keyword:X]` token that is NOT a valid keyword,
+      // NOT a composition marker, and NOT a recognized modifier (reveal-count) is a
+      // SAW-a-marker-resolved-to-nothing case. Record the raw token so the hollow
+      // detector can flag `parse-unrecognized` at runtime — distinct from flavor
+      // text, which contains no marker token and so records nothing here.
+      unresolvedMarkers.push(normalizedKeyword);
     }
     keywordMatch = keywordRegex.exec(abilityText);
   }
@@ -523,6 +548,7 @@ function parseAbilityText(abilityText: string): {
     conditions,
     effects: effects.length > 0 ? effects : [],
     primitiveEffects,
+    unresolvedMarkers,
     timing,
   };
 }
@@ -879,6 +905,14 @@ export function buildHeroAbilityHooks(
         // registry AST, so the hook never aliases the shared HERO_COMPOSITION_MARKERS const.
         if (parsedAbility.primitiveEffects.length > 0) {
           hook.primitiveEffects = parsedAbility.primitiveEffects;
+        }
+
+        // why: WP-257 / D-24034 — assign unresolvedMarkers only when non-empty (same
+        // exactOptionalPropertyTypes conditional-construction pattern). Absent means
+        // "no unresolved marker" — flavor-text lines carry no markers and so omit it,
+        // which is exactly what keeps flavor text from flagging hollow at runtime.
+        if (parsedAbility.unresolvedMarkers.length > 0) {
+          hook.unresolvedMarkers = parsedAbility.unresolvedMarkers;
         }
 
         hooks.push(hook);

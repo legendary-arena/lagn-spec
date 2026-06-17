@@ -702,3 +702,50 @@ describe('buildVillainAbilityHooks — dual-grammar equivalence (WP-252 / D-2402
     ]);
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-257 — unresolved-marker surfacing (D-24034)
+//
+// An `[effect:X]` token that resolves to neither a legacy keyword nor a valid
+// parameterized descriptor is surfaced on hook.unresolvedMarkers so the runtime
+// hollow detector can flag `parse-unrecognized`. A line whose markers all
+// resolve surfaces an absent field.
+// ---------------------------------------------------------------------------
+
+describe('buildVillainAbilityHooks — unresolved markers (WP-257)', () => {
+  /** Builds a single villain group with one card carrying one ability line. */
+  function buildSingleAbility(abilityText: string) {
+    const registry = makeRegistry(
+      'core',
+      [{ slug: 'grammar3', cards: [{ slug: 'v', abilities: [abilityText] }] }],
+      [],
+    );
+    const hooks = buildVillainAbilityHooks(registry, makeConfig(['core/grammar3'], []));
+    return hooks.find((h) => h.cardId === 'core-villain-grammar3-v-00');
+  }
+
+  it('surfaces an unresolved [effect:X] token on hook.unresolvedMarkers', () => {
+    const hook = buildSingleAbility('Ambush: [effect:made-up-ability]');
+    assert.ok(hook, 'a hook is still emitted for the timing line');
+    assert.deepStrictEqual(hook!.unresolvedMarkers, ['made-up-ability']);
+    assert.deepStrictEqual(hook!.effects, [], 'no descriptor for an unresolved marker');
+  });
+
+  it('a recognized legacy effect marker surfaces NO unresolvedMarkers', () => {
+    const hook = buildSingleAbility('Fight: [effect:gainWoundCurrentPlayer]');
+    assert.ok(hook);
+    assert.equal(hook!.unresolvedMarkers, undefined, 'a recognized marker is not unresolved');
+  });
+
+  it('a recognized parameterized marker surfaces NO unresolvedMarkers', () => {
+    const hook = buildSingleAbility('Fight: [effect:ko-hero:each:2]');
+    assert.ok(hook);
+    assert.equal(hook!.unresolvedMarkers, undefined, 'a valid descriptor is not unresolved');
+  });
+
+  it('a flavor-text line with no [effect:] marker surfaces NO unresolvedMarkers', () => {
+    const hook = buildSingleAbility('Ambush: The villain glares menacingly.');
+    assert.ok(hook);
+    assert.equal(hook!.unresolvedMarkers, undefined, 'flavor text carries no marker token');
+  });
+});

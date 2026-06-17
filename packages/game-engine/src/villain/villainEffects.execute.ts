@@ -18,11 +18,18 @@ import type { LegendaryGameState } from '../types.js';
 import type { CardExtId, PlayerZones } from '../state/zones.types.js';
 import type {
   VillainAbilityTiming,
+  VillainAbilityHook,
   VillainEffectKeyword,
   VillainEffectDescriptor,
   VillainEffectPrimitive,
 } from '../rules/villainAbility.types.js';
-import { getVillainHooksForCard, descriptorToLegacyKeyword } from '../rules/villainAbility.types.js';
+import {
+  getVillainHooksForCard,
+  descriptorToLegacyKeyword,
+  VILLAIN_EFFECT_PRIMITIVES,
+} from '../rules/villainAbility.types.js';
+import type { HollowEffectRecord } from '../diagnostics/hollowEffect.types.js';
+import { recordHollowEffect } from '../diagnostics/hollowEffect.record.js';
 import { gainWound } from '../board/wounds.logic.js';
 import { koCard } from '../board/ko.logic.js';
 import {
@@ -101,6 +108,16 @@ export function executeVillainAbilities(
   // iteration derives from G.
   const currentPlayer = (ctx as { currentPlayer: string }).currentPlayer;
 
+  // why: WP-257 — the turn number for any hollow record, read off the
+  // unknown-typed ctx defensively. boardgame.io's ctx carries `turn`; the
+  // villain test CTX object ({ currentPlayer }) does not, so a missing /
+  // non-numeric value falls back to 0 — never a throw.
+  const turn = readTurnNumber(ctx);
+  // why: WP-257 — cardType for the record: a card classified `henchman` in
+  // G.villainDeckCardTypes records as `henchman`, everything else (including an
+  // absent classification in narrow test mocks) records as `villain`.
+  const cardType = resolveVillainCardType(G, cardId);
+
   const hooks = getVillainHooksForCard(G.villainAbilityHooks, cardId, timing);
   for (const hook of hooks) {
     for (const descriptor of hook.effects) {
@@ -116,11 +133,166 @@ export function executeVillainAbilities(
         if (legacyKeyword !== undefined) {
           appliedEffects.push(legacyKeyword);
         }
+      } else {
+        // why: WP-257 / D-24033 — `applied === false` is the out-of-vocabulary
+        // skip site: applyVillainEffect reached NO handler for this descriptor.
+        // Classify on handler REACHABILITY (never state-diff) and record a hollow
+        // event. This is purely additive — appliedEffects is byte-unchanged
+        // (a non-applied descriptor was never recorded there).
+        recordHollowEffect(G, buildVillainDescriptorHollowRecord(cardId, cardType, timing, descriptor, turn));
       }
     }
+    // why: WP-257 / D-24034 — an unresolved `[effect:X]` marker the parser saw
+    // but could not turn into a descriptor is `parse-unrecognized` hollow. These
+    // never produced a descriptor, so they are not in hook.effects above.
+    detectVillainUnresolvedMarkers(G, cardId, cardType, hook, turn);
   }
 
   return appliedEffects;
+}
+
+// ---------------------------------------------------------------------------
+// Hollow-effect detection (WP-257 / D-24033 + D-24034)
+// ---------------------------------------------------------------------------
+
+/**
+ * Reads the boardgame.io turn number off the (unknown-typed) ctx, defaulting to
+ * 0 when absent.
+ *
+ * Local copy of the same helper in heroEffects.execute.ts (duplicate-first per
+ * §16.1; the two executors are independent dispatch surfaces — a third
+ * appearance would justify extracting it). The villain CTX test object carries
+ * no `turn`, so a missing / non-numeric value falls back to 0, never a throw.
+ *
+ * @param ctx - The boardgame.io context, typed unknown to avoid a framework import.
+ * @returns The turn number, or 0 when unavailable.
+ */
+function readTurnNumber(ctx: unknown): number {
+  if (ctx !== null && typeof ctx === 'object') {
+    const turn = (ctx as { turn?: unknown }).turn;
+    if (typeof turn === 'number' && Number.isFinite(turn)) {
+      return turn;
+    }
+  }
+  return 0;
+}
+
+/**
+ * Resolves the HollowEffectRecord cardType for a villain/henchman card.
+ *
+ * Reads G.villainDeckCardTypes: a card classified `henchman` records as
+ * `henchman`; everything else — `villain`, or an absent classification (narrow
+ * test mocks build G without the map) — records as `villain`. Never throws.
+ *
+ * @param G - Game state.
+ * @param cardId - The triggering card-instance ext_id.
+ * @returns The record cardType ('villain' or 'henchman').
+ */
+function resolveVillainCardType(
+  G: LegendaryGameState,
+  cardId: CardExtId,
+): 'villain' | 'henchman' {
+  const types = G.villainDeckCardTypes;
+  if (types !== undefined && types[cardId] === 'henchman') {
+    return 'henchman';
+  }
+  return 'villain';
+}
+
+/**
+ * Builds the HollowEffectRecord for a villain/henchman descriptor whose handler
+ * was unreachable.
+ *
+ * Classifies the reason by REACHABILITY: a descriptor carrying a non-primitive
+ * `primitive` value is `unsupported-keyword` (dispatch cannot execute it); a
+ * descriptor with no primitive at all (an out-of-vocab legacy marker that
+ * produced an empty descriptor) is `no-handler`. Never diffs G.
+ *
+ * @param cardId - The triggering card-instance ext_id.
+ * @param cardType - The resolved record cardType.
+ * @param timing - The timing that fired.
+ * @param descriptor - The descriptor whose handler was unreachable.
+ * @param turn - The turn number for the record.
+ * @returns The hollow-effect record.
+ */
+function buildVillainDescriptorHollowRecord(
+  cardId: CardExtId,
+  cardType: 'villain' | 'henchman',
+  timing: VillainAbilityTiming,
+  descriptor: VillainEffectDescriptor,
+  turn: number,
+): HollowEffectRecord {
+  // why: descriptor.primitive is typed VillainEffectPrimitive but a malformed
+  // hook (or test cast) can carry an unknown string or none at all; read it
+  // defensively to classify the reason.
+  const primitiveValue = (descriptor as { primitive?: string }).primitive;
+  let reason: HollowEffectRecord['reason'];
+  let mechanic: string;
+  if (typeof primitiveValue === 'string' && primitiveValue.length > 0) {
+    // why: a present-but-unrecognized primitive is `unsupported-keyword`; a
+    // recognized primitive would have had a handler and never reached here.
+    reason = isVillainEffectPrimitive(primitiveValue) ? 'no-handler' : 'unsupported-keyword';
+    mechanic = primitiveValue;
+  } else {
+    // why: no primitive on the descriptor — an out-of-vocab legacy marker that
+    // produced an empty descriptor. No executable handler exists for it.
+    reason = 'no-handler';
+    mechanic = 'unknown';
+  }
+  return { cardId, cardType, timing, mechanic, reason, turn };
+}
+
+/**
+ * Records a `parse-unrecognized` hollow event for each unresolved `[effect:X]`
+ * marker on a villain/henchman hook.
+ *
+ * The parser surfaces markers it saw but could not resolve into a descriptor on
+ * hook.unresolvedMarkers (WP-257 / D-24034). A line with no effect marker at all
+ * leaves the field absent, so it never reaches here.
+ *
+ * @param G - Game state (mutated under Immer draft only via recordHollowEffect).
+ * @param cardId - The triggering card-instance ext_id.
+ * @param cardType - The resolved record cardType.
+ * @param hook - The villain ability hook that fired.
+ * @param turn - The turn number for the record.
+ */
+function detectVillainUnresolvedMarkers(
+  G: LegendaryGameState,
+  cardId: CardExtId,
+  cardType: 'villain' | 'henchman',
+  hook: VillainAbilityHook,
+  turn: number,
+): void {
+  const unresolvedMarkers = hook.unresolvedMarkers ?? [];
+  for (const marker of unresolvedMarkers) {
+    recordHollowEffect(G, {
+      cardId,
+      cardType,
+      timing: hook.timing,
+      mechanic: marker,
+      reason: 'parse-unrecognized',
+      turn,
+    });
+  }
+}
+
+/**
+ * Returns whether a string is a valid VillainEffectPrimitive.
+ *
+ * Splits `no-handler` (a recognized primitive that somehow lacks a handler —
+ * unreachable in practice but future-proof) from `unsupported-keyword` (an
+ * unrecognized primitive token).
+ *
+ * @param value - The candidate primitive string.
+ * @returns Whether the value is a member of VILLAIN_EFFECT_PRIMITIVES.
+ */
+function isVillainEffectPrimitive(value: string): value is VillainEffectPrimitive {
+  for (const primitive of VILLAIN_EFFECT_PRIMITIVES) {
+    if (primitive === value) {
+      return true;
+    }
+  }
+  return false;
 }
 
 // ---------------------------------------------------------------------------

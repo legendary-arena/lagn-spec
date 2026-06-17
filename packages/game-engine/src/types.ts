@@ -180,6 +180,24 @@ export {
   VILLAIN_EFFECT_KEYWORDS,
 } from './rules/villainAbility.types.js';
 
+// why: WP-257 / D-24033 + D-24034 — hollow-effect detection contracts are
+// defined canonically in src/diagnostics/hollowEffect.types.ts. Re-exported here
+// so consumers importing from './types.js' have access. EFFECT_EXECUTION_REASONS
+// + DEFERRED_BY_DESIGN_MECHANICS + HOLLOW_EFFECTS_CAP are value exports, so they
+// use a separate export statement.
+export type {
+  EffectExecutionReason,
+  EffectExecutionOutcome,
+  HollowEffectRecord,
+  GameDiagnostics,
+} from './diagnostics/hollowEffect.types.js';
+export {
+  EFFECT_EXECUTION_REASONS,
+  isHollowReason,
+  HOLLOW_EFFECTS_CAP,
+  DEFERRED_BY_DESIGN_MECHANICS,
+} from './diagnostics/hollowEffect.types.js';
+
 // why: WP-200 — notable game event contracts (NotableGameEvent,
 // NotableGameEventType, SchemeTwistResolverKey, FightResolvedEvent,
 // AmbushResolvedEvent, SchemeTwistResolvedEvent, MastermindStrikeResolvedEvent)
@@ -369,6 +387,9 @@ import type { HeroAbilityHook } from './rules/heroAbility.types.js';
 import type { HeroKeyword } from './rules/heroKeywords.js';
 import type { VillainAbilityHook } from './rules/villainAbility.types.js';
 import type { NotableGameEvent } from './events/notableEvents.types.js';
+// why: WP-257 / D-24034 — GameDiagnostics is the runtime-only hollow-effect
+// channel shape (plain JSON; never persisted, never gameplay input).
+import type { GameDiagnostics } from './diagnostics/hollowEffect.types.js';
 import type { LobbyState } from './lobby/lobby.types.js';
 import type { VillainDeckState, RevealedCardType } from './villainDeck/villainDeck.types.js';
 import type { CityZone, HqZone } from './board/city.types.js';
@@ -774,6 +795,16 @@ export interface LegendaryGameState {
   // explicitly deferred it per D-4802.
   /** Optional setup-time scoring config; presence marks the match as PAR-scored. */
   readonly activeScoringConfig?: ScenarioScoringConfig;
+
+  // why: WP-257 / D-24034 — runtime-only hollow-effect diagnostics channel.
+  // Seeded empty at buildInitialGameState; written ONLY by recordHollowEffect
+  // (lazy-init there too, for older snapshots / narrow test mocks). Plain JSON,
+  // bounded by HOLLOW_EFFECTS_CAP, never persisted as a save-game, and NEVER
+  // read as gameplay input (no move/rule/endIf may consume it — observation,
+  // not state). Optional so existing full-state literals across the test suite
+  // need no edit (absent is treated as not-yet-written). Not projected to
+  // UIState here — that is WP-258.
+  diagnostics?: GameDiagnostics;
 }
 
 // why: PAR artifact storage types (WP-050) ship the immutable artifact +

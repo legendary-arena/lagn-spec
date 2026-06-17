@@ -54,17 +54,23 @@
 - `setup/heroAbility.setup.test.ts` — **modified** — unresolved-marker vs flavor-text
 - `villain/villainEffects.execute.test.ts` — **modified** — villain hollow + recognized-no-op = NO record + applied-return byte-unchanged
 
+## Execution Amendments (test-only EC path corrections, 2026-06-16)
+- The EC listed `setup/heroAbility.setup.test.ts` for the unresolved-marker-vs-flavor test, but **that file does not exist** — the `buildHeroAbilityHooks` suite lives at `rules/heroAbility.setup.test.ts`. The hero parser tests were added there.
+- The EC's Files list omitted a villain **setup-parser** test even though it modifies `setup/villainAbility.setup.ts`. A villain unresolved-marker test block was added to the existing `setup/villainAbility.setup.test.ts`.
+- Both are test-only additions covering already-allowlisted **source** changes (01.1 §"the EC missed a file" → fold inline, no scope expansion). No production file outside the allowlist was touched.
+- `setup/buildInitialGameState.ts` is **comment-only**: the channel "resets empty at setup" is realized as the field being **absent** (lazy-init at the writer), NOT a seeded `{ hollowEffects: [], hollowEffectsDropped: 0 }` literal — a seeded literal changes the canonical-JSON `finalStateHash` and breaks AC-E. (Documented under D-24034.)
+
 ## After Completing
-- [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0
-- [ ] `pnpm --filter @legendary-arena/game-engine test` exits 0
-- [ ] `git diff --name-only -- data/cards/` empty; no `coreMoves.impl.ts`/`fightVillain.ts`/`villainDeck.reveal.ts`/barrel/`apps/**` diff
-- [ ] Grep confirms no move/rule/`endIf` reads `G.diagnostics` (only the detector writes it)
-- [ ] Sentinel/replay `finalStateHash` unchanged (EMPTY_REGISTRY fixtures → channel stays empty)
-- [ ] Live-on-surface: N/A — `User-Visible Surface = none — infrastructure`; STATUS.md states "No user-observable feature — infrastructure only"
-- [ ] `docs/ai/STATUS.md` updated
-- [ ] `docs/ai/DECISIONS.md` updated — D-24033 + D-24034 flip to Active
-- [ ] `docs/ai/work-packets/WORK_INDEX.md` WP-257 checked off with date; `docs/ai/execution-checklists/EC_INDEX.md` EC-288 Done
-- [ ] `docs/05-ROADMAP-MINDMAP.md` WP-257 node added; `node scripts/roadmap-counts.mjs --check` passes
+- [x] `pnpm --filter @legendary-arena/game-engine build` exits 0
+- [x] `pnpm --filter @legendary-arena/game-engine test` exits 0 (1394 → 1433/0)
+- [x] `git diff --name-only -- data/cards/` empty; no `coreMoves.impl.ts`/`fightVillain.ts`/`villainDeck.reveal.ts`/barrel/`apps/**` diff
+- [x] Grep confirms no move/rule/`endIf` reads `G.diagnostics` (only the detector writes it)
+- [x] Sentinel/replay `finalStateHash` unchanged (EMPTY_REGISTRY fixtures → channel ABSENT → byte-identical hash)
+- [x] Live-on-surface: N/A — `User-Visible Surface = none — infrastructure`; STATUS.md states "No user-observable feature — infrastructure only"
+- [x] `docs/ai/STATUS.md` updated
+- [x] `docs/ai/DECISIONS.md` updated — D-24033 + D-24034 flipped to Active
+- [x] `docs/ai/work-packets/WORK_INDEX.md` WP-257 checked off with date; `docs/ai/execution-checklists/EC_INDEX.md` EC-288 Done
+- [x] `docs/05-ROADMAP-MINDMAP.md` WP-257 node added; `node scripts/roadmap-counts.mjs --check` passes
 
 ## Common Failure Smells
 - A hollow record fires on an empty-supply rescue or failed condition → the detector is diffing `G` instead of checking handler reachability (the keystone violation).

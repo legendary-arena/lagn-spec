@@ -25319,7 +25319,7 @@ A declared card ability that produces nothing is a *hollow effect* — a defect 
 **Why:** the most likely implementation drift is diffing pre/post `G` and flagging correct empty-supply/failed-condition plays — a false-positive firehose on working behavior. Anchoring the boundary on reachability makes the detector precise: it fires on genuinely unimplemented mechanics (the Web-Shooters bug class, generalized to hero + villain/ambush) and stays silent on legitimate no-ops.
 
 **Packet:** WP-257 / EC-288. Implements `DESIGN-HOLLOW-EFFECT-DETECTION.md §3`.
-**Status:** Drafted 2026-06-16; not yet landed (flips to Active when WP-257 executes).
+**Status:** **Active** (landed 2026-06-16 via WP-257 / EC-288). `DEFERRED_BY_DESIGN_MECHANICS = { 'wound', 'conditional' }` (the two HeroKeywords with no handler today). The hero detector applies the per-hook rule (a hook flags only when no declared effect reached a handler AND ≥1 was a hollow reason; a mixed hook never flags); the villain detector classifies at the executor's out-of-vocab skip site + per unresolved marker. Engine suite 1394 → 1433/0.
 
 ---
 
@@ -25330,6 +25330,6 @@ The detector emits a `HollowEffectRecord { cardId; cardType: 'hero'|'villain'|'h
 **Why:** the channel must observe without ever influencing the game (determinism + the persistence boundary: `G` is runtime-only). The `unresolvedMarkers` surfacing is the non-obvious enabler — without it, `parse-unrecognized` cannot be told apart from a no-mechanic flavor line.
 
 **Packet:** WP-257 / EC-288. Implements `DESIGN-HOLLOW-EFFECT-DETECTION.md §4–§5`.
-**Status:** Drafted 2026-06-16; not yet landed (flips to Active when WP-257 executes).
+**Status:** **Active** (landed 2026-06-16 via WP-257 / EC-288). Execution refinement: the channel "resets empty at `buildInitialGameState`" is realized as the channel being **absent** (`G.diagnostics === undefined`) at match start, NOT a seeded `{ hollowEffects: [], hollowEffectsDropped: 0 }` literal. A seeded-empty literal would add `"diagnostics":{...}` to the canonical-JSON `finalStateHash` (`hashGameState` serializes the whole `G`), breaking the AC-E "sentinel/replay `finalStateHash` unchanged" requirement on the EMPTY_REGISTRY fixtures. The writer (`recordHollowEffect`) lazy-inits the channel on the first hollow event (mirroring `pendingOptionalKoRewards`); each match calls `buildInitialGameState` fresh, so absence ≡ empty with no mid-match reset. `HOLLOW_EFFECTS_CAP = 256`. The parser surfaces unresolved markers on `HeroAbilityHook.unresolvedMarkers` / `VillainAbilityHook.unresolvedMarkers`; recognized non-keyword modifiers (`reveal-count`) are excluded from the hero scan so they do not false-flag.
 
 Protect this file.

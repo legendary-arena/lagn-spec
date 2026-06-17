@@ -1569,3 +1569,126 @@ describe('executeVillainAbilities — captureHqHeroLowestCost (WP-214)', () => {
     assert.deepStrictEqual(applied, ['captureHqHeroLowestCost']);
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-257 — hollow-effect detection (D-24033 + D-24034)
+//
+// Villain detection writes at the executor's existing out-of-vocab skip site +
+// for each unresolved [effect:X] marker. The VillainEffectKeyword[] applied
+// return stays byte-unchanged (detection is purely additive). cardType is
+// resolved from G.villainDeckCardTypes (henchman vs villain).
+// ---------------------------------------------------------------------------
+
+describe('executeVillainAbilities — hollow-effect detection (WP-257)', () => {
+  /** Reads the lazy-init diagnostics records (empty array when never written). */
+  function records(G: LegendaryGameState) {
+    return G.diagnostics?.hollowEffects ?? [];
+  }
+
+  /** Attaches a messages array + cardType map so the record + message line surface. */
+  function withDiagnosticsFields(
+    G: LegendaryGameState,
+    cardTypes?: Record<string, 'villain' | 'henchman'>,
+  ): LegendaryGameState {
+    (G as { messages?: unknown }).messages = [];
+    if (cardTypes !== undefined) {
+      (G as { villainDeckCardTypes?: unknown }).villainDeckCardTypes = cardTypes;
+    }
+    return G;
+  }
+
+  it('an out-of-vocabulary descriptor records a hollow record (cardType villain)', () => {
+    // why: the hook helper maps 'notARealKeyword' through the empty
+    // LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR entry → a {} descriptor with no
+    // primitive → applyVillainEffect reaches no handler → no-handler hollow.
+    const G = withDiagnosticsFields(
+      makeG({ hooks: [hook('v-x', 'onAmbush', ['notARealKeyword'])] }),
+    );
+    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onAmbush');
+
+    assert.equal(records(G).length, 1, 'exactly one hollow record');
+    assert.equal(records(G)[0]!.reason, 'no-handler');
+    assert.equal(records(G)[0]!.cardType, 'villain');
+    assert.equal(records(G)[0]!.timing, 'onAmbush');
+  });
+
+  it('resolves cardType henchman from G.villainDeckCardTypes', () => {
+    const G = withDiagnosticsFields(
+      makeG({ hooks: [hook('henchman-doombot-00', 'onFight', ['notARealKeyword'])] }),
+      { 'henchman-doombot-00': 'henchman' },
+    );
+    executeVillainAbilities(G, CTX, 'henchman-doombot-00' as CardExtId, 'onFight');
+
+    assert.equal(records(G).length, 1);
+    assert.equal(records(G)[0]!.cardType, 'henchman');
+  });
+
+  it('a recognized ambush descriptor that no-ops records NO hollow event', () => {
+    // why: captureHqHeroRightmost with an all-null HQ reaches its real handler and
+    // intentionally no-ops — a reachable outcome, NOT hollow (the keystone).
+    const G = withDiagnosticsFields(
+      makeG({
+        hooks: [hook('v-skrull', 'onAmbush', ['captureHqHeroRightmost'])],
+        hq: [null, null, null, null, null],
+      }),
+    );
+    executeVillainAbilities(G, CTX, 'v-skrull' as CardExtId, 'onAmbush');
+
+    assert.equal(records(G).length, 0, 'a reachable handler that no-ops is not hollow');
+  });
+
+  it('an empty-wound-pile gainWound records NO hollow event (reachable no-op)', () => {
+    const G = withDiagnosticsFields(
+      makeG({ hooks: [hook('v-x', 'onFight', ['gainWoundCurrentPlayer'])], wounds: [] }),
+    );
+    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.equal(records(G).length, 0, 'empty wound pile is a reachable no-op, not hollow');
+  });
+
+  it('an unresolved [effect:X] marker records a parse-unrecognized hollow event', () => {
+    const G = withDiagnosticsFields(makeG({ hooks: [] }));
+    // why: hand-build a hook carrying an unresolvedMarkers field (the parser
+    // surfaces these; the hook helper does not).
+    (G as { villainAbilityHooks: VillainAbilityHook[] }).villainAbilityHooks = [
+      {
+        cardId: 'v-x' as CardExtId,
+        timing: 'onFight',
+        keywords: [],
+        effects: [],
+        unresolvedMarkers: ['mind-control'],
+      },
+    ];
+    executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.equal(records(G).length, 1, 'exactly one hollow record');
+    assert.equal(records(G)[0]!.reason, 'parse-unrecognized');
+    assert.equal(records(G)[0]!.mechanic, 'mind-control');
+  });
+
+  it('the VillainEffectKeyword[] applied return is byte-unchanged when an unhandled effect is present', () => {
+    // why: detection is purely additive — a hook mixing a real keyword and an
+    // out-of-vocab one returns ONLY the real applied keyword (post-safe-skip
+    // contract), identical to before WP-257.
+    const G = withDiagnosticsFields(
+      makeG({
+        hooks: [hook('v-x', 'onFight', ['captureBystander', 'totallyMadeUpKeyword'])],
+        bystanders: ['b0'] as CardExtId[],
+      }),
+    );
+    const applied = executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onFight');
+
+    assert.deepStrictEqual(applied, ['captureBystander'], 'applied return byte-unchanged');
+    assert.equal(records(G).length, 1, 'the unhandled effect still flags hollow');
+  });
+
+  it('does not throw when recording with a non-array G.messages (the makeG default)', () => {
+    // why: makeG builds G without a messages array; the writer must no-op the
+    // message push without throwing while still storing the record.
+    const G = makeG({ hooks: [hook('v-x', 'onAmbush', ['notARealKeyword'])] });
+    assert.doesNotThrow(() =>
+      executeVillainAbilities(G, CTX, 'v-x' as CardExtId, 'onAmbush'),
+    );
+    assert.equal(records(G).length, 1, 'record stored even with non-array messages');
+  });
+});

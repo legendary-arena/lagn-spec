@@ -115,6 +115,8 @@ interface HookEntry {
   keywords: VillainEffectKeyword[];
   /** Executable descriptors on this line, in source order. */
   effects: VillainEffectDescriptor[];
+  /** Raw `[effect:X]` tokens that resolved to nothing (WP-257 / D-24034). */
+  unresolvedMarkers: string[];
 }
 
 // ---------------------------------------------------------------------------
@@ -296,9 +298,15 @@ function parseParameterizedEffect(
 function extractEffects(abilityLine: string): {
   keywords: VillainEffectKeyword[];
   effects: VillainEffectDescriptor[];
+  unresolvedMarkers: string[];
 } {
   const keywords: VillainEffectKeyword[] = [];
   const effects: VillainEffectDescriptor[] = [];
+  // why: WP-257 / D-24034 — raw `[effect:X]` tokens that resolve to neither a
+  // legacy keyword nor a parameterized descriptor. The hollow detector reads this
+  // so an unresolved villain marker flags `parse-unrecognized` at the Fight/Ambush/
+  // Escape fire sites, distinct from a line that carries no effect marker at all.
+  const unresolvedMarkers: string[] = [];
   const regex = new RegExp(EFFECT_MARKER_PATTERN.source, 'g');
   let match: RegExpExecArray | null = regex.exec(abilityLine);
   while (match !== null) {
@@ -317,12 +325,16 @@ function extractEffects(abilityLine: string): {
         // for such a descriptor, so it is simply not recorded in appliedEffects
         // (descriptor-keyed narrative labels are deferred to WP-253).
         effects.push(descriptor);
+      } else {
+        // why: WP-257 / D-24034 — an `[effect:X]` marker that is neither a legacy
+        // keyword nor a valid parameterized descriptor is a SAW-a-marker-resolved-
+        // to-nothing case; record the raw token so the detector flags it hollow.
+        unresolvedMarkers.push(rawValue);
       }
-      // else: unknown value, ignored (matches the prior extractEffectKeywords).
     }
     match = regex.exec(abilityLine);
   }
-  return { keywords, effects };
+  return { keywords, effects, unresolvedMarkers };
 }
 
 // ---------------------------------------------------------------------------
@@ -480,6 +492,7 @@ function collectVillainHookEntries(
             lineIndex,
             keywords: [...extracted.keywords],
             effects: [...extracted.effects],
+            unresolvedMarkers: [...extracted.unresolvedMarkers],
           });
         }
       }
@@ -543,6 +556,7 @@ function collectHenchmanHookEntries(
           lineIndex,
           keywords: [...extracted.keywords],
           effects: [...extracted.effects],
+          unresolvedMarkers: [...extracted.unresolvedMarkers],
         });
       }
     }
@@ -611,12 +625,20 @@ export function buildVillainAbilityHooks(
     for (const descriptor of entry.effects) {
       hookEffects.push({ ...descriptor });
     }
-    hooks.push({
+    const hook: VillainAbilityHook = {
       cardId: entry.cardId,
       timing: entry.timing,
       keywords: hookKeywords,
       effects: hookEffects,
-    });
+    };
+    // why: WP-257 / D-24034 — assign unresolvedMarkers only when non-empty
+    // (exactOptionalPropertyTypes forbids `: x ?? undefined`), freshly copied so
+    // no two hooks alias a shared array (D-13502). Absent means "no unresolved
+    // marker" — the common case for a fully-recognized line.
+    if (entry.unresolvedMarkers.length > 0) {
+      hook.unresolvedMarkers = [...entry.unresolvedMarkers];
+    }
+    hooks.push(hook);
   }
 
   return hooks;

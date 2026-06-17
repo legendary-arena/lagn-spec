@@ -54,6 +54,14 @@ export interface HeroAbilityHook {
   // hook.keywords (`berserk` is not a HeroKeyword). Each element is a top-level effect
   // the interpreter runs with its own fresh, never-persisted execution context.
   primitiveEffects?: EffectNode[];
+  // why: WP-257 / D-24034 — raw `[keyword:X]`/`[effect:X]` marker tokens the parser
+  // SAW but resolved to no keyword, descriptor, composition, or modifier. Hooks
+  // otherwise carry parsed descriptors only, so an unresolved marker would leave an
+  // empty hook INDISTINGUISHABLE from a pure flavor-text line — and flavor text must
+  // NOT flag while an unresolved marker MUST. Surfacing the raw token here is what
+  // makes `parse-unrecognized` detectable at runtime. Additive optional: absent or
+  // empty means "no unresolved marker" (flavor text yields neither).
+  unresolvedMarkers?: string[];
 }
 
 // ---------------------------------------------------------------------------

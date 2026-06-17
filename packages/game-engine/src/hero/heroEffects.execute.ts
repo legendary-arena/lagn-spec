@@ -18,8 +18,12 @@ import type { LegendaryGameState, PendingHeroChoice } from '../types.js';
 import type { CardExtId, PlayerZones } from '../state/zones.types.js';
 import type { CardStatEntry } from '../economy/economy.types.js';
 import type { HeroKeyword } from '../rules/heroKeywords.js';
+import { HERO_KEYWORDS } from '../rules/heroKeywords.js';
 import type { HeroAbilityHook, HeroEffectDescriptor } from '../rules/heroAbility.types.js';
 import { getHooksForCard } from '../rules/heroAbility.types.js';
+import type { EffectExecutionReason } from '../diagnostics/hollowEffect.types.js';
+import { isHollowReason, DEFERRED_BY_DESIGN_MECHANICS } from '../diagnostics/hollowEffect.types.js';
+import { recordHollowEffect } from '../diagnostics/hollowEffect.record.js';
 import type { RevealRule, RevealAction, RevealPredicate, RevealActionKind } from '../rules/revealRule.js';
 import { evaluateAllConditions } from './heroConditions.evaluate.js';
 import type { HeroEffectResult } from './heroEffects.types.js';
@@ -215,6 +219,10 @@ export function executeHeroEffects(
     // (self-exclusion rule — a card's own class/team does not satisfy its own
     // superpower).
     if (!evaluateAllConditions(G, playerID, hook.conditions, cardId)) {
+      // why: WP-257 — a hook whose conditions failed reached a real (condition)
+      // handler and intentionally did not execute — a `condition-failed` reachable
+      // outcome, NOT hollow. Skip detection entirely (no record), reproducing the
+      // existing `continue`.
       continue;
     }
 
@@ -238,7 +246,185 @@ export function executeHeroEffects(
         interpretHeroPrimitiveEffect(G, ctx, playerID, primitiveEffect);
       }
     }
+
+    // why: WP-257 / D-24033 — AFTER the hook ran, classify whether the whole hook was
+    // hollow (per-hook rule, NOT state-diff): the detector asks "did any declared
+    // mechanic on this line reach an executable handler?" — never whether G changed.
+    // recordHollowEffect fires only when NO declared effect was reachable AND ≥1 was a
+    // hollow reason (mixed-hook lines with ≥1 reachable effect never flag).
+    detectHollowHeroHook(G, ctx, cardId, hook);
   }
+}
+
+// ---------------------------------------------------------------------------
+// Hollow-effect detection (WP-257 / D-24033 + D-24034)
+// ---------------------------------------------------------------------------
+
+/**
+ * Reads the boardgame.io turn number off the (unknown-typed) ctx, defaulting
+ * to 0 when absent.
+ *
+ * The executor narrows ctx only where it needs a specific field (the draw
+ * handler narrows to ShuffleProvider). The turn is read here for the
+ * HollowEffectRecord. Test mocks (makeMockCtx, the villain CTX object) carry no
+ * top-level `turn`, so a missing or non-numeric value falls back to 0 — never a
+ * throw.
+ *
+ * @param ctx - The boardgame.io context, typed unknown to avoid a framework import.
+ * @returns The turn number, or 0 when unavailable.
+ */
+function readTurnNumber(ctx: unknown): number {
+  if (ctx !== null && typeof ctx === 'object') {
+    const turn = (ctx as { turn?: unknown }).turn;
+    if (typeof turn === 'number' && Number.isFinite(turn)) {
+      return turn;
+    }
+  }
+  return 0;
+}
+
+/**
+ * Classifies one declared hero effect by handler REACHABILITY (never by diffing
+ * G). Returns the EffectExecutionReason the per-hook rule aggregates.
+ *
+ * Mirrors executeSingleEffect's gating, but answers "is a handler reachable for
+ * this mechanic?" rather than mutating: a deferred-by-design mechanic is
+ * `deferred`; any MVP keyword (a direct handler OR a reveal translation exists)
+ * is reachable (`applied`); a recognized HeroKeyword with no handler is
+ * `no-handler`; a token that is not even a recognized keyword is
+ * `unsupported-keyword`. Magnitude validity is a within-handler concern, not a
+ * missing handler, so it does not change reachability.
+ *
+ * @param effect - The declared hero effect descriptor.
+ * @returns The reachability classification reason.
+ */
+function classifyHeroEffectReason(effect: HeroEffectDescriptor): EffectExecutionReason {
+  const keyword: string = effect.type;
+  // why: D-24033 — the explicit deferred allowlist is consulted BEFORE the
+  // MVP/handler check. `wound`/`conditional` have no handler today (absent from
+  // MVP_KEYWORDS), so without this they would classify `no-handler` → hollow even
+  // though they are implemented-as-deferred by design.
+  if (DEFERRED_BY_DESIGN_MECHANICS.has(keyword)) {
+    return 'deferred';
+  }
+  // why: any MVP keyword has a reachable handler — either a direct
+  // HERO_EFFECT_HANDLERS entry or a reveal translation (revealRulesForLegacyKeyword).
+  // Reaching a handler is the not-hollow condition; the magnitude pre-gate inside
+  // executeSingleEffect is internal handler logic, not a missing handler.
+  if (MVP_KEYWORDS.has(keyword)) {
+    return 'applied';
+  }
+  // why: a recognized HeroKeyword with neither a handler nor a deferred entry is
+  // `no-handler` (recognized-but-unimplemented). A token that is not even a valid
+  // HeroKeyword (only reachable via a malformed hook / test cast) is
+  // `unsupported-keyword` — dispatch cannot execute it.
+  if (isValidHeroKeyword(keyword)) {
+    return 'no-handler';
+  }
+  return 'unsupported-keyword';
+}
+
+/**
+ * Returns whether a string is a valid HeroKeyword.
+ *
+ * Local copy of the setup-parser guard (duplicate-first per §16.1; a third
+ * appearance would justify extracting it). Used to split `no-handler`
+ * (recognized keyword) from `unsupported-keyword` (unrecognized token).
+ *
+ * @param value - The candidate keyword string.
+ * @returns Whether the value is a member of HERO_KEYWORDS.
+ */
+function isValidHeroKeyword(value: string): value is HeroKeyword {
+  for (const keyword of HERO_KEYWORDS) {
+    if (keyword === value) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Records a HollowEffectRecord for a hero hook iff the whole hook is hollow.
+ *
+ * Per-hook rule (D-24033): a hook flags hollow when (1) it declared ≥1 effect
+ * (a legacy effect, a composition primitive, or an unresolved marker), AND
+ * (2) NO declared effect reached a handler (no `applied`/`handler-noop`/
+ * `condition-failed`/`deferred` outcome), AND (3) ≥1 declared effect resolved to
+ * a hollow reason. A mixed hook with even one reachable effect never flags.
+ *
+ * Conditions are evaluated by the caller; this runs only for a conditions-passed
+ * hook, so a failed-condition hook is already excluded (it `continue`d, a
+ * `condition-failed` reachable outcome). primitiveEffects always reach the
+ * interpreter (a recognized composition), so they count as reachable.
+ *
+ * @param G - Game state (mutated under Immer draft only via recordHollowEffect).
+ * @param ctx - The boardgame.io context (read for the turn number only).
+ * @param cardId - The played hero card's CardExtId.
+ * @param hook - The hero ability hook that just ran.
+ */
+function detectHollowHeroHook(
+  G: LegendaryGameState,
+  ctx: unknown,
+  cardId: CardExtId,
+  hook: HeroAbilityHook,
+): void {
+  const effects = hook.effects ?? [];
+  const primitiveEffects = hook.primitiveEffects ?? [];
+  const unresolvedMarkers = hook.unresolvedMarkers ?? [];
+
+  // why: "declared ≥1 effect" — a hook with no legacy effect, no composition, and
+  // no unresolved marker declares nothing executable (e.g. a keyword-only or
+  // empty hook), so it can never be hollow.
+  if (effects.length === 0 && primitiveEffects.length === 0 && unresolvedMarkers.length === 0) {
+    return;
+  }
+
+  // why: a composition primitive always reaches the interpreter (a recognized
+  // open-mechanic handler), so its presence makes the hook reachable — it is
+  // never hollow. Short-circuit before classifying the legacy effects.
+  if (primitiveEffects.length > 0) {
+    return;
+  }
+
+  let hasReachable = false;
+  let firstHollow: { reason: EffectExecutionReason; mechanic: string } | null = null;
+
+  for (const effect of effects) {
+    const reason = classifyHeroEffectReason(effect);
+    if (!isHollowReason(reason)) {
+      hasReachable = true;
+    } else if (firstHollow === null) {
+      firstHollow = { reason, mechanic: effect.type };
+    }
+  }
+
+  // why: each unresolved marker is a `parse-unrecognized` hollow reason (the
+  // parser saw a marker token and resolved it to nothing). Flavor text leaves
+  // unresolvedMarkers empty, so it never reaches here.
+  for (const marker of unresolvedMarkers) {
+    if (firstHollow === null) {
+      firstHollow = { reason: 'parse-unrecognized', mechanic: marker };
+    }
+  }
+
+  // why: per-hook rule — flag ONLY when no declared effect was reachable AND ≥1
+  // was hollow. A mixed hook (≥1 reachable) is not hollow even if another effect
+  // is unhandled.
+  if (hasReachable || firstHollow === null) {
+    return;
+  }
+
+  // why: the reason field is one of the three hollow reasons (isHollowReason
+  // gated firstHollow). The cast narrows EffectExecutionReason to the
+  // HollowEffectRecord.reason subset for the record contract.
+  recordHollowEffect(G, {
+    cardId,
+    cardType: 'hero',
+    timing: hook.timing,
+    mechanic: firstHollow.mechanic,
+    reason: firstHollow.reason as 'parse-unrecognized' | 'no-handler' | 'unsupported-keyword',
+    turn: readTurnNumber(ctx),
+  });
 }
 
 // ---------------------------------------------------------------------------

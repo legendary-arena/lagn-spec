@@ -867,3 +867,58 @@ describe('buildHeroAbilityHooks [team:X] markup (WP-179)', () => {
     assert.ok(hasConditional, 'conditional keyword should be added when team conditions are present');
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-257 — unresolved-marker surfacing (D-24034)
+//
+// The parser records a `[keyword:X]` token that resolves to no keyword,
+// composition, or recognized modifier onto hook.unresolvedMarkers, so the
+// runtime hollow detector can flag `parse-unrecognized` — while a pure
+// flavor-text line (no marker token) surfaces an empty/absent field.
+// ---------------------------------------------------------------------------
+
+describe('buildHeroAbilityHooks — unresolved markers (WP-257)', () => {
+  /** Builds a single-hero, single-ability registry + matching config. */
+  function buildSingleAbility(abilityText: string) {
+    const registry = makeHeroRegistry('core', 'spider-man', [
+      { slug: 'astonishing-strength', rarityLabel: 'Common 1', abilities: [abilityText] },
+    ]);
+    const config = createTestConfig();
+    return buildHeroAbilityHooks(registry, config);
+  }
+
+  it('surfaces an unrecognized [keyword:X] token on hook.unresolvedMarkers', () => {
+    const hooks = buildSingleAbility('[keyword:mind-swap] a card.');
+    assert.equal(hooks.length, 1);
+    assert.deepStrictEqual(hooks[0]!.unresolvedMarkers, ['mind-swap']);
+  });
+
+  it('a pure flavor-text line surfaces NO unresolvedMarkers (absent or empty)', () => {
+    const hooks = buildSingleAbility('Spider-Man swings into action.');
+    assert.equal(hooks.length, 1);
+    // why: absent field is the encoding for "no unresolved marker" — flavor text
+    // must not flag hollow at runtime.
+    assert.equal(hooks[0]!.unresolvedMarkers, undefined);
+  });
+
+  it('a recognized reveal-count modifier does NOT flag as an unresolved marker', () => {
+    // why: `reveal-count` is a recognized modifier consumed by REVEAL_COUNT_PATTERN
+    // but its bare-word form also matches KEYWORD_PATTERN; it must be excluded from
+    // the unresolved-marker scan (RECOGNIZED_NON_KEYWORD_MARKERS).
+    const hooks = buildSingleAbility('[keyword:reveal:always:draw][keyword:reveal-count:2]');
+    assert.equal(hooks.length, 1);
+    assert.equal(hooks[0]!.unresolvedMarkers, undefined, 'reveal-count is not unresolved');
+  });
+
+  it('a valid keyword does NOT flag as an unresolved marker', () => {
+    const hooks = buildSingleAbility('[keyword:rescue] a Bystander.');
+    assert.equal(hooks.length, 1);
+    assert.equal(hooks[0]!.unresolvedMarkers, undefined, 'a valid keyword is not unresolved');
+  });
+
+  it('a composition marker (berserk) does NOT flag as an unresolved marker', () => {
+    const hooks = buildSingleAbility('[keyword:berserk]');
+    assert.equal(hooks.length, 1);
+    assert.equal(hooks[0]!.unresolvedMarkers, undefined, 'a composition marker is not unresolved');
+  });
+});

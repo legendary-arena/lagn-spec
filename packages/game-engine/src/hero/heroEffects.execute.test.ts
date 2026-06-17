@@ -2634,3 +2634,209 @@ describe('executeHeroEffects primitiveEffects path (WP-256 / D-24031)', () => {
     assert.deepEqual(gameState.playerZones['0'].discard, ['top'], 'Berserk discarded the deck-top card');
   });
 });
+
+// ---------------------------------------------------------------------------
+// WP-257 — hollow-effect detection (D-24033 + D-24034)
+//
+// The detector classifies on handler REACHABILITY, never by diffing G. These
+// tests pin: an unknown/unsupported keyword flags hollow; an empty-supply rescue
+// / failed condition / deferred mechanic / empty-deck reveal record NO hollow;
+// a mixed hook (≥1 reachable + 1 unhandled) records NO hollow; an unresolved
+// marker flags parse-unrecognized; the record turn defaults to 0 under a mock ctx.
+// ---------------------------------------------------------------------------
+
+describe('executeHeroEffects — hollow-effect detection (WP-257)', () => {
+  const mockCtx = makeMockCtx();
+
+  /** Reads the lazy-init diagnostics records (empty array when never written). */
+  function records(gameState: LegendaryGameState) {
+    return gameState.diagnostics?.hollowEffects ?? [];
+  }
+
+  it('unknown keyword (not a HeroKeyword) records ONE hollow record (unsupported-keyword)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+          // why: an invented keyword cast as HeroKeyword simulates a token that is
+          // not even a recognized keyword — dispatch cannot execute it.
+          effects: [{ type: 'totally-made-up' as HeroKeyword }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 1, 'exactly one hollow record');
+    assert.equal(records(gameState)[0]!.reason, 'unsupported-keyword');
+    assert.equal(records(gameState)[0]!.cardType, 'hero');
+    assert.equal(records(gameState)[0]!.mechanic, 'totally-made-up');
+    assert.equal(records(gameState)[0]!.turn, 0, 'turn defaults to 0 under the mock ctx');
+  });
+
+  it('unsupported keyword (recognized HeroKeyword with no handler) is NOT hollow when deferred (wound)', () => {
+    // why: `wound` is on DEFERRED_BY_DESIGN_MECHANICS — a recognized keyword with
+    // no handler today, classified `deferred` (reachable), NOT hollow.
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['wound'],
+          effects: [{ type: 'wound', magnitude: 1 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 0, 'a deferred mechanic records NO hollow event');
+  });
+
+  it('empty-bystander-supply rescue records NO hollow event (reachable handler, intentional no-op)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      bystanders: [],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['rescue'],
+          effects: [{ type: 'rescue', magnitude: 1 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 0, 'empty supply is a reachable no-op, not hollow');
+  });
+
+  it('failed condition records NO hollow event (condition-failed reachable outcome)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['attack'],
+          // why: heroClassMatch with no other in-play card of that class fails.
+          conditions: [{ type: 'heroClassMatch', value: 'strength' }],
+          effects: [{ type: 'attack', magnitude: 5 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 0, 'a failed condition is reachable, not hollow');
+  });
+
+  it('empty-deck reveal records NO hollow event (reachable handler, empty source)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: [],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [legacyRevealEffect('reveal', 2)],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 0, 'an empty deck is a reachable no-op, not hollow');
+  });
+
+  it('mixed hook (one reachable effect + one unhandled) records NO hollow event', () => {
+    // why: per-hook rule — a hook flags hollow only when NONE of its declared
+    // effects reached a handler. A reachable draw alongside an unknown keyword on
+    // the same hook means the hook is NOT hollow.
+    const gameState = makeTestState({
+      deck: ['card-a', 'card-b'],
+      inPlay: ['hero-x'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+          effects: [
+            { type: 'draw', magnitude: 1 },
+            { type: 'totally-made-up' as HeroKeyword },
+          ],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 0, 'a mixed hook with ≥1 reachable effect is not hollow');
+    assert.equal(gameState.playerZones['0'].hand.length, 1, 'the reachable draw still fired');
+  });
+
+  it('unresolved marker on the hook records a parse-unrecognized hollow event', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+          unresolvedMarkers: ['mind-swap'],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 1, 'exactly one hollow record');
+    assert.equal(records(gameState)[0]!.reason, 'parse-unrecognized');
+    assert.equal(records(gameState)[0]!.mechanic, 'mind-swap');
+  });
+
+  it('a flavor-text-only hook (no effects, no markers) records NO hollow event', () => {
+    // why: a hook that declares nothing executable can never be hollow — a pure
+    // flavor-text line surfaces no effects and an empty/absent unresolvedMarkers.
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 0, 'no declared effect → never hollow');
+  });
+
+  it('a primitive-only (Berserk) hook records NO hollow event (composition is reachable)', () => {
+    const gameState = makeTestState({
+      deck: ['top', 'b'],
+      inPlay: ['hero-x'],
+      cardStats: { top: { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 } },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+          primitiveEffects: [HERO_COMPOSITION_MARKERS['berserk']!],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 0, 'a recognized composition reaches the interpreter');
+  });
+});
