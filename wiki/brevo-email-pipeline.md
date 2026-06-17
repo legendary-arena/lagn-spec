@@ -16,7 +16,7 @@ source:
   - C:\www\legendary-arena-com\docs\brevo\newsletter-template.md
   - C:\www\legendary-arena-com\docs\brand\strategy.md
   - C:\www\legendary-arena-com\functions\api\subscribe.js
-last-reviewed: 2026-05-13
+last-reviewed: 2026-06-16
 ---
 
 ## Repository base URLs
@@ -160,6 +160,13 @@ via `POST https://api.brevo.com/v3/contacts` with:
 - `updateEnabled: true`
 - Double opt-in is configured at the Brevo list level, not in the API
   call body.
+- (Planned, pending a WP) Optional
+  `attributes: { SIGNUP_SOURCE: <source> }` when the signup form
+  supplies a provenance value — best-effort: if the `SIGNUP_SOURCE`
+  attribute is not yet provisioned in Brevo, the function retries the
+  create without it so signups never break. This change is drafted but
+  not yet committed; the site-file edit needs a governing WP (marketing
+  commit hook). See Planned enhancements below.
 
 The API key (`BREVO_API_KEY`) lives in CF Pages environment variables
 only. It must never appear in committed code, email content, or
@@ -487,6 +494,36 @@ These steps must be completed in the Brevo dashboard:
    `<TEMPLATE_ID>`, and `<WORKFLOW_ID>` in
    `C:\www\legendary-arena-com\docs\brevo\email-automation.md` with real
    values from Brevo.
+5. **Create the `SIGNUP_SOURCE` contact attribute (when the source
+   hedge ships)** — add a text contact attribute named `SIGNUP_SOURCE`
+   in Brevo so the drafted subscribe-function change can store signup
+   provenance for future segmentation. The hedge is drafted but pending
+   a governing WP; this step pairs with it. Until the attribute exists,
+   source values are dropped by design (the function retries the create
+   without them, so signups never break).
+
+### Planned enhancements (deferred until volume)
+
+The pipeline is deliberately linear in v1 — no drip, no segmentation,
+no conditional logic — and stays that way until subscriber volume
+justifies the added complexity. The authoritative roadmap, with the
+concrete build trigger for each item, lives in the marketing doc at
+`C:\www\legendary-arena-com\docs\brevo\email-automation.md`
+§"Planned enhancements (deferred until volume)".
+
+| Enhancement | Status | Build trigger (summary) |
+|---|---|---|
+| Welcome drip (3–4 emails) | Deferred | v1 welcome has a stable open/click baseline (≥4 weeks) and list ≥ ~200 confirmed |
+| Source / topic segmentation | Hedge drafted (pending WP), not acted on | ≥2 distinct, sizeable source cohorts and a generic broadcast measurably underperforming |
+| Re-engagement / win-back | Deferred | A 30-day-inactive cohort worth recovering exists |
+| Closed-loop conversion metrics | Partly on roadmap | Site-analytics ingestion WP lands, then add Brevo goals on `play.*` |
+
+Each requires its own governing WP before build. The signup-source
+forward hedge (form -> `assets/js/newsletter.js` ->
+`functions/api/subscribe.js` -> Brevo `SIGNUP_SOURCE` attribute) is
+drafted and parked, pending its own lightweight WP (the site-file edit
+needs a governing WP per the marketing commit hook). Once it ships, the
+provenance data exists before segmentation's trigger is met.
 
 ### Claude Code
 
