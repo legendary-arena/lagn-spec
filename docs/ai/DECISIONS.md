@@ -25297,4 +25297,17 @@ Implements the open half of **D-24029** (landed by WP-256). A card **mechanic** 
 **Packet:** WP-256 / EC-287.
 **Status:** Active (landed by WP-256 / EC-287, 2026-06-16; commit `d53cce3f`).
 
+---
+
+**D-24032: Match-Setup Supply-Pile Minimums — bystanders/wounds/officers ≥ 30 (Engine-Authoritative Floor)**
+
+`validateMatchSetup` (the engine's authoritative match-setup gate, run inside `Game.setup()`) now enforces a per-pile minimum on the four `MatchSetupConfig` count fields, in addition to the existing non-negative-integer shape check: `bystandersCount`, `woundsCount`, and `officersCount` must each be ≥ 30; `sidekicksCount` keeps its floor of 0 (a match may legitimately use no sidekicks). The floors live in `COUNT_FIELD_MINIMUMS` (`matchSetup.validate.ts`) and match the Registry Viewer loadout builder's `DEFAULT_*` count defaults (30/30/30/0). A config below a floor produces a structured `MatchSetupError` for that field, so `Game.setup()` throws and match creation aborts with a full-sentence message — the same surface as every other setup error.
+
+**Why:** a supply pile configured below its floor starts a match but starves its pile-driven mechanic mid-game. Motivating field report: the `loadout-test.json` sample shipped `bystandersCount: 1`, so core/spider-man Web-Shooters' "Rescue a Bystander" became a silent no-op once that lone bystander was captured/consumed (`heroEffects.execute.ts#rescue` correctly logged "supply is empty"). The engine rescue logic was correct; the under-provisioned config was the bug. The floor turns an unplayable config into a fail-fast at match creation rather than a confusing in-game dead mechanic.
+
+**Scope / non-breaking:** the floor is checked only after the value is a confirmed non-negative integer, so a bad-type value still reports the type error. Only the match-creation path (`Game.setup` → `validateMatchSetup`) is gated; the replay/snapshot and fixture paths call `buildInitialGameState` directly and are unaffected (historical replays with sub-30 counts still verify). The Registry Viewer's `DEFAULT_*` counts already satisfy the floor; `loadout-test.json` is bumped to comply (bystanders 1→30 prior commit; officers 5→30 here). The browser-side `setupContract` / `parseLoadoutJson` shape guards are NOT changed — semantic minimums remain engine-owned (consistent with how ext_id existence is engine-owned), so the Viewer could still build a sub-floor loadout that fails at match-create; mirroring the floor into `setupContract` for earlier authoring feedback is a noted optional fast-follow.
+
+**Packet:** Ad-hoc operator fix (branch `claude/fix-sample-loadout-bystander-count`; no WP) — conversational bug-fix from the Web-Shooters rescue field report.
+**Status:** Active.
+
 Protect this file.

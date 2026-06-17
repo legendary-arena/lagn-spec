@@ -58,6 +58,24 @@ const STRING_FIELDS = ['schemeId', 'mastermindId'] as const;
 const ARRAY_FIELDS = ['villainGroupIds', 'henchmanGroupIds', 'heroDeckIds'] as const;
 const COUNT_FIELDS = ['bystandersCount', 'woundsCount', 'officersCount', 'sidekicksCount'] as const;
 
+// why: D-24032 — per-pile supply floors. bystanders / wounds / officers each
+// default to 30 (DEFAULT_BYSTANDERS_COUNT / DEFAULT_WOUNDS_COUNT /
+// DEFAULT_OFFICERS_COUNT in the Registry Viewer loadout builder). A match
+// configured below the floor starts but starves its pile-driven mechanic mid-
+// game — the original field bug: a 1-bystander supply made core/spider-man
+// Web-Shooters' "Rescue a Bystander" a silent no-op once that lone bystander
+// was captured/consumed. Sidekicks default to 0 (a match may legitimately use
+// no sidekicks), so their floor is 0 — i.e. the pre-existing non-negative
+// check, unchanged. The engine is the authoritative match-setup gate
+// (ARCHITECTURE.md "Engine Owns Truth"), so the floor lives here and aborts
+// Game.setup() like every other setup error.
+const COUNT_FIELD_MINIMUMS: Readonly<Record<(typeof COUNT_FIELDS)[number], number>> = {
+  bystandersCount: 30,
+  woundsCount: 30,
+  officersCount: 30,
+  sidekicksCount: 0,
+};
+
 /**
  * Checks whether a value is a non-null object (not an array).
  */
@@ -269,10 +287,22 @@ function validateShape(input: Record<string, unknown>, errors: MatchSetupError[]
   }
 
   for (const fieldName of COUNT_FIELDS) {
-    if (!isNonNegativeInteger(input[fieldName])) {
+    const countValue = input[fieldName];
+    if (!isNonNegativeInteger(countValue)) {
       errors.push({
         field: fieldName,
         message: `The ${fieldName} field must be a non-negative integer.`,
+      });
+      continue;
+    }
+    // why: D-24032 — the supply-floor check runs only after the value is a
+    // confirmed non-negative integer, so a bad-type value still reports the
+    // type error above rather than the floor error.
+    const minimumCount = COUNT_FIELD_MINIMUMS[fieldName];
+    if (countValue < minimumCount) {
+      errors.push({
+        field: fieldName,
+        message: `The ${fieldName} field must be at least ${minimumCount} so the supply pile does not run dry during play; received ${countValue}. Re-export the loadout from the Registry Viewer, whose defaults satisfy this minimum.`,
       });
     }
   }

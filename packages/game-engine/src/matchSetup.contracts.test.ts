@@ -190,6 +190,87 @@ describe('validateMatchSetup', () => {
   });
 });
 
+describe('validateMatchSetup — supply-pile minimums (D-24032)', () => {
+  it('rejects bystandersCount below the floor of 30', () => {
+    const registry = createMockRegistry();
+    const input = createValidInput();
+    input.bystandersCount = 29;
+
+    const result = validateMatchSetup(input, registry);
+
+    assert.equal(result.ok, false);
+    if (!result.ok) {
+      const countError = result.errors.find((error) => error.field === 'bystandersCount');
+      assert.ok(countError, 'Expected a minimum-floor error for bystandersCount.');
+      assert.ok(
+        countError.message.includes('at least 30'),
+        'Error message should name the minimum floor.',
+      );
+    }
+  });
+
+  it('rejects woundsCount and officersCount below the floor of 30', () => {
+    const registry = createMockRegistry();
+    const input = createValidInput();
+    input.woundsCount = 0;
+    input.officersCount = 12;
+
+    const result = validateMatchSetup(input, registry);
+
+    assert.equal(result.ok, false);
+    if (!result.ok) {
+      assert.ok(
+        result.errors.find((error) => error.field === 'woundsCount'),
+        'Expected a minimum-floor error for woundsCount.',
+      );
+      assert.ok(
+        result.errors.find((error) => error.field === 'officersCount'),
+        'Expected a minimum-floor error for officersCount.',
+      );
+    }
+  });
+
+  it('accepts a sub-30 sidekicksCount (its floor is 0 — a match may use no sidekicks)', () => {
+    const registry = createMockRegistry();
+    const input = createValidInput();
+    input.sidekicksCount = 5;
+
+    const result = validateMatchSetup(input, registry);
+
+    assert.equal(result.ok, true, 'A sub-30 sidekicksCount must not trip the supply floor.');
+  });
+
+  it('reports the non-negative-integer error (not the floor) for a negative count', () => {
+    const registry = createMockRegistry();
+    const input = createValidInput();
+    input.bystandersCount = -1;
+
+    const result = validateMatchSetup(input, registry);
+
+    assert.equal(result.ok, false);
+    if (!result.ok) {
+      const countError = result.errors.find((error) => error.field === 'bystandersCount');
+      assert.ok(countError, 'Expected an error for bystandersCount.');
+      assert.ok(
+        countError.message.includes('non-negative integer'),
+        'A negative value should report the type error, not the floor.',
+      );
+    }
+  });
+
+  it('accepts the exact floor of 30 (>= not >)', () => {
+    const registry = createMockRegistry();
+    const input = createValidInput();
+    input.bystandersCount = 30;
+    input.woundsCount = 30;
+    input.officersCount = 30;
+
+    const result = validateMatchSetup(input, registry);
+
+    assert.equal(result.ok, true, 'Exactly 30 must satisfy the floor.');
+  });
+});
+
 describe('validateMatchSetup — no-throw contract', () => {
   it('never throws, even with null input', () => {
     const registry = createMockRegistry();
@@ -297,9 +378,13 @@ describe('validateMatchSetup — CardRegistryReader boundary', () => {
       villainGroupIds: ['fake/villain-001'],
       henchmanGroupIds: ['fake/henchman-001'],
       heroDeckIds: ['fake/hero-001'],
-      bystandersCount: 5,
-      woundsCount: 5,
-      officersCount: 5,
+      // why: at/above the D-24032 supply floor so this test isolates the
+      // registry-existence boundary it targets (villain group + hero have no
+      // flat-card keys in the minimal mock) rather than also tripping the
+      // count floor.
+      bystandersCount: 30,
+      woundsCount: 30,
+      officersCount: 30,
       sidekicksCount: 0,
     };
 
