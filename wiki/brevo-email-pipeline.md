@@ -16,7 +16,7 @@ source:
   - C:\www\legendary-arena-com\docs\brevo\newsletter-template.md
   - C:\www\legendary-arena-com\docs\brand\strategy.md
   - C:\www\legendary-arena-com\functions\api\subscribe.js
-last-reviewed: 2026-06-16
+last-reviewed: 2026-06-17
 ---
 
 ## Repository base URLs
@@ -355,6 +355,46 @@ deployed before the newsletter send.
 **Email signature graphic**
 
 ![Legendary Arena email signature](/brevo-email-pipeline/la-email-signature-300px.png)
+
+### Email signature block
+
+The personal email sign-off for outbound mail — logo, name, role, the
+two canonical links, and the brand sign-off line. Paste the HTML
+verbatim into the mail client's signature setting (or wherever a
+personal sender sign-off is wanted). Colors map to the documented email
+design tokens: `#1a1d2e` text-primary, `#4a5168` text-secondary,
+`#1d4ed8` link blue, `#7a1d1f` brand red.
+
+```html
+<table border="0" cellpadding="0" cellspacing="0" style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.4; color: #1a1d2e;">
+  <tr>
+    <td style="padding-right: 15px; vertical-align: top;">
+      <img src="https://www.legendary-arena.com/images/logo-la.jpg" alt="Legendary Arena" width="180" style="display: block;">
+    </td>
+    <td style="vertical-align: top; padding-top: 8px;">
+      <strong style="font-size: 16px; color: #1a1d2e;">Jeffery J. Jensen</strong><br>
+      <span style="color: #4a5168;">Founder &amp; Game Architect</span><br><br>
+
+      <a href="https://www.legendary-arena.com" style="color: #1d4ed8; text-decoration: none;">www.legendary-arena.com</a><br>
+      <a href="mailto:jeff@legendary-arena.com" style="color: #1d4ed8; text-decoration: none;">jeff@legendary-arena.com</a><br><br>
+
+      <span style="color: #7a1d1f; font-style: italic;">Mastery — not luck — determines victory.</span>
+    </td>
+  </tr>
+</table>
+```
+
+**Notes:**
+
+- Brand voice holds: no emoji, no exclamation marks. The sign-off line
+  "Mastery — not luck — determines victory." is mechanics-forward, which
+  matches the brand rule to lead with mechanics over fantasy.
+- **Logo asset pending.** The `src` resolves to
+  `C:\www\legendary-arena-com\static\images\logo-la.jpg` (Hugo serves it
+  at `/images/logo-la.jpg`). Save the winged-emblem logo there as a PNG
+  or JPG — not SVG; Outlook and Gmail do not render SVG in email. Export
+  it ~360px wide so it stays crisp at the 180px display size. Until the
+  file exists, the logo will 404.
 
 ### Linking requirements
 
