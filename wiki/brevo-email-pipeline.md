@@ -368,7 +368,7 @@ brand red.
 **Rendered preview** — this is the flattened image to insert into
 Outlook (Insert → Picture in the signature editor):
 
-![Jeff Jensen email signature](/brevo-email-pipeline/email-signature-jeff.jpg)
+![Jeff Jensen email signature](https://www.legendary-arena.com/images/email-signature-jeff.jpg)
 
 ```html
 <table border="0" cellpadding="0" cellspacing="0" style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.5; color: #1a1d2e;">
