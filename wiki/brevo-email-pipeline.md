@@ -365,6 +365,11 @@ Colors map to the documented email design tokens: `#1a1d2e`
 text-primary, `#4a5168` text-secondary, `#1d4ed8` link blue, `#7a1d1f`
 brand red.
 
+**Rendered preview** — this is the flattened image to insert into
+Outlook (Insert → Picture in the signature editor):
+
+![Jeff Jensen email signature](/brevo-email-pipeline/email-signature-jeff.jpg)
+
 ```html
 <table border="0" cellpadding="0" cellspacing="0" style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; line-height: 1.5; color: #1a1d2e;">
   <tr>
