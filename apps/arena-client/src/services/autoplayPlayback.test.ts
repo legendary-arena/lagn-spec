@@ -12,6 +12,7 @@ import {
   restart,
   goToEnd,
   resolveAutoplayGating,
+  interpretStallProbe,
   type AutoplayControlResponse,
 } from './autoplayPlayback';
 import { useUiStateStore } from '../stores/uiState';
@@ -69,6 +70,7 @@ function envelope(
     mode: 'paused',
     speedMode: '1x',
     gameOver: false,
+    aborted: false,
     ...overrides,
   };
 }
@@ -176,6 +178,67 @@ describe('autoplayPlayback service (WP-164) — getStatus resolution', () => {
         assert.match(error.message, /network request to .* did not complete/);
         return true;
       },
+    );
+  });
+
+  test('getStatus exposes aborted + abortReason from an aborted envelope (WP-262)', async () => {
+    installFetchStub(() =>
+      jsonResponse(
+        200,
+        envelope({
+          aborted: true,
+          abortReason: 'The bot loop stopped after an unexpected server error.',
+        }),
+      ),
+    );
+
+    const result = await getStatus('match-aborted');
+
+    assert.notEqual(result, null);
+    assert.equal(result!.aborted, true);
+    assert.equal(
+      result!.abortReason,
+      'The bot loop stopped after an unexpected server error.',
+    );
+  });
+
+  test('getStatus on a healthy envelope reports aborted false with no abortReason (WP-262)', async () => {
+    installFetchStub(() => jsonResponse(200, envelope({ mode: 'live' })));
+
+    const result = await getStatus('match-live');
+
+    assert.notEqual(result, null);
+    assert.equal(result!.aborted, false);
+    assert.equal(result!.abortReason, undefined);
+  });
+});
+
+describe('autoplayPlayback service (WP-262) — interpretStallProbe classification', () => {
+  test("an envelope with aborted true classifies 'aborted'", () => {
+    assert.equal(interpretStallProbe(envelope({ aborted: true })), 'aborted');
+  });
+
+  test("a null probe (404 / torn-down controller) classifies 'stopped', NOT 'aborted'", () => {
+    // why: a null probe means the controller is no longer observable, so the
+    // client cannot invent an abort banner — it is a stopped controller.
+    assert.equal(interpretStallProbe(null), 'stopped');
+  });
+
+  test("a gameOver envelope classifies 'stopped'", () => {
+    assert.equal(interpretStallProbe(envelope({ gameOver: true })), 'stopped');
+  });
+
+  test("a normal live envelope classifies 'continue'", () => {
+    assert.equal(
+      interpretStallProbe(envelope({ paused: false, mode: 'live' })),
+      'continue',
+    );
+  });
+
+  test("aborted wins over gameOver — an aborted+gameOver envelope classifies 'aborted'", () => {
+    assert.equal(
+      interpretStallProbe(envelope({ aborted: true, gameOver: true })),
+      'aborted',
     );
   });
 });

@@ -3,7 +3,7 @@ import '../testing/jsdom-setup';
 import { describe, test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { setActivePinia, createPinia } from 'pinia';
-import { mount, flushPromises } from '@vue/test-utils';
+import { mount, flushPromises, enableAutoUnmount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import type { UIState } from '@legendary-arena/game-engine';
 import PlayDesktop from './PlayDesktop.vue';
@@ -12,6 +12,12 @@ import type { SubmitMove } from '../components/play/uiMoveName.types';
 import type { NotableGameEvent } from '../composables/useNotableEventStream';
 
 const noopSubmitMove: SubmitMove = () => undefined;
+
+// why: an autoplay-match mount renders AutoplayControls, which arms the WP-262
+// stall-detection setInterval on mount. Without auto-unmount, that interval
+// outlives each test and keeps the node:test event loop alive (hang). Unmount
+// after every test so the bar's onBeforeUnmount clears the interval.
+enableAutoUnmount(afterEach);
 
 function snapshot(): UIState {
   return {

@@ -47,6 +47,7 @@
 - `apps/arena-client/src/services/autoplayPlayback.test.ts` — **modified** — field parse + `interpretStallProbe` classification (no timers)
 - `apps/arena-client/src/components/AutoplayControls.vue` — **modified** — abort state, stall poll (abort-state-only + cleanup), `autoplay-aborted` banner, live-control disable
 - `apps/arena-client/src/components/AutoplayControls.test.ts` — **modified** — banner + reason, control disable/rewind-kept, poll stop on abort/game-over/unmount, cursor untouched on poll
+- `apps/arena-client/src/pages/PlayDesktop.test.ts` — **modified (execution amendment, 2026-06-18)** — `enableAutoUnmount(afterEach)` leak-guard. `PlayDesktop` mounts `AutoplayControls`, which now arms the stall-detection `setInterval` on mount; without auto-unmount the leaked interval keeps the `node:test` event loop alive and hangs the suite. Same-layer arena-client **test-hygiene** file within the lightweight lane's "+ ≤ 1 same-layer runtime-wiring file" allowance — it is NOT a `PlayDesktop.vue` production / mount-wiring change, the poll still lives entirely in the bar, so this is **not** a self-demotion trigger.
 - `docs/ai/DECISIONS.md` — **modified** — D-24042 Drafted → Active
 - `docs/ai/STATUS.md` — **modified** — client abort-banner note
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** — check off WP-262

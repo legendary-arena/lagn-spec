@@ -144,6 +144,7 @@ mindmap
         ["WP-177 ✅ Autoplay rewind requester audience (server: D-17701 scopes D-16303)"]
         ["WP-164 ✅ Autoplay playback controls (client: media-player bar + status probe gating)"]
         ["WP-261 ✅ Autoplay bot-loop crash surfacing + defensive stage progress (server; EC-292): markAborted(reason) + abort-on-abnormal-exit keeps the controller registered for the 5-min review window + surfaces aborted/abortReason on the playback envelope; per-stage _stateID progress assertion (a stalled stage aborts instead of spinning to maxTurns); routes ALL stages through getLegalMoves so a parked KO-hero resolve fires anywhere; pure botLoopProgress.mjs helper; engine untouched; D-24037/D-24038 Active; WP-262 client banner fast-follow)"]
+        ["WP-262 ✅ Autoplay 'Bot match stopped' banner + stall-detection poll (client; EC-296): consumes WP-261's aborted/abortReason envelope — mirrors both onto the client AutoplayControlResponse (no server import) + a bounded abort-state-only stall poll in AutoplayControls.vue (STALL_POLL_INTERVAL_MS=3000, single in-flight, stops on abort/stopped/unmount, never moves cursor/mode/history/paused) + a pure interpretStallProbe helper + a data-testid=autoplay-aborted banner extending the expired span + live-control disable on abort (rewind kept for the review window) + initial-aborted seed with no poll start; no server/engine/api-endpoints diff; D-24042 Active; D-24026 live-verify pending post-deploy)"]
         ["WP-166 ✅ arena-client vue-tsc green + CI typecheck gate (engine barrel publishes the 6 WP-128 UIState sub-types; D-16502)"]
         ["WP-227 ✅ arena-client vue-tsc green (WP-214/222 UIState/UICityCard fixture + prop backfill; 3rd recurrence of engine-field-add → client-typecheck drift after WP-166/207)"]
         ["WP-171 ✅ Pile browse modal (click-to-view card piles)"]
@@ -400,7 +401,7 @@ mindmap
 | Scoring & PAR Pipeline | 4/4 | — |
 | Beta-Launch Pillar | 5/5 | — |
 | Engine Hardening | 2/2 | — |
-| Client Integration Cluster | 20/20 | — |
+| Client Integration Cluster | 21/21 | — |
 | Auth Stack & Profile Surface | 14/14 | — |
 | Engine + Server Wiring & Leaderboard HTTP | 3/3 | — |
 | Registry Viewer Enhancements | 14/14 | — |
@@ -427,7 +428,7 @@ mindmap
 | Next Horizons | 0/4 | 4 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **258/259 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
+| **Total** | **259/260 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
 
 **Open / blocked WPs (derived from WORK_INDEX, 1):** WP-042.1 ⏸ blocked.
 <!-- ROADMAP-COUNTS:END -->

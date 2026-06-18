@@ -49,6 +49,14 @@ export interface AutoplayControlResponse {
   mode: 'live' | 'paused';
   speedMode: '1x' | '2x' | '4x' | 'max';
   gameOver: boolean;
+  // why: structural mirror of the WP-261 server envelope (D-24037). `aborted`
+  // is ALWAYS present; `abortReason` is an own key only when `aborted === true`
+  // (a public-safe full sentence). Both are read DIRECTLY off the parsed
+  // envelope and never recomputed on the client — the abort DECISION is
+  // server-side (WP-261), the client only surfaces it. No server-layer type is
+  // imported (WP-164 / D-14401); the shapes match structurally.
+  aborted: boolean;
+  abortReason?: string;
   uiState?: UIState;
   error?: string;
 }
@@ -58,6 +66,14 @@ export interface AutoplayControlResponse {
 // controller can be momentarily unregistered right after autoplay-create)
 // without an unbounded loop or visible bar flicker (D-16501).
 export const STATUS_RETRY_DELAY_MS = 1000;
+
+// why: stall-detection poll cadence (WP-262 / D-24042). 3000 ms is frequent
+// enough that a spectator sees the "Bot match stopped" banner within a few
+// seconds of an abort, but infrequent enough that the periodic GET .../status
+// traffic for the bar's lifetime stays negligible. Defined ONCE here and
+// consumed by AutoplayControls.vue — there is no duplicate local interval
+// literal in the component.
+export const STALL_POLL_INTERVAL_MS = 3000;
 
 /**
  * Probe whether a match is an autoplay match.
@@ -322,4 +338,46 @@ export async function resolveAutoplayGating(
   }
   await retryDelay();
   return probe(matchId);
+}
+
+/**
+ * The classification of a SETTLED stall-detection probe result. The poll in
+ * `AutoplayControls.vue` maps each outcome to an action: `'aborted'` raises the
+ * "Bot match stopped" banner and stops the poll, `'stopped'` stops the poll
+ * silently, `'continue'` keeps polling.
+ */
+export type StallProbeOutcome = 'aborted' | 'stopped' | 'continue';
+
+/**
+ * Classify an already-settled stall-detection probe result (WP-262 / D-24042).
+ *
+ * This is the pure, timer-free decision half of the stall poll, mirroring the
+ * `resolveAutoplayGating` pure-helper split so the classification is unit
+ * tested without fake timers. It handles ONLY settled results
+ * (`AutoplayControlResponse | null`); a thrown `getStatus` fault never reaches
+ * here — the poll caller catches and logs transient faults and keeps polling.
+ *
+ * @param response The settled probe envelope (HTTP 200), or `null` (HTTP 404).
+ * @returns `'aborted'` when the envelope reports `aborted === true`; `'stopped'`
+ *   for a `null` (404) probe or a `gameOver === true` envelope; `'continue'`
+ *   for a normal live envelope.
+ */
+export function interpretStallProbe(
+  response: AutoplayControlResponse | null,
+): StallProbeOutcome {
+  // why: a `null` (404) probe means the autoplay controller is no longer
+  // observable (torn down, or never registered), so it is classified
+  // `'stopped'` rather than `'aborted'`: the client cannot read an abort reason
+  // for a controller it can no longer see, so it must not invent an abort
+  // banner. Only an explicit `aborted === true` envelope raises the banner.
+  if (response === null) {
+    return 'stopped';
+  }
+  if (response.aborted === true) {
+    return 'aborted';
+  }
+  if (response.gameOver === true) {
+    return 'stopped';
+  }
+  return 'continue';
 }
