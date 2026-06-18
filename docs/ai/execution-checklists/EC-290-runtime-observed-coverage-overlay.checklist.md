@@ -5,6 +5,7 @@
 
 ## Before Starting
 - [ ] WP-257 is on `main` (`G.diagnostics.hollowEffects` + `HollowEffectRecord` + `HOLLOW_EFFECTS_CAP = 256` exist; D-24033/D-24034)
+- [ ] **WP-263 ✅ on `main` (D-24039)** — surfaces the runtime-only diagnostics as additive sibling fields `cell.hollowEffects` / `cell.hollowEffectsDropped` on `SweepCellResult`; the harness reads those off the `onCellComplete` callback, NOT a finished `G`. **Folded-inline amendment (2026-06-18):** committed artifact = fast random-policy recorded **zero-state** gated per-PR by `sim:runtime-observed:check`; the heavier competent-play sweep is deferred to a scheduled cron (the D-24035 CI-affordability fallback). Locked values: `runSeed = 'wp259-runtime-observed-v1'`, `policy = random`, 1 game over `core/legacy-virus-the` + `core/dr-doom` + `core/brotherhood` + `core/savage-land-mutates` + five `wwhk` heroes.
 - [ ] `sweep.runner.ts` exports `sweepSetupMatrix` (the bounded deterministic sweep driver)
 - [ ] `pnpm -r build` exits 0
 - [ ] `pnpm --filter @legendary-arena/dashboard test` exits 0

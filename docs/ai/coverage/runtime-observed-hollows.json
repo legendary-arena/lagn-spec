@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "generatedFrom": {
+    "runSeed": "wp259-runtime-observed-v1",
+    "gamesPlayed": 1,
+    "matrixDescription": "policy=random (fast per-PR smoke baseline; RECORDED ZERO-STATE — the passive random policy executes no declared card abilities, so it surfaces no runtime hollows; the heavier competent-play sweep over this board is deferred to a scheduled cron per the D-24035 CI-affordability fallback). playerCount=1; schemeIds=[core/legacy-virus-the] × mastermindIds=[core/dr-doom]; heroes=[wwhk/amadeus-cho, wwhk/gladiator-hulk, wwhk/hiroim, wwhk/korg, wwhk/bruce-banner]; villainGroups=[core/brotherhood]; henchmanGroups=[core/savage-land-mutates]"
+  },
+  "summary": {
+    "distinctMechanics": 0,
+    "totalObservations": 0,
+    "hollowEffectsDropped": 0,
+    "byReason": {
+      "no-handler": 0,
+      "unsupported-keyword": 0,
+      "parse-unrecognized": 0
+    }
+  },
+  "byMechanic": {}
+}

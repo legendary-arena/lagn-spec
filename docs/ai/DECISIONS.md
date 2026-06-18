@@ -25362,8 +25362,8 @@ The dashboard `/coverage` page gains a **runtime-observed** overlay distinguishi
 
 **Why:** static coverage answers *"is this mechanic unsupported in theory?"*; the runtime overlay answers *"was it actually encountered during play?"* — separating paper gaps from gaps that bite players, so the highest-value mechanic-implementation work is prioritized by real runtime evidence rather than a static list. Keeping the artifact a deterministic, committed, drift-gated downstream record (the ledger precedent) preserves the persistence boundary (`G.diagnostics` is runtime-only) and the layer boundary (the engine emits; tooling consumes; the dashboard reads JSON, never the engine).
 
-**Packet:** WP-259 / EC-290. Implements `DESIGN-HOLLOW-EFFECT-DETECTION.md §6.2` + §8 (WP-259 acceptance criteria) + §10.
-**Status:** Drafted 2026-06-17; not yet landed (flips to Active when WP-259 executes).
+**Packet:** WP-259 / EC-290. Implements `DESIGN-HOLLOW-EFFECT-DETECTION.md §6.2` + §8 (WP-259 acceptance criteria) + §10. Depends on **WP-263 / D-24039** (the predecessor that surfaces the channel as the `SweepCellResult.hollowEffects` sibling fields the harness reads).
+**Status:** Active (2026-06-18, WP-259 / EC-290 executed at commit `b395df71`). **Execution outcome:** the committed per-PR artifact is a fast random-policy recorded **zero-state** (the passive random policy executes no declared abilities → no hollows); surfacing real runtime hollows needs active competent play, which is multi-minute/game (the real-registry decision cost) and **not CI-affordable per-PR**, so the heavier competent-play sweep that populates real signal is **deferred to a scheduled cron** per this decision's CI-affordability fallback (noted, not built in WP-259). Per-PR freshness via `sim:runtime-observed:check` in the `hero-effect-coverage` CI job.
 
 ---
 

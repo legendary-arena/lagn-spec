@@ -6,7 +6,13 @@ import {
   executablePercent,
   useCoverageLedger,
 } from './useCoverageLedger.js';
-import type { CoverageLedger, LedgerRow, LedgerStatus } from '../types/coverage.js';
+import type {
+  CoverageLedger,
+  LedgerRow,
+  LedgerStatus,
+  RuntimeObservedEntry,
+  RuntimeObservedHollows,
+} from '../types/coverage.js';
 
 function makeRow(overrides: Partial<LedgerRow>): LedgerRow {
   return {
@@ -105,4 +111,54 @@ test('useCoverageLedger falls back to the bundled ledger when none is injected',
   // The bundled ledger is the real hero ledger — non-empty, hero card type.
   assert.ok(view.summary.value.totalRows > 0);
   assert.ok(view.mechanics.value.length > 0);
+});
+
+function makeRuntimeObserved(
+  byMechanic: Record<string, RuntimeObservedEntry>,
+): RuntimeObservedHollows {
+  return {
+    schemaVersion: 1,
+    generatedFrom: { runSeed: 'test-seed', gamesPlayed: 1, matrixDescription: 'test matrix' },
+    summary: {
+      distinctMechanics: Object.keys(byMechanic).length,
+      totalObservations: 0,
+      hollowEffectsDropped: 0,
+      byReason: { 'no-handler': 0, 'unsupported-keyword': 0, 'parse-unrecognized': 0 },
+    },
+    byMechanic,
+  };
+}
+
+test('useCoverageLedger joins the runtime-observed overlay by mechanic key (present / absent)', () => {
+  const ledger = makeLedger([
+    makeRow({ extId: 'a', mechanic: 'phase', status: 'unsupported' }),
+    makeRow({ extId: 'b', mechanic: 'berserk', status: 'executable' }),
+  ]);
+  const runtimeObserved = makeRuntimeObserved({
+    phase: {
+      hitCount: 3,
+      lastSeenTurn: 7,
+      byReason: { 'no-handler': 3, 'unsupported-keyword': 0, 'parse-unrecognized': 0 },
+      examples: [{ cardId: 'wwhk/korg', cardType: 'hero', timing: 'onPlay', reason: 'no-handler' }],
+    },
+  });
+  const view = useCoverageLedger({ ledger, runtimeObserved });
+
+  // present: a mechanic in the artifact reads its runtime-observed entry by key
+  const observed = view.runtimeObservedByMechanic.value['phase'];
+  assert.equal(observed?.hitCount, 3);
+  assert.equal(observed?.lastSeenTurn, 7);
+  assert.equal(observed?.byReason['no-handler'], 3);
+  // absent: a mechanic NOT in the artifact reads as none ("not observed in play")
+  assert.equal(view.runtimeObservedByMechanic.value['berserk'], undefined);
+  // the run-level summary is exposed for the page header
+  assert.equal(view.runtimeObservedSummary.value.distinctMechanics, 1);
+});
+
+test('useCoverageLedger falls back to the bundled runtime-observed artifact when none is injected', () => {
+  const view = useCoverageLedger();
+  // The bundled artifact is the real one — byMechanic is a record (possibly empty
+  // when the committed sweep observed no runtime hollows), summary is present.
+  assert.equal(typeof view.runtimeObservedByMechanic.value, 'object');
+  assert.ok(view.runtimeObservedSummary.value.distinctMechanics >= 0);
 });

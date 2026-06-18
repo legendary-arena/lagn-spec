@@ -1,15 +1,45 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useCoverageLedger, statusLabel } from '../../composables/useCoverageLedger.js';
-import type { LedgerStatus } from '../../types/coverage.js';
+import type { LedgerStatus, RuntimeObservedEntry } from '../../types/coverage.js';
 
-const { summary, rows, mechanics, percentExecutable, error } = useCoverageLedger();
+const {
+  summary,
+  rows,
+  mechanics,
+  percentExecutable,
+  error,
+  runtimeObservedByMechanic,
+  runtimeObservedSummary,
+} = useCoverageLedger();
 
 const DISPLAY_CAP = 100;
+
+// why: the closed WP-257 hollow-reason set, in canonical order — drives the
+// dominant-reason badge label on the runtime-observed overlay.
+const HOLLOW_REASONS = ['no-handler', 'unsupported-keyword', 'parse-unrecognized'] as const;
 
 /** Maps a ledger status to its CSS modifier class for the colored badges. */
 function statusClass(status: LedgerStatus): string {
   return `cov-${status}`;
+}
+
+/** The runtime-observed entry for a mechanic, or undefined if never hit in play. */
+function runtimeObservedFor(mechanic: string): RuntimeObservedEntry | undefined {
+  return runtimeObservedByMechanic.value[mechanic];
+}
+
+/** The most-hit hollow reason for an entry (drives the overlay badge label). */
+function dominantReason(entry: RuntimeObservedEntry): string {
+  let topReason: string = HOLLOW_REASONS[0];
+  let topCount = -1;
+  for (const reason of HOLLOW_REASONS) {
+    if (entry.byReason[reason] > topCount) {
+      topCount = entry.byReason[reason];
+      topReason = reason;
+    }
+  }
+  return topReason;
 }
 
 // By-card index (the debugging lookup): status filter + free-text search over
@@ -91,12 +121,20 @@ const STATUS_FILTERS: readonly (LedgerStatus | 'all')[] = [
       <h2>By mechanic — the implementation worklist</h2>
       <p class="block-note">
         One row per mechanic (implementing one clears every card using it). Unsupported first.
+        <span class="runtime-note">
+          The <strong>Observed in play</strong> column overlays <em>runtime-observed</em> hollows —
+          mechanics actually hit during a fixed-seed deterministic sim sweep
+          ({{ runtimeObservedSummary.distinctMechanics }} distinct ·
+          {{ runtimeObservedSummary.totalObservations }} observations).
+          Static status answers "unsupported in theory?"; this answers "did it bite a player in play?"
+        </span>
       </p>
       <table class="cov-table">
         <thead>
           <tr>
             <th>Mechanic</th>
             <th>Status</th>
+            <th>Observed in play</th>
             <th class="num">Cards</th>
             <th>WP</th>
             <th>Decision</th>
@@ -110,6 +148,17 @@ const STATUS_FILTERS: readonly (LedgerStatus | 'all')[] = [
               <span class="badge" :class="statusClass(entry.status)">{{
                 statusLabel(entry.status)
               }}</span>
+            </td>
+            <td>
+              <span
+                v-if="runtimeObservedFor(entry.mechanic)"
+                class="badge cov-runtime"
+                :title="`hit ${runtimeObservedFor(entry.mechanic)!.hitCount}× in play · last seen turn ${runtimeObservedFor(entry.mechanic)!.lastSeenTurn}`"
+              >
+                ⚡ {{ runtimeObservedFor(entry.mechanic)!.hitCount }}× ·
+                {{ dominantReason(runtimeObservedFor(entry.mechanic)!) }}
+              </span>
+              <span v-else class="not-observed">not observed in play</span>
             </td>
             <td class="num">{{ entry.cardCount }}</td>
             <td class="mono dim">{{ entry.wp || '—' }}</td>
@@ -389,5 +438,25 @@ const STATUS_FILTERS: readonly (LedgerStatus | 'all')[] = [
 }
 .cov-deferred {
   color: var(--p-blue-500, #3b82f6);
+}
+
+/* why (WP-259): the runtime-observed overlay is a DISTINCT visual channel from
+   the four static-status colors — a filled purple badge (not an outlined status
+   badge) so "actually hit in play" reads as its own signal at a glance. */
+.cov-runtime {
+  color: var(--p-purple-500, #a855f7);
+  border-color: var(--p-purple-500, #a855f7);
+  background: color-mix(in srgb, var(--p-purple-500, #a855f7) 15%, transparent);
+}
+
+.not-observed {
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--p-text-muted-color);
+}
+
+.runtime-note {
+  display: block;
+  margin-top: 0.35rem;
 }
 </style>

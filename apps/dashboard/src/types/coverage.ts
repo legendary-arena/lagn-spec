@@ -65,3 +65,56 @@ export interface MechanicEntry {
   decision: string;
   handler: string;
 }
+
+/**
+ * The runtime-observed hollow-effect overlay (WP-259 / D-24035). Build-time
+ * copy of `docs/ai/coverage/runtime-observed-hollows.json`, produced by the
+ * `runtime-observed-hollows` harness (a fixed-seed deterministic sim sweep) and
+ * copied into `src/data` by `scripts/build-coverage-ledger.mjs`. The static
+ * ledger above answers "unsupported in theory?"; this answers "did it actually
+ * bite a player in play?". The three `byReason` keys are the closed WP-257
+ * hollow set (always present, even at 0).
+ */
+export interface RuntimeObservedByReason {
+  'no-handler': number;
+  'unsupported-keyword': number;
+  'parse-unrecognized': number;
+}
+
+/** One example card that hit a mechanic's hollow handler during the sweep. */
+export interface RuntimeObservedExample {
+  cardId: string;
+  cardType: string;
+  timing: string;
+  reason: string;
+}
+
+/** Per-mechanic runtime-observed tally — the value the overlay joins per row. */
+export interface RuntimeObservedEntry {
+  hitCount: number;
+  lastSeenTurn: number;
+  byReason: RuntimeObservedByReason;
+  examples: readonly RuntimeObservedExample[];
+}
+
+export interface RuntimeObservedGeneratedFrom {
+  runSeed: string | number;
+  gamesPlayed: number;
+  matrixDescription: string;
+}
+
+export interface RuntimeObservedSummary {
+  distinctMechanics: number;
+  totalObservations: number;
+  hollowEffectsDropped: number;
+  byReason: RuntimeObservedByReason;
+}
+
+export interface RuntimeObservedHollows {
+  schemaVersion: number;
+  generatedFrom: RuntimeObservedGeneratedFrom;
+  summary: RuntimeObservedSummary;
+  byMechanic: Record<string, RuntimeObservedEntry>;
+  /** Present only when the build-time copy failed (empty-stub path). */
+  error?: string;
+}

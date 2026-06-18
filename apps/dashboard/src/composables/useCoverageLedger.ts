@@ -1,11 +1,15 @@
 import { computed, type ComputedRef } from 'vue';
 import ledgerData from '../data/coverage-ledger.json';
+import runtimeObservedData from '../data/runtime-observed-hollows.json';
 import type {
   CoverageLedger,
   LedgerRow,
   LedgerStatus,
   LedgerSummary,
   MechanicEntry,
+  RuntimeObservedEntry,
+  RuntimeObservedHollows,
+  RuntimeObservedSummary,
 } from '../types/coverage.js';
 
 // why: the unmarked sentinel mirrors the generator (`scripts/hero-mechanic-ledger.mjs`)
@@ -117,6 +121,8 @@ export function executablePercent(ledger: CoverageLedger): number {
 interface UseCoverageLedgerOptions {
   /** Injectable ledger. Defaults to the build-time bundled ledger. */
   ledger?: CoverageLedger;
+  /** Injectable runtime-observed overlay. Defaults to the build-time bundled artifact. */
+  runtimeObserved?: RuntimeObservedHollows;
 }
 
 interface UseCoverageLedgerReturn {
@@ -125,6 +131,10 @@ interface UseCoverageLedgerReturn {
   mechanics: ComputedRef<MechanicEntry[]>;
   percentExecutable: ComputedRef<number>;
   error: string | undefined;
+  /** Runtime-observed hollow tally keyed by mechanic — the overlay join (WP-259). */
+  runtimeObservedByMechanic: ComputedRef<Record<string, RuntimeObservedEntry>>;
+  /** Run-level runtime-observed summary (seed/games provenance + roll-up). */
+  runtimeObservedSummary: ComputedRef<RuntimeObservedSummary>;
 }
 
 /**
@@ -135,11 +145,18 @@ interface UseCoverageLedgerReturn {
  */
 export function useCoverageLedger(options?: UseCoverageLedgerOptions): UseCoverageLedgerReturn {
   const ledger = options?.ledger ?? (ledgerData as unknown as CoverageLedger);
+  const runtimeObserved =
+    options?.runtimeObserved ?? (runtimeObservedData as unknown as RuntimeObservedHollows);
   return {
     summary: computed(() => ledger.summary),
     rows: computed(() => ledger.rows),
     mechanics: computed(() => buildMechanicDictionary(ledger.rows)),
     percentExecutable: computed(() => executablePercent(ledger)),
     error: ledger.error,
+    // why (WP-259): the overlay joins each ledger mechanic row onto this lookup
+    // by mechanic key — a present key reads its runtime-observed entry, an
+    // absent key reads as "not observed in play".
+    runtimeObservedByMechanic: computed(() => runtimeObserved.byMechanic),
+    runtimeObservedSummary: computed(() => runtimeObserved.summary),
   };
 }

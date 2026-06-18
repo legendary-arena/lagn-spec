@@ -164,6 +164,16 @@ jobs:
       - name: Hero mechanic ledger freshness
         run: pnpm ledger:heroes:check
 
+      # why (WP-259 / D-24035): the committed runtime-observed-hollows artifact is
+      # regenerated from the same engine dist via a fixed-seed deterministic sweep;
+      # this freshness gate fails if it drifts. The committed per-PR artifact is a
+      # fast random-policy SMOKE BASELINE (a recorded zero-state — see the artifact's
+      # matrixDescription); the heavier competent-play sweep that surfaces real
+      # runtime hollows is a deferred cron follow-up (the CI-affordability fallback),
+      # not run here.
+      - name: Runtime-observed hollows freshness
+        run: pnpm sim:runtime-observed:check
+
   # ── 3c. Dashboard gates ──────────────────────────────────────────────────────
   # why: wires the apps/dashboard checks from
   # apps/dashboard/docs/code-checks-and-balances.md §11 into CI. The dashboard is
