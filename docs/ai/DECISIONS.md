@@ -25374,6 +25374,6 @@ The simulation capture path surfaces a finished game's runtime-only `G.diagnosti
 **Why:** WP-259 (the runtime-observed `/coverage` overlay) must read each finished simulated game's hollow effects off the locked `sweepSetupMatrix` driver, but that driver and its single-game companion discard the finished `G` and project only `{ winner, escapedVillains }` — so the WP-257 channel was **unreadable off any exported simulation surface**. Reading it otherwise would force WP-259 to edit `packages/**` (which it forbids), re-implement a simulation loop ("no new simulation engine"), or reconstruct hollows from `G.messages` ("never re-detect") — all forbidden. A small additive read accessor in the engine is the in-boundary fix: it keeps the channel **runtime-only** (D-24034 preserved — surfaced as a derived read-only RETURN value, never persisted, never written back to `G`, never gameplay input), keeps the sim byte-identical (no new randomness / clock / IO / `G` mutation; `finalStateHash` unchanged, replay-test-guarded), and lets WP-259 stay projection-and-report only. A predecessor engine packet rather than a fold-in keeps WP-259's `packages/** diff empty` invariant intact.
 
 **Packet:** WP-263 / EC-293. Unblocks WP-259 / EC-290 (D-24035).
-**Status:** Drafted 2026-06-17; not yet landed (flips to Active when WP-263 executes).
+**Status:** Active (2026-06-17, WP-263 / EC-293 executed at commit `d86ba240`).
 
 Protect this file.

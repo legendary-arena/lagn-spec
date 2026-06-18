@@ -330,6 +330,8 @@ describe('sweepSetupMatrix — dispatcher invariants', () => {
       'cellIndex',
       'cellSeed',
       'endgameReached',
+      'hollowEffects',
+      'hollowEffectsDropped',
       'mastermindId',
       'moveCount',
       'outcome',
@@ -363,5 +365,27 @@ describe('sweepSetupMatrix — dispatcher invariants', () => {
     // Sanity-check the base was not mutated.
     assert.equal(base.schemeId, 'base/scheme');
     assert.equal(base.mastermindId, 'base/mastermind');
+  });
+
+  test('per-cell hollow diagnostics pass-through (WP-263): []/0 under the mock registry', () => {
+    const collected: SweepCellResult[] = [];
+    sweepSetupMatrix(
+      createBaseSetupConfig(),
+      1,
+      ['scheme-a'],
+      ['mastermind-x'],
+      createMockRegistry(),
+      buildSinglePolicyFromCellSeed,
+      'run-seed-hollow',
+      (cell) => {
+        collected.push(cell);
+      },
+    );
+
+    assert.equal(collected.length, 1);
+    // why (WP-263): the mock registry produces no hollow effects, so the
+    // per-cell fields pass through the CapturedGameResult as []/0.
+    assert.deepEqual(collected[0]!.hollowEffects, []);
+    assert.equal(collected[0]!.hollowEffectsDropped, 0);
   });
 });

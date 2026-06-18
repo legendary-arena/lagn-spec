@@ -276,6 +276,7 @@ mindmap
         ["WP-256 ✅ Berserk via composable effect primitives (D-24029 first proof case; bootstraps the homogeneous effect-descriptor AST + interpreter with transient bind/ref context never in G + open HERO_COMPOSITION_MARKERS seam; Berserk + Recruit cousin are data; D-24030 + D-24031)"]
         ["WP-257 ✅ Hollow Effect Detector (engine runtime invariant; handler-reachability NOT state-diff; EFFECT_EXECUTION_REASONS + HollowEffectRecord + capped runtime-only G.diagnostics channel + parser unresolvedMarkers; DEFERRED_BY_DESIGN_MECHANICS allowlist; write-directly, no caller change; foundation for WP-258/259/260; D-24033 + D-24034)"]
         ["WP-258 ✅ Hollow effects on the arena-client diagnostics surface (reporting-loop consumer 1 of 3; optional UIState.hollowEffects projection read-only + public pass-through D-12803 + HollowEffectRecord/EffectExecutionReason barrel re-export; HollowEffectsPanel.vue mounted once in shared PlayViewport; rides the Download-diagnostics export free; no new DECISIONS)"]
+        ["WP-263 ✅ Surface sim hollow-effect diagnostics on the capture/sweep projection (WP-259 predecessor; captureGameDiagnostics pure helper + additive sibling hollowEffects/hollowEffectsDropped on CapturedGameResult + SweepCellResult; runtime-only derived read, never persisted/gameplay-input, not nested into CapturedOutcomeSummary; both field-set drift guards updated; sim byte-identical, finalStateHash unchanged; unblocks WP-259; D-24039)"]
 
       Notable Events & Overlays
         ["WP-200 ✅ Notable game event log (engine)"]

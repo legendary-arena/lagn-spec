@@ -38,6 +38,9 @@ import type { MatchSetupConfig } from '../matchSetup.types.js';
 import type { CardRegistryReader } from '../matchSetup.validate.js';
 import type { AIPolicy } from './ai.types.js';
 import type { CapturedOutcomeSummary } from './simulation.runner.js';
+// why (WP-263 / D-24039): reuse the WP-257 hollow-effect record type for the
+// per-cell diagnostics pass-through — never a parallel shape.
+import type { HollowEffectRecord } from '../diagnostics/hollowEffect.types.js';
 
 import { simulateOneGameAndCaptureMoves } from './simulation.runner.js';
 
@@ -76,6 +79,14 @@ export interface SweepCellResult {
   readonly outcome: CapturedOutcomeSummary;
   readonly endgameReached: boolean;
   readonly moveCount: number;
+  // why (WP-263 / D-24039): per-cell pass-through of the finished game's
+  // runtime-only hollow-effect diagnostics (WP-257 / D-24034), sibling to
+  // `outcome` — the WP-259 runtime-observed coverage harness reads these off
+  // each cell's callback. Carried verbatim from the cell's CapturedGameResult;
+  // the engine emits, the projection only carries (never persisted, never
+  // gameplay input).
+  readonly hollowEffects: readonly HollowEffectRecord[];
+  readonly hollowEffectsDropped: number;
 }
 
 /**
@@ -264,6 +275,8 @@ export function sweepSetupMatrix(
       outcome: captured.outcome,
       endgameReached: captured.endgameReached,
       moveCount: captured.moves.length,
+      hollowEffects: captured.hollowEffects,
+      hollowEffectsDropped: captured.hollowEffectsDropped,
     };
 
     onCellComplete(cell);

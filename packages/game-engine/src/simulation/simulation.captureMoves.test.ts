@@ -27,11 +27,14 @@ import type { ClientTurnIntent } from '../network/intent.types.js';
 import type { AIPolicy, LegalMove } from './ai.types.js';
 import type { FixtureFile } from '../test/fixtures/fixtureSchema.js';
 import type { ReplayMove } from '../replay/replay.types.js';
+import type { LegendaryGameState } from '../types.js';
+import type { HollowEffectRecord } from '../diagnostics/hollowEffect.types.js';
 
 import { createRandomPolicy } from './ai.random.js';
 import {
   runSimulation,
   simulateOneGameAndCaptureMoves,
+  captureGameDiagnostics,
   type CapturedGameResult,
   type CapturedOutcomeSummary,
 } from './simulation.runner.js';
@@ -337,7 +340,7 @@ describe('simulateOneGameAndCaptureMoves (WP-193)', () => {
     );
   });
 
-  test('field-set drift: CapturedGameResult has exactly { endgameReached, moves, outcome }; CapturedOutcomeSummary has exactly { escapedVillains, winner }', () => {
+  test('field-set drift: CapturedGameResult has exactly { endgameReached, hollowEffects, hollowEffectsDropped, moves, outcome }; CapturedOutcomeSummary has exactly { escapedVillains, winner }', () => {
     const setupConfig = createTestConfig();
     const registry = createMockRegistry();
     const seed = 'wp193-field-set-drift-seed';
@@ -359,7 +362,16 @@ describe('simulateOneGameAndCaptureMoves (WP-193)', () => {
     // canonical readonly-array drift-detection discipline used elsewhere
     // in the project.
     const capturedKeys = Object.keys(captured).sort();
-    assert.deepEqual(capturedKeys, ['endgameReached', 'moves', 'outcome']);
+    // why (WP-263): the two additive sibling fields join the drift gate so a
+    // future silent field add still trips it. CapturedOutcomeSummary stays
+    // narrow (diagnostics are siblings, never nested into it).
+    assert.deepEqual(capturedKeys, [
+      'endgameReached',
+      'hollowEffects',
+      'hollowEffectsDropped',
+      'moves',
+      'outcome',
+    ]);
 
     const summary: CapturedOutcomeSummary = captured.outcome;
     const summaryKeys = Object.keys(summary).sort();
@@ -413,6 +425,103 @@ describe('simulateOneGameAndCaptureMoves (WP-193)', () => {
       capturedComparable,
       decisionPrefix,
       'captured moves must byte-equal the dispatched-decision prefix',
+    );
+  });
+});
+
+describe('simulateOneGameAndCaptureMoves — hollow-effect diagnostics (WP-263)', () => {
+  test('surfaces the finished game hollow diagnostics; empty under the mock registry', () => {
+    const setupConfig = createTestConfig();
+    const registry = createMockRegistry();
+    const seed = 'wp263-capture-hollow-seed';
+    const policies: AIPolicy[] = [
+      createRandomPolicy(`${seed}::seat:0`),
+      createRandomPolicy(`${seed}::seat:1`),
+    ];
+
+    const captured = simulateOneGameAndCaptureMoves(
+      setupConfig,
+      registry,
+      policies,
+      seed,
+      0,
+    );
+
+    // why (WP-263): the mock registry has no real cards, so no hollow effect
+    // is recorded — the additive fields exist and default to []/0. The
+    // populated path is proven by the captureGameDiagnostics unit tests below.
+    assert.deepEqual(captured.hollowEffects, []);
+    assert.equal(captured.hollowEffectsDropped, 0);
+  });
+
+  test('both degenerate early returns carry []/0', () => {
+    const setupConfig = createTestConfig();
+    const registry = createMockRegistry();
+
+    const emptySeed = simulateOneGameAndCaptureMoves(setupConfig, registry, [], '', 0);
+    assert.deepEqual(emptySeed.hollowEffects, []);
+    assert.equal(emptySeed.hollowEffectsDropped, 0);
+
+    const noPolicies = simulateOneGameAndCaptureMoves(
+      setupConfig,
+      registry,
+      [],
+      'wp263-degenerate-seed',
+      0,
+    );
+    assert.deepEqual(noPolicies.hollowEffects, []);
+    assert.equal(noPolicies.hollowEffectsDropped, 0);
+  });
+});
+
+describe('captureGameDiagnostics (WP-263)', () => {
+  const makeRecord = (): HollowEffectRecord => ({
+    cardId: 'core/hero-phantom',
+    cardType: 'hero',
+    timing: 'onPlay',
+    mechanic: 'phantom-mechanic',
+    reason: 'no-handler',
+    turn: 3,
+  });
+
+  test('reads a populated G.diagnostics channel: exact records + dropped count', () => {
+    const record = makeRecord();
+    const gameState = {
+      diagnostics: { hollowEffects: [record], hollowEffectsDropped: 2 },
+    } as unknown as LegendaryGameState;
+
+    const captured = captureGameDiagnostics(gameState);
+
+    assert.deepEqual(captured.hollowEffects, [record]);
+    assert.equal(captured.hollowEffectsDropped, 2);
+  });
+
+  test('an absent diagnostics channel reads as []/0 (lazy-init not yet triggered)', () => {
+    const gameState = {} as unknown as LegendaryGameState;
+
+    const captured = captureGameDiagnostics(gameState);
+
+    assert.deepEqual(captured.hollowEffects, []);
+    assert.equal(captured.hollowEffectsDropped, 0);
+  });
+
+  test('returns a fresh shallow copy — mutating the result leaves the source channel untouched', () => {
+    const source = {
+      hollowEffects: [makeRecord()],
+      hollowEffectsDropped: 0,
+    };
+    const gameState = { diagnostics: source } as unknown as LegendaryGameState;
+
+    const captured = captureGameDiagnostics(gameState);
+    // why (WP-263): the projection must hold no reference into the sim G —
+    // growing the returned array must not grow the source channel.
+    (captured.hollowEffects as HollowEffectRecord[]).push(makeRecord());
+
+    assert.equal(captured.hollowEffects.length, 2);
+    assert.equal(
+      source.hollowEffects.length,
+      1,
+      'the source diagnostics channel must be unmodified',
     );
   });
 });
