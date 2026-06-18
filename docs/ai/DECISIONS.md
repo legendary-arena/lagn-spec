@@ -25365,4 +25365,15 @@ The dashboard `/coverage` page gains a **runtime-observed** overlay distinguishi
 **Packet:** WP-259 / EC-290. Implements `DESIGN-HOLLOW-EFFECT-DETECTION.md §6.2` + §8 (WP-259 acceptance criteria) + §10.
 **Status:** Drafted 2026-06-17; not yet landed (flips to Active when WP-259 executes).
 
+---
+
+**D-24039: Simulation Capture/Sweep Projection Surfaces the Runtime-Only Hollow-Effect Diagnostics (Additive Sibling Fields via `captureGameDiagnostics`)**
+
+The simulation capture path surfaces a finished game's runtime-only `G.diagnostics` channel (the WP-257 / D-24034 `hollowEffects` + `hollowEffectsDropped`) as **additive sibling fields** on `CapturedGameResult` (single game, `simulateOneGameAndCaptureMoves`) and `SweepCellResult` (per cell, `sweepSetupMatrix`), populated via a new exported pure helper `captureGameDiagnostics(gameState): CapturedDiagnostics` that reads `gameState.diagnostics?.hollowEffects ?? []` (returned as a **fresh shallow copy** so the projection holds no reference into the discarded sim `G`) + `gameState.diagnostics?.hollowEffectsDropped ?? 0`. The fields are **siblings** of `outcome` — they are **NOT** nested into `CapturedOutcomeSummary`, which stays exactly `{ winner, escapedVillains }` (the WP-193 "smallest seam" narrow type) with its field-set drift assertion unchanged. Both projections' field-set drift guards (`simulation.captureMoves.test.ts`, `sweep.runner.test.ts`) are updated in the same change. The engine does not re-classify or re-detect — it copies what the executors already recorded (`reason ∈ { no-handler, unsupported-keyword, parse-unrecognized }`).
+
+**Why:** WP-259 (the runtime-observed `/coverage` overlay) must read each finished simulated game's hollow effects off the locked `sweepSetupMatrix` driver, but that driver and its single-game companion discard the finished `G` and project only `{ winner, escapedVillains }` — so the WP-257 channel was **unreadable off any exported simulation surface**. Reading it otherwise would force WP-259 to edit `packages/**` (which it forbids), re-implement a simulation loop ("no new simulation engine"), or reconstruct hollows from `G.messages` ("never re-detect") — all forbidden. A small additive read accessor in the engine is the in-boundary fix: it keeps the channel **runtime-only** (D-24034 preserved — surfaced as a derived read-only RETURN value, never persisted, never written back to `G`, never gameplay input), keeps the sim byte-identical (no new randomness / clock / IO / `G` mutation; `finalStateHash` unchanged, replay-test-guarded), and lets WP-259 stay projection-and-report only. A predecessor engine packet rather than a fold-in keeps WP-259's `packages/** diff empty` invariant intact.
+
+**Packet:** WP-263 / EC-293. Unblocks WP-259 / EC-290 (D-24035).
+**Status:** Drafted 2026-06-17; not yet landed (flips to Active when WP-263 executes).
+
 Protect this file.
