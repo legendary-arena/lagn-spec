@@ -123,10 +123,11 @@ const STATUS_FILTERS: readonly (LedgerStatus | 'all')[] = [
         One row per mechanic (implementing one clears every card using it). Unsupported first.
         <span class="runtime-note">
           The <strong>Observed in play</strong> column overlays <em>runtime-observed</em> hollows —
-          mechanics actually hit during a fixed-seed deterministic sim sweep
-          ({{ runtimeObservedSummary.distinctMechanics }} distinct ·
-          {{ runtimeObservedSummary.totalObservations }} observations).
-          Static status answers "unsupported in theory?"; this answers "did it bite a player in play?"
+          mechanics actually hit during a fixed-seed deterministic sim sweep ({{
+            runtimeObservedSummary.distinctMechanics
+          }}
+          distinct · {{ runtimeObservedSummary.totalObservations }} observations). Static status
+          answers "unsupported in theory?"; this answers "did it bite a player in play?"
         </span>
       </p>
       <table class="cov-table">

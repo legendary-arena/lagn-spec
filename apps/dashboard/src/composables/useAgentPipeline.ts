@@ -2,6 +2,7 @@ import { useGovernanceSnapshot, type GovernanceSnapshot } from './useGovernanceS
 import { computeSweepHealthRate } from './useSweepHealth.js';
 import type { SweepRunSummary } from '../types/sweep.js';
 import type { HandoffStatusCounts, InspectionVerdict } from '../types/triage.js';
+import type { ArchitectGapCandidate } from '../types/architectGap.js';
 
 /**
  * A single item rendered in one of the four pipeline lanes.
@@ -53,6 +54,23 @@ export interface TriageProjection {
   readonly active: readonly PipelineItem[];
   readonly history: readonly PipelineItem[];
   readonly distribution: HandoffStatusCounts | null;
+}
+
+/**
+ * The Architect-lane gap projection the Pipeline page injects (WP-260 / D-24036).
+ * Declared HERE — with `PipelineItem` and `ArchitectGapCandidate` (imported
+ * type-only) — for the same reason as `TriageProjection`: the projection/lane
+ * type lives with the consumer composable that folds it (D-23901), so the
+ * producer `useArchitectGapIntake.ts` imports this type and the dependency stays
+ * one-directional with no circular type import.
+ *
+ * `candidates` carries the structured intake evidence a human architect reads to
+ * draft an implementation WP; `backlog` is the 1:1 `PipelineItem` rendering
+ * folded into the Architect lane backlog.
+ */
+export interface ArchitectGapProjection {
+  readonly candidates: readonly ArchitectGapCandidate[];
+  readonly backlog: readonly PipelineItem[];
 }
 
 /**
@@ -452,10 +470,18 @@ function deriveEvaluatorPriorities(inputs: PriorityInputs): PriorityRecommendati
 // the triage projection (inspection findings + handoff lifecycle) injects only
 // into the Inspector lane; the other three lanes never see it. Optional keeps
 // every existing caller backward compatible.
+// why (WP-260 / D-23901 + D-23902): architectGapData is a fourth optional
+// parameter mirroring triageData — the runtime-confirmed hollow-gap projection
+// folds ONLY into the Architect lane backlog (the other three lanes never see
+// it). `ArchitectGapProjection` is consumer-owned (declared above, D-23901) so
+// the producer's import stays one-directional; optional keeps every existing
+// caller byte-identical when it is absent (the `triageData` backward-compat
+// precedent).
 export function useAgentPipeline(
   snapshotOverride?: GovernanceSnapshot,
   sweepData?: PipelineSweepData,
   triageData?: TriageProjection,
+  architectGapData?: ArchitectGapProjection,
 ): UseAgentPipelineReturn {
   const snapshot = useGovernanceSnapshot(snapshotOverride);
 
@@ -699,6 +725,17 @@ export function useAgentPipeline(
       label: `WP-${String(entry.wpNumber).padStart(3, '0')} / EC-${entry.ecNumber} — ${entry.title}`,
       meta: entry.date,
     });
+  }
+
+  // --- Architect gap projection: runtime-confirmed hollow gaps (WP-260) ---
+  // why (D-23902 single-lane discipline): the gap backlog folds INTO the
+  // Architect lane backlog only — never a new panel/lane, and never the
+  // Builder/Inspector/Evaluator lanes. Items are prepended (unshift) so the
+  // runtime-confirmed gaps LEAD the existing sweep-health/open-drafts/draft-WP
+  // items in their projection-supplied order. Absent ⇒ architectBacklog is
+  // byte-identical to the pre-WP-260 result (backward-compat).
+  if (architectGapData !== undefined) {
+    architectBacklog.unshift(...architectGapData.backlog);
   }
 
   // --- Triage projection: inspection findings + handoff lifecycle (WP-239) ---
