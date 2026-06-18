@@ -77,6 +77,7 @@ test('404 returns the not-found envelope on an unknown match id', async () => {
     mode: 'live',
     speedMode: '1x',
     gameOver: false,
+    aborted: false,
     error: 'No autoplay match is running for the requested match id.',
   });
 });
@@ -184,4 +185,45 @@ test('a controller removed at match end returns 404 (D-16308)', async () => {
   await handleAutoplayStatusRequest(ended);
   assert.equal(ended.status, 404);
   assert.equal((ended.body as Record<string, unknown>).ok, false);
+});
+
+test('a healthy status envelope carries aborted:false and no abortReason key (D-24037)', async () => {
+  const matchId = 'status-healthy-abort-field';
+  const controller = createPlaybackController(800);
+  controller.pushState(snap(0));
+  autoplayControllers.set(matchId, controller);
+
+  const koaContext = makeContext(matchId);
+  await handleAutoplayStatusRequest(koaContext);
+
+  const body = koaContext.body as Record<string, unknown>;
+  assert.equal(body.aborted, false);
+  // why: abortReason is an own key only when aborted; healthy envelopes omit it.
+  assert.equal(Object.hasOwn(body, 'abortReason'), false);
+
+  autoplayControllers.delete(matchId);
+});
+
+test('an aborted-but-registered controller returns 200 with aborted:true + abortReason, not 404 (D-24037)', async () => {
+  const matchId = 'status-aborted';
+  const controller = createPlaybackController(800);
+  controller.pushState(snap(0));
+  // The bot loop marked the match aborted (e.g., the match state vanished); the
+  // controller stays registered for the review window instead of being deleted.
+  controller.markAborted('The bot loop stopped: the match state was no longer available.');
+  autoplayControllers.set(matchId, controller);
+
+  const koaContext = makeContext(matchId);
+  await handleAutoplayStatusRequest(koaContext);
+
+  // why: D-24037 — the whole point of the WP: a stopped bot match is OBSERVABLE
+  // (200 + aborted) instead of a silent 404 / frozen board.
+  assert.equal(koaContext.status, undefined);
+  const body = koaContext.body as Record<string, unknown>;
+  assert.equal(body.ok, true);
+  assert.equal(body.aborted, true);
+  assert.equal(body.abortReason, 'The bot loop stopped: the match state was no longer available.');
+  assert.equal(body.gameOver, false);
+
+  autoplayControllers.delete(matchId);
 });

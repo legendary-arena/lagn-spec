@@ -22,6 +22,12 @@ import {
   filterUIStateForAudience,
 } from '@legendary-arena/game-engine';
 import { createPlaybackController } from './playbackController.mjs';
+import {
+  findPendingChoiceMove,
+  hasProgressed,
+  classifyDispatch,
+  buildAbortReason,
+} from './botLoopProgress.mjs';
 
 /**
  * Per-match playback controllers, keyed by match id. A controller is
@@ -40,6 +46,17 @@ const { ProcessGameConfig } = require('boardgame.io/internal');
 const koaBody = require('koa-body');
 
 const MAKE_MOVE = 'MAKE_MOVE';
+
+/**
+ * The post-exit review window (milliseconds) a controller stays registered
+ * after the bot loop ends — on a natural game over OR an abort — so a viewer
+ * can scrub the completed/stopped match before cleanup removes it.
+ *
+ * // why: D-16308 / D-24037 — both exit paths defer removal by the SAME window,
+ * so the abort path reaches parity with the game-over review window instead of
+ * deleting immediately. Defined once and reused; never duplicated per path.
+ */
+const REVIEW_WINDOW_MS = 5 * 60 * 1000;
 
 /**
  * Loads the default loadout JSON used when no custom loadout is provided.
@@ -85,9 +102,16 @@ export function buildResponse(controller, options = {}) {
     mode: controller.getMode(),
     speedMode: controller.getSpeedMode(),
     gameOver: controller.isGameOver(),
+    aborted: controller.isAborted(),
   };
   if (options.uiState !== undefined) {
     response.uiState = options.uiState;
+  }
+  // why: D-24037 — abortReason is added as an OWN key ONLY when aborted, so a
+  // healthy or game-over envelope carries no abortReason key at all. Clients
+  // gate on `aborted` first; the key's mere presence implies an abort.
+  if (controller.isAborted()) {
+    response.abortReason = controller.getAbortReason();
   }
   return response;
 }
@@ -193,6 +217,7 @@ async function handlePlaybackRequest(koaContext, core) {
       mode: 'live',
       speedMode: '1x',
       gameOver: false,
+      aborted: false,
       error: 'No autoplay match is running for the requested match id.',
     };
     return;
@@ -454,13 +479,24 @@ export async function withRegisteredController(matchId, baseDelay, body) {
   autoplayControllers.set(matchId, controller);
   try {
     await body(controller);
-    // why: normal exit means game over. Mark and defer cleanup for 5 minutes
-    // so the viewer can scrub completed match history (review window).
-    controller.markGameOver();
-    setTimeout(() => autoplayControllers.delete(matchId), 5 * 60 * 1000);
+    // why: D-24037 — normal exit means game over, BUT guard with !isAborted()
+    // so a loop-detected stall the body already recorded (markAborted) is never
+    // overwritten with gameOver. Either way, defer cleanup by the review window
+    // so the viewer can scrub the completed/stopped match.
+    if (!controller.isAborted()) {
+      controller.markGameOver();
+    }
+    setTimeout(() => autoplayControllers.delete(matchId), REVIEW_WINDOW_MS);
   } catch (error) {
-    // why: error exit — immediate cleanup (no review possible).
-    autoplayControllers.delete(matchId);
+    // why: D-24037 — no silent immediate delete on an abnormal exit. Mark the
+    // controller aborted with a PUBLIC-SAFE reason (the raw fault stays in the
+    // existing runBotMatch console.error path, never the guest envelope) and
+    // defer removal by the same review window as the normal path, so spectators
+    // see an explicit "stopped" state instead of a frozen board. Refines the
+    // error half of D-16308 (eventual removal preserved). Rethrow is safe — the
+    // runBotMatch launcher already catches it, so no new unhandled rejection.
+    controller.markAborted(buildAbortReason('unexpected-error'));
+    setTimeout(() => autoplayControllers.delete(matchId), REVIEW_WINDOW_MS);
     throw error;
   }
 }
@@ -512,12 +548,335 @@ async function runBotMatch(params) {
 }
 
 /**
- * Runs the full bot match loop: lobby ready-up, then play phase until game over.
+ * Builds the minimal lifecycle context getLegalMoves needs from a fetched
+ * match state (phase, turn, current player, player count).
+ *
+ * @param {object} state - The fetched boardgame.io match state.
+ * @returns {{ phase: string, turn: number, currentPlayer: string, numPlayers: number }}
+ */
+function lifecycleContextFor(state) {
+  return {
+    phase: state.ctx.phase,
+    turn: state.ctx.turn,
+    currentPlayer: state.ctx.currentPlayer,
+    numPlayers: state.ctx.numPlayers,
+  };
+}
+
+/**
+ * Fetches the current match state, returning null when the match has vanished
+ * from storage (e.g., the in-memory match store was wiped by a redeploy).
+ *
+ * @param {object} db - boardgame.io storage backend.
+ * @param {string} matchId - The match id.
+ * @returns {Promise<object | null>}
+ */
+async function fetchMatchState(db, matchId) {
+  const { state } = await db.fetch(matchId, { state: true });
+  return state ?? null;
+}
+
+/**
+ * Reports whether a move of the given name is present in a legal-move list.
+ *
+ * @param {ReadonlyArray<{ name: string }>} legalMoves - The getLegalMoves result.
+ * @param {string} moveName - The move name to look for.
+ * @returns {boolean} true when the move is legal in the current state.
+ */
+function isLegalMove(legalMoves, moveName) {
+  for (const legalMove of legalMoves) {
+    if (legalMove.name === moveName) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Builds the active player's audience-filtered view and asks the policy which
+ * spend move to make. Wiring over the engine's UIState projection + policy.
+ *
+ * @param {object} state - The current match state.
+ * @param {ReadonlyArray<object>} spendMoves - The legal spend moves to choose among.
+ * @param {object} policy - The AI policy.
+ * @param {number} turnCount - The current turn index (for logging).
+ * @param {string} matchId - The match id (for logging).
+ * @returns {{ move: { name: string, args: unknown } }} The chosen intent.
+ */
+function decideSpendIntent(state, spendMoves, policy, turnCount, matchId) {
+  const player = state.ctx.currentPlayer;
+  const fullUIState = buildUIState(state.G, {
+    phase: state.ctx.phase,
+    turn: state.ctx.turn,
+    currentPlayer: player,
+  });
+  const filteredView = filterUIStateForAudience(fullUIState, { kind: 'player', playerId: player });
+  const intent = policy.decideTurn(filteredView, spendMoves);
+  console.log(`[autoplay] match ${matchId} turn ${turnCount}: spending → ${intent.move.name} ${JSON.stringify(intent.move.args)}`);
+  return intent;
+}
+
+/**
+ * Dispatches one move expected to advance the loop, paces playback, then
+ * re-fetches and classifies the outcome against the pre-dispatch _stateID.
+ *
+ * // why: D-24038 — every stage-advancing dispatch is verified to make
+ * progress, so a move that should advance but silently doesn't aborts the loop
+ * rather than being re-dispatched to the turn cap (the ~10-minute "freeze").
+ *
+ * @param {{ moveParams: object, controller: object, db: object, matchId: string }} loop - Loop context.
+ * @param {string} playerId - The dispatching player.
+ * @param {string} moveName - The move to dispatch.
+ * @param {unknown} moveArgs - The move arguments (undefined for arg-less moves).
+ * @returns {Promise<{ kind: 'progressed' | 'game-over' | 'abort', state?: object, reason?: string }>}
+ */
+async function dispatchAdvancingMove(loop, playerId, moveName, moveArgs) {
+  const before = await fetchMatchState(loop.db, loop.matchId);
+  if (before === null) {
+    return { kind: 'abort', reason: buildAbortReason('match-state-unavailable') };
+  }
+  const previousStateId = before._stateID;
+  await submitMove({ ...loop.moveParams, playerId, moveName, moveArgs });
+  await recordAndPace(loop.controller, loop.db, loop.matchId);
+  const after = await fetchMatchState(loop.db, loop.matchId);
+  const outcome = classifyDispatch(previousStateId, after);
+  if (outcome === 'vanished') {
+    return { kind: 'abort', reason: buildAbortReason('match-state-unavailable') };
+  }
+  if (outcome === 'stalled') {
+    return { kind: 'abort', reason: buildAbortReason('stage-did-not-advance') };
+  }
+  if (outcome === 'game-over') {
+    return { kind: 'game-over', state: after };
+  }
+  return { kind: 'progressed', state: after };
+}
+
+/**
+ * Drains every parked player-choice (resolveKoHeroChoice /
+ * resolveOptionalKoReward) the engine has short-circuited getLegalMoves to, in
+ * any stage, dispatching each via dispatchAdvancingMove. A parked choice
+ * freezes the board, so it must resolve before any stage-specific move.
+ *
+ * // why: D-24038 — the old loop only consulted getLegalMoves in the main spend
+ * step and filtered the resolve short-circuit OUT, so a choice parked in start
+ * (or mid-main by a fight) spun the loop to the turn cap. Draining it in EVERY
+ * stage via getLegalMoves closes that path.
+ *
+ * @param {{ moveParams: object, controller: object, db: object, matchId: string }} loop - Loop context.
+ * @param {object} state - The current fetched match state.
+ * @returns {Promise<{ kind: 'progressed' | 'game-over' | 'abort', state?: object, reason?: string }>}
+ */
+async function drainPendingChoices(loop, state) {
+  let current = state;
+  while (true) {
+    const legalMoves = getLegalMoves(current.G, lifecycleContextFor(current));
+    const pendingChoice = findPendingChoiceMove(legalMoves);
+    if (pendingChoice === null) {
+      return { kind: 'progressed', state: current };
+    }
+    const result = await dispatchAdvancingMove(loop, current.ctx.currentPlayer, pendingChoice.name, pendingChoice.args);
+    if (result.kind !== 'progressed') {
+      return result;
+    }
+    current = result.state;
+  }
+}
+
+/**
+ * Plays cards from the active player's hand until the hand is empty or a play
+ * is silently rejected. Card plays generate the turn's attack/recruit economy;
+ * they are NOT stage-advancing, so a rejected play stops the play step (the
+ * existing _stateID silent-rejection guard) rather than aborting the match.
+ *
+ * @param {{ moveParams: object, controller: object, db: object, matchId: string }} loop - Loop context.
+ * @param {object} state - The current match state (currentStage === 'main').
+ * @returns {Promise<{ kind: 'progressed' | 'game-over' | 'abort', state?: object, reason?: string, playedCount: number }>}
+ */
+async function playHandCards(loop, state) {
+  const player = state.ctx.currentPlayer;
+  let playedCount = 0;
+  while (playedCount < 30) {
+    const current = await fetchMatchState(loop.db, loop.matchId);
+    if (current === null) {
+      return { kind: 'abort', reason: buildAbortReason('match-state-unavailable'), playedCount };
+    }
+    if (current.ctx.gameover !== undefined) {
+      return { kind: 'game-over', state: current, playedCount };
+    }
+    const hand = current.G.playerZones[player]?.hand ?? [];
+    if (hand.length === 0) {
+      return { kind: 'progressed', state: current, playedCount };
+    }
+    const previousStateId = current._stateID;
+    await submitMove({ ...loop.moveParams, playerId: player, moveName: 'playCard', moveArgs: { cardId: hand[0] } });
+    const after = await fetchMatchState(loop.db, loop.matchId);
+    if (after !== null && !hasProgressed(previousStateId, after._stateID)) {
+      // why: playCard is not stage-advancing; an unchanged _stateID means the
+      // card cannot be played now, so stop the play step rather than aborting
+      // the whole match (preserves the existing silent-rejection guard).
+      console.error(`[autoplay] match ${loop.matchId} playCard silently rejected for card ${hand[0]}`);
+      return { kind: 'progressed', state: after, playedCount };
+    }
+    playedCount += 1;
+    await recordAndPace(loop.controller, loop.db, loop.matchId);
+  }
+  const finalState = await fetchMatchState(loop.db, loop.matchId);
+  return { kind: 'progressed', state: finalState ?? state, playedCount };
+}
+
+/**
+ * Spends the turn's economy in the main stage: drains any parked choice first,
+ * then lets the policy pick recruit/fight moves until only advanceStage remains,
+ * then advances out of main. The spend filter PRESERVES the parked-choice
+ * short-circuit (it is drained first) instead of dropping it (D-24038); the
+ * advanceStage dispatch is progress-checked.
+ *
+ * @param {{ moveParams: object, controller: object, db: object, matchId: string }} loop - Loop context.
+ * @param {object} state - The current match state (currentStage === 'main').
+ * @param {object} policy - The AI policy.
+ * @param {number} turnCount - The current turn index (for logging).
+ * @returns {Promise<{ kind: 'progressed' | 'game-over' | 'abort', state?: object, reason?: string }>}
+ */
+async function spendResources(loop, state, policy, turnCount) {
+  let attempts = 0;
+  while (attempts < 20) {
+    const fetched = await fetchMatchState(loop.db, loop.matchId);
+    if (fetched === null) {
+      return { kind: 'abort', reason: buildAbortReason('match-state-unavailable') };
+    }
+    if (fetched.ctx.gameover !== undefined) {
+      return { kind: 'game-over', state: fetched };
+    }
+    if (fetched.G.currentStage !== 'main') {
+      return { kind: 'progressed', state: fetched };
+    }
+    const drainResult = await drainPendingChoices(loop, fetched);
+    if (drainResult.kind !== 'progressed') {
+      return drainResult;
+    }
+    const current = drainResult.state;
+    const player = current.ctx.currentPlayer;
+    const legalMoves = getLegalMoves(current.G, lifecycleContextFor(current));
+    const spendMoves = legalMoves.filter(
+      (legalMove) =>
+        legalMove.name === 'recruitHero' ||
+        legalMove.name === 'fightVillain' ||
+        legalMove.name === 'fightMastermind' ||
+        legalMove.name === 'advanceStage',
+    );
+    if (spendMoves.length === 0) {
+      return { kind: 'progressed', state: current };
+    }
+    // why: D-24038 — advanceStage is the only stage-advancing spend move, so it
+    // routes through the progress-checked dispatch; recruit/fight are bounded
+    // by the attempt cap and the shrinking economy.
+    if (spendMoves.length === 1 && spendMoves[0].name === 'advanceStage') {
+      return dispatchAdvancingMove(loop, player, 'advanceStage', undefined);
+    }
+    const intent = decideSpendIntent(current, spendMoves, policy, turnCount, loop.matchId);
+    await submitMove({ ...loop.moveParams, playerId: player, moveName: intent.move.name, moveArgs: intent.move.args });
+    attempts += 1;
+    await recordAndPace(loop.controller, loop.db, loop.matchId);
+  }
+  const finalState = await fetchMatchState(loop.db, loop.matchId);
+  return { kind: 'progressed', state: finalState ?? state };
+}
+
+/**
+ * Drives the start stage: reveal one villain card (if legal), drain any choice
+ * the reveal parks, then advance into the main stage (if legal). Each dispatch
+ * is progress-checked; a start stage that cannot advance aborts rather than
+ * spinning. The engine auto-draws the start-of-turn hand at onBegin (WP-236),
+ * so the bot no longer submits a start-of-turn draw move.
+ *
+ * @param {{ moveParams: object, controller: object, db: object, matchId: string }} loop - Loop context.
+ * @param {object} state - The current match state (currentStage === 'start').
+ * @returns {Promise<{ kind: 'progressed' | 'game-over' | 'abort', state?: object, reason?: string }>}
+ */
+async function runStartStage(loop, state) {
+  let current = state;
+  const revealLegal = getLegalMoves(current.G, lifecycleContextFor(current));
+  if (isLegalMove(revealLegal, 'revealVillainCard')) {
+    const revealResult = await dispatchAdvancingMove(loop, current.ctx.currentPlayer, 'revealVillainCard', undefined);
+    if (revealResult.kind !== 'progressed') {
+      return revealResult;
+    }
+    const drainResult = await drainPendingChoices(loop, revealResult.state);
+    if (drainResult.kind !== 'progressed') {
+      return drainResult;
+    }
+    current = drainResult.state;
+  }
+  if (current.G.currentStage !== 'start') {
+    return { kind: 'progressed', state: current };
+  }
+  const advanceLegal = getLegalMoves(current.G, lifecycleContextFor(current));
+  if (!isLegalMove(advanceLegal, 'advanceStage')) {
+    // why: D-24038 — start stage cannot progress (no legal reveal, no legal
+    // advance, no parked choice already drained); abort rather than re-enter
+    // the same stuck stage to the turn cap.
+    return { kind: 'abort', reason: buildAbortReason('no-legal-move') };
+  }
+  return dispatchAdvancingMove(loop, current.ctx.currentPlayer, 'advanceStage', undefined);
+}
+
+/**
+ * Drives the main stage: play hand cards (economy generation), log the economy,
+ * then spend it via the policy.
+ *
+ * @param {{ moveParams: object, controller: object, db: object, matchId: string }} loop - Loop context.
+ * @param {object} state - The current match state (currentStage === 'main').
+ * @param {object} policy - The AI policy.
+ * @param {number} turnCount - The current turn index.
+ * @returns {Promise<{ kind: 'progressed' | 'game-over' | 'abort', state?: object, reason?: string }>}
+ */
+async function runMainStage(loop, state, policy, turnCount) {
+  const player = state.ctx.currentPlayer;
+  const playResult = await playHandCards(loop, state);
+  if (playResult.kind !== 'progressed') {
+    return playResult;
+  }
+  const afterPlay = playResult.state;
+  if (afterPlay) {
+    const economy = afterPlay.G.turnEconomy;
+    console.log(`[autoplay] match ${loop.matchId} turn ${turnCount} player ${player}: played ${playResult.playedCount} cards, economy: attack=${economy.attack} recruit=${economy.recruit}`);
+  }
+  if (!afterPlay || afterPlay.ctx.gameover !== undefined || afterPlay.G.currentStage !== 'main') {
+    return { kind: 'progressed', state: afterPlay ?? state };
+  }
+  return spendResources(loop, afterPlay, policy, turnCount);
+}
+
+/**
+ * Drives the cleanup stage: end the turn (if legal), progress-checked.
+ *
+ * @param {{ moveParams: object, controller: object, db: object, matchId: string }} loop - Loop context.
+ * @param {object} state - The current match state (currentStage === 'cleanup').
+ * @returns {Promise<{ kind: 'progressed' | 'game-over' | 'abort', state?: object, reason?: string }>}
+ */
+async function runCleanupStage(loop, state) {
+  const legalMoves = getLegalMoves(state.G, lifecycleContextFor(state));
+  if (!isLegalMove(legalMoves, 'endTurn')) {
+    // why: D-24038 — cleanup with no legal endTurn (and no parked choice,
+    // drained earlier) cannot progress; abort rather than spin to the turn cap.
+    return { kind: 'abort', reason: buildAbortReason('no-legal-move') };
+  }
+  return dispatchAdvancingMove(loop, state.ctx.currentPlayer, 'endTurn', undefined);
+}
+
+/**
+ * Runs the full bot match loop: lobby ready-up, then play phase until game over
+ * or an observable abort. Each turn drives the start → main → cleanup stage
+ * cycle; every stage drains parked player-choices via getLegalMoves and
+ * progress-checks its stage-advancing dispatches so the loop fails loud and
+ * bounded instead of freezing silently or spinning to the turn cap.
  *
  * @param {object} params - All parameters for the bot match, plus the controller.
  */
 async function runBotMatchLoop({ matchId, playerCount, credentials, db, transport, auth, processedGame, policyName, seed, controller }) {
   const moveParams = { processedGame, db, transport, auth, matchId, credentials };
+  const loop = { moveParams, controller, db, matchId };
 
   // Lobby phase: mark all players ready, then start
   for (let playerIndex = 0; playerIndex < playerCount; playerIndex++) {
@@ -545,15 +904,16 @@ async function runBotMatchLoop({ matchId, playerCount, credentials, db, transpor
     : createCompetentHeuristicPolicy(seed);
 
   // Play phase: drive the turn stage cycle explicitly.
-  // Each turn: reveal villain (start) → advance to main → policy decisions → end turn.
-  // The policy is only consulted for main-stage decisions (play/recruit/fight).
   let turnCount = 0;
   const maxTurns = 400;
 
   while (turnCount < maxTurns) {
-    let { state } = await db.fetch(matchId, { state: true });
-    if (!state) {
-      console.error(`[autoplay] match ${matchId} not found in storage.`);
+    const state = await fetchMatchState(db, matchId);
+    if (state === null) {
+      // why: D-24038 — the match vanished from storage (deploy-wipe / eviction);
+      // mark the controller aborted so the client sees an explicit "stopped"
+      // state instead of the old silent break + frozen board.
+      controller.markAborted(buildAbortReason('match-state-unavailable'));
       break;
     }
     if (state.ctx.gameover !== undefined) {
@@ -565,147 +925,48 @@ async function runBotMatchLoop({ matchId, playerCount, credentials, db, transpor
       break;
     }
 
-    const currentPlayer = state.ctx.currentPlayer;
+    // why: D-24038 — drain any parked player-choice at turn entry in ANY stage
+    // before stage-specific moves, so a KO-a-Hero / optional-KO ambush never
+    // spins the loop to maxTurns.
+    const entryDrain = await drainPendingChoices(loop, state);
+    if (entryDrain.kind === 'game-over') {
+      console.log(`[autoplay] match ${matchId} ended during pending-choice resolution.`);
+      break;
+    }
+    if (entryDrain.kind === 'abort') {
+      controller.markAborted(entryDrain.reason);
+      break;
+    }
+    let current = entryDrain.state;
 
-    // --- Start stage: reveal one villain card, then advance. The engine
-    //     auto-draws the start-of-turn hand at onBegin (WP-236), so the bot
-    //     no longer submits the start-of-turn draw move — it would only be a
-    //     guarded no-op. ---
-    if (state.G.currentStage === 'start') {
-      await submitMove({
-        ...moveParams,
-        playerId: currentPlayer,
-        moveName: 'revealVillainCard',
-        moveArgs: undefined,
-      });
-      await recordAndPace(controller, db, matchId);
-
-      // Check for gameover after reveal (villains may have escaped)
-      ({ state } = await db.fetch(matchId, { state: true }));
-      if (!state || state.ctx.gameover !== undefined) continue;
-
-      await submitMove({
-        ...moveParams,
-        playerId: currentPlayer,
-        moveName: 'advanceStage',
-        moveArgs: undefined,
-      });
-      await recordAndPace(controller, db, matchId);
+    if (current.G.currentStage === 'start') {
+      const startResult = await runStartStage(loop, current);
+      if (startResult.kind === 'game-over') break;
+      if (startResult.kind === 'abort') {
+        controller.markAborted(startResult.reason);
+        break;
+      }
+      current = startResult.state;
     }
 
-    // --- Main stage: play cards, then recruit/fight, then advance ---
-    ({ state } = await db.fetch(matchId, { state: true }));
-    if (!state || state.ctx.gameover !== undefined) continue;
-
-    if (state.G.currentStage === 'main') {
-      const player = state.ctx.currentPlayer;
-
-      // Step 1: Play all cards from hand (generates attack/recruit)
-      let playAttempts = 0;
-      while (playAttempts < 30) {
-        ({ state } = await db.fetch(matchId, { state: true }));
-        if (!state || state.ctx.gameover !== undefined) break;
-        const hand = state.G.playerZones[player]?.hand ?? [];
-        if (hand.length === 0) break;
-
-        const prevStateId = state._stateID;
-        await submitMove({
-          ...moveParams,
-          playerId: player,
-          moveName: 'playCard',
-          moveArgs: { cardId: hand[0] },
-        });
-
-        // Detect silent rejection — if stateID didn't change, the move failed
-        const afterFetch = await db.fetch(matchId, { state: true });
-        if (afterFetch.state && afterFetch.state._stateID === prevStateId) {
-          console.error(`[autoplay] match ${matchId} playCard silently rejected for card ${hand[0]}`);
-          break;
-        }
-
-        playAttempts++;
-        await recordAndPace(controller, db, matchId);
+    if (current.G.currentStage === 'main') {
+      const mainResult = await runMainStage(loop, current, policy, turnCount);
+      if (mainResult.kind === 'game-over') break;
+      if (mainResult.kind === 'abort') {
+        controller.markAborted(mainResult.reason);
+        break;
       }
-
-      // Log economy after playing cards
-      ({ state } = await db.fetch(matchId, { state: true }));
-      if (state) {
-        const economy = state.G.turnEconomy;
-        console.log(`[autoplay] match ${matchId} turn ${turnCount} player ${player}: played ${playAttempts} cards, economy: attack=${economy.attack} recruit=${economy.recruit}`);
-      }
-
-      // Step 2: Spend resources — recruit heroes and fight villains
-      let spendAttempts = 0;
-      while (spendAttempts < 20) {
-        ({ state } = await db.fetch(matchId, { state: true }));
-        if (!state || state.ctx.gameover !== undefined) break;
-        if (state.G.currentStage !== 'main') break;
-
-        const lifecycleContext = {
-          phase: state.ctx.phase,
-          turn: state.ctx.turn,
-          currentPlayer: player,
-          numPlayers: state.ctx.numPlayers,
-        };
-
-        const legalMoves = getLegalMoves(state.G, lifecycleContext);
-        // Filter to only spend moves (recruit/fight) and advanceStage
-        const spendMoves = legalMoves.filter(
-          (m) => m.name === 'recruitHero' || m.name === 'fightVillain' ||
-                 m.name === 'fightMastermind' || m.name === 'advanceStage'
-        );
-
-        if (spendMoves.length === 0) break;
-
-        // If only advanceStage remains, advance and exit
-        if (spendMoves.length === 1 && spendMoves[0].name === 'advanceStage') {
-          await submitMove({
-            ...moveParams,
-            playerId: player,
-            moveName: 'advanceStage',
-            moveArgs: undefined,
-          });
-          await recordAndPace(controller, db, matchId);
-          break;
-        }
-
-        const uiBuildContext = {
-          phase: state.ctx.phase,
-          turn: state.ctx.turn,
-          currentPlayer: player,
-        };
-        const fullUIState = buildUIState(state.G, uiBuildContext);
-        const filteredView = filterUIStateForAudience(fullUIState, {
-          kind: 'player',
-          playerId: player,
-        });
-
-        const intent = policy.decideTurn(filteredView, spendMoves);
-        console.log(`[autoplay] match ${matchId} turn ${turnCount}: spending → ${intent.move.name} ${JSON.stringify(intent.move.args)}`);
-
-        await submitMove({
-          ...moveParams,
-          playerId: player,
-          moveName: intent.move.name,
-          moveArgs: intent.move.args,
-        });
-        spendAttempts++;
-        await recordAndPace(controller, db, matchId);
-      }
+      current = mainResult.state;
     }
 
-    // --- Cleanup stage: end the turn ---
-    ({ state } = await db.fetch(matchId, { state: true }));
-    if (!state || state.ctx.gameover !== undefined) continue;
-
-    if (state.G.currentStage === 'cleanup') {
-      await submitMove({
-        ...moveParams,
-        playerId: state.ctx.currentPlayer,
-        moveName: 'endTurn',
-        moveArgs: undefined,
-      });
-      await recordAndPace(controller, db, matchId);
+    if (current.G.currentStage === 'cleanup') {
+      const cleanupResult = await runCleanupStage(loop, current);
+      if (cleanupResult.kind === 'game-over') break;
+      if (cleanupResult.kind === 'abort') {
+        controller.markAborted(cleanupResult.reason);
+        break;
+      }
+      current = cleanupResult.state;
     }
 
     turnCount++;

@@ -25341,7 +25341,7 @@ When the server-side autoplay ("Watch Bot Play") bot loop exits abnormally — a
 **Why:** the prior error-exit path `console.error`'d the fault and **immediately deleted** the controller, leaving every connected spectator on a frozen board with zero signal and the client's next status/control probe getting a bare `404` — indistinguishable from natural post-match cleanup. Diagnosed from client capture `UDK-shUse1C` (build `d6387ec`): healthy engine state frozen at `turn 3 / start` after the reveal chain, empty client console buffer. Surfacing the abort over the HTTP envelope the client already speaks lets the paired client follow-up (WP-262) render "Bot match stopped" instead of a silent freeze. This **refines the error half of D-16308** ("controller removed from the map on every `runBotMatch` exit path"): eventual removal is preserved (now deferred 5 minutes on the error path too, matching the normal path), and the controller carries an explicit abort flag during the review window. The flags are Class-1 runtime state (D-16306) — never persisted, never snapshotted.
 
 **Packet:** WP-261 / EC-292.
-**Status:** Drafted 2026-06-16; not yet landed (flips to Active when WP-261 executes).
+**Status:** Active (landed 2026-06-18, EC-292 commit `88a74411`).
 
 ---
 
@@ -25352,7 +25352,7 @@ The bot loop selects its move(s) in **every** stage (start, main, cleanup) from 
 **Why:** two latent freezes share one root cause — a hardcoded stage move that becomes a permanent no-op while a player-choice is parked. (1) The start/cleanup handlers hardcoded `revealVillainCard`→`advanceStage` / `endTurn` and never consulted `getLegalMoves`, so a choice parked during `onTurnStart` or the reveal (a ko-hero ambush villain, some masterminds — not Magneto) made `advanceStage` a permanent no-op → the loop spun to `maxTurns` ≈ a 10-minute "freeze". (2) Even the main spend loop filtered legal moves to `recruitHero|fightVillain|fightMastermind|advanceStage`, **dropping** the `resolve*` short-circuit, so a KO-hero choice parked mid-main by a `fightVillain` emptied `spendMoves` → `break` → the same spin. Routing all stages through `getLegalMoves` resolves the choice wherever it parks; the `_stateID` assertion converts any residual no-progress into a bounded, observable abort instead of a long spin. The server stays wiring-only — `getLegalMoves` is the engine's decision and the loop only dispatches it (moving *more* decisions into the engine, not fewer).
 
 **Packet:** WP-261 / EC-292.
-**Status:** Drafted 2026-06-16; not yet landed (flips to Active when WP-261 executes).
+**Status:** Active (landed 2026-06-18, EC-292 commit `88a74411`).
 
 ---
 

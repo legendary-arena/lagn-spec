@@ -56,6 +56,9 @@ export function createPlaybackController(baseDelay) {
   let activeDelay = baseDelay;
   let speedMode = '1x';
   let isGameOverFlag = false;
+  let isAbortedFlag = false;
+  /** @type {string | null} */
+  let abortReason = null;
 
   const SPEED_FACTORS = { '1x': 1, '2x': 2, '4x': 4 };
 
@@ -286,6 +289,44 @@ export function createPlaybackController(baseDelay) {
      */
     isGameOver() {
       return isGameOverFlag;
+    },
+
+    /**
+     * Marks the match as abnormally stopped (a crash, a vanished match store,
+     * or a non-advancing stage) with a public-safe reason. Pauses the
+     * controller so scrub operations keep working during the review window.
+     *
+     * // why: D-24037 — an abort is NOT a natural game over; it is a distinct
+     * terminal flag carrying its own public-safe reason, so a frozen bot match
+     * surfaces observably instead of silently. It pauses (like markGameOver)
+     * for scrub consistency, but never sets isGameOverFlag. Terminal: once
+     * aborted the controller is not re-marked, so the first detected cause wins.
+     *
+     * @param {string} reason - A public-safe full-sentence abort reason.
+     * @returns {void}
+     */
+    markAborted(reason) {
+      if (isAbortedFlag) {
+        return;
+      }
+      isAbortedFlag = true;
+      abortReason = reason;
+      isPausedFlag = true;
+    },
+
+    /**
+     * @returns {boolean} Whether the match stopped abnormally.
+     */
+    isAborted() {
+      return isAbortedFlag;
+    },
+
+    /**
+     * @returns {string | null} The public-safe abort reason, or null when the
+     *   match has not aborted.
+     */
+    getAbortReason() {
+      return abortReason;
     },
   };
 }
