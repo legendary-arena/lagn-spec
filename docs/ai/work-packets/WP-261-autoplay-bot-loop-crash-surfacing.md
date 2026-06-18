@@ -124,12 +124,17 @@ mutation, no rule interpretation is added to the server.
    `resolve*`), re-fetch and verify `_stateID` changed (or stage advanced); a
    move expected to progress that leaves `_stateID` unchanged aborts the loop
    (`markAborted`) instead of re-dispatching to `maxTurns`.
-5. **Route ALL stages through `getLegalMoves`** — a parked
-   `resolveKoHeroChoice` / `resolveOptionalKoReward` choice is drained in every
-   stage (start, **main**, cleanup), not only via the main spend loop. (The
-   current main filter `recruitHero|fightVillain|fightMastermind|advanceStage`
-   **drops** the resolve short-circuit moves, so a choice parked mid-main by a
-   `fightVillain` spins too — this closes that path as well.)
+5. **Route ALL stages through `getLegalMoves` before dispatch** — every stage
+   (`start`, `main`, `cleanup`, and any existing resolve/transition branch)
+   first observes `getLegalMoves(G, ctx)`. If the legal moves are parked-choice
+   short-circuits (`resolveKoHeroChoice` / `resolveOptionalKoReward`), the loop
+   dispatches that resolve move regardless of stage. If no parked choice is
+   present, a stage-specific fallback may be dispatched **only if that fallback
+   move is present in the legal-move list**. The current main filter
+   (`recruitHero|fightVillain|fightMastermind|advanceStage`) must preserve and
+   handle `resolveKoHeroChoice` / `resolveOptionalKoReward` instead of dropping
+   them — today it drops the resolve short-circuit, so a choice parked mid-main
+   by a `fightVillain` spins too; this closes that path as well.
 6. **A pure-helper module `botLoopProgress.mjs`** (no `boardgame.io`, no I/O)
    holding the testable decisions: find-the-pending-choice-move, has-progressed,
    and the full-sentence stall/abort message builder. Mirrors the EC-180 split
@@ -169,6 +174,7 @@ mutation, no rule interpretation is added to the server.
 | `docs/ai/STATUS.md` | modified — autoplay reliability note |
 | `docs/ai/work-packets/WORK_INDEX.md` | modified — check off WP-261 |
 | `docs/ai/execution-checklists/EC_INDEX.md` | modified — EC-292 → Done |
+| `docs/05-ROADMAP-MINDMAP.md` | modified — flip the existing `WP-261` node `📝 → ✅` and regenerate the count table via `node scripts/roadmap-counts.mjs --write` (D-24002; the node was added drafted in #386 — execution flips it, preventing the known finished-WP orphan-drift where ECs omit the mindmap) |
 
 Runtime-wiring note (`01.5`): no wiring file outside the allowlist — the
 autoplay routes are already registered (WP-163); WP-261 only changes their
@@ -178,30 +184,66 @@ response shape and the loop body.
 
 ## 6. Contract
 
-**Playback envelope (additive, D-24037).** Every success envelope from
-`buildResponse` gains:
+### Playback envelope (additive, D-24037)
 
-- `aborted: boolean` — `false` during normal play and on a natural game over;
-  `true` after an abnormal stop. Always present.
-- `abortReason?: string` — present **iff** `aborted === true`; a full sentence,
-  e.g. `"The bot loop stopped after an unexpected error: <message>."`,
-  `"The bot loop stopped: the match state was no longer available."`, or
-  `"The bot loop stopped: the start stage did not advance."`
+Every success envelope from `buildResponse` gains:
 
-`gameOver` and `aborted` are mutually independent flags; a given controller is
-at most one of {playing, gameOver, aborted}. The 404 not-found envelope retains
-its neutral defaults plus `aborted: false`.
+- `aborted: boolean` — always present. `false` during normal play and on a
+  natural game over; `true` after an abnormal stop.
+- `abortReason?: string` — present **iff** `aborted === true`.
 
-**Controller (D-24037).** `markAborted(reason)` sets `isAborted = true`,
-`abortReason = reason`, `isPaused = true`; it does **not** set `gameOver`.
-`isAborted()` / `getAbortReason()` expose the state. Terminal: once aborted,
-the controller is not re-marked.
+`abortReason` is a **public-safe full sentence**. Because the autoplay endpoints
+remain guest-accessible (`Auth: guest`), the envelope MUST NOT expose raw
+exception messages, stack text, serialized errors, database errors, request
+URLs, secrets, internal IDs, or infrastructure paths. The catch path stores the
+public-safe reason on the controller — never the raw `error.message`; raw fault
+detail stays in the existing server `console.error` logging only.
 
-**Bot-loop progress invariant (D-24038).** (1) Every stage selects its move(s)
-from `getLegalMoves(G, ctx)`, honoring the parked-choice short-circuit in
-**all** stages; (2) after each stage-advancing dispatch the loop verifies
-`_stateID` progressed and `markAborted`s rather than re-dispatching a no-op to
-`maxTurns`.
+Allowed public reason shapes (full sentences):
+
+- `"The bot loop stopped after an unexpected server error."`
+- `"The bot loop stopped: the match state was no longer available."`
+- `"The bot loop stopped: the start stage did not advance."`
+- `"The bot loop stopped: no legal move was available for the current stage."`
+
+`gameOver` and `aborted` are distinct terminal states; a given controller is at
+most one of {playing, gameOver, aborted}. An abort is not a natural game end.
+The 404 not-found envelope retains its neutral defaults plus `aborted: false`
+and no `abortReason`.
+
+### Controller (D-24037)
+
+`markAborted(reason)` sets `isAborted = true`, `abortReason = reason`,
+`isPaused = true`; it does **not** set `gameOver`. `isAborted()` /
+`getAbortReason()` expose the state. Terminal: once aborted, the controller is
+not re-marked, and a later normal-exit path must not overwrite it with
+`gameOver`.
+
+### Bot-loop progress invariant (D-24038)
+
+1. Each stage reads `getLegalMoves(G, ctx)` before selecting a move.
+2. If `getLegalMoves` returns a parked-choice short-circuit move, the loop
+   dispatches that resolve move before any stage-specific fallback.
+3. A stage-specific fallback move may be dispatched only when that move is
+   present in the current legal-move list.
+4. For each dispatch expected to advance the loop, capture the pre-dispatch
+   `_stateID`, re-fetch after dispatch, and classify the result:
+   - state missing/null → abort with the vanished-match reason;
+   - game over / natural terminal state → exit through the normal game-over path;
+   - `_stateID` changed → progress accepted;
+   - `_stateID` unchanged → abort with the stage-did-not-advance reason.
+5. The loop must never repeatedly dispatch an unchanged-state move until
+   `maxTurns`.
+
+### Abnormal-exit handling
+
+The `withRegisteredController` catch path marks the controller aborted (with a
+public-safe reason) and schedules the same deferred cleanup used by the normal
+review window; it must **not** immediately delete the controller. It may rethrow
+only if the existing autoplay launcher/caller already catches that rejection and
+prevents an unhandled promise rejection; otherwise it logs through the existing
+error path and settles after scheduling cleanup, introducing no new unhandled
+rejection.
 
 ---
 
@@ -210,11 +252,32 @@ from `getLegalMoves(G, ctx)`, honoring the parked-choice short-circuit in
 - [ ] A controller that has `markAborted(reason)` called reports
   `isAborted() === true`, `getAbortReason() === reason`, `isPaused() === true`,
   `isGameOver() === false`.
-- [ ] `buildResponse` on a fresh controller yields `aborted: false` and **no**
-  `abortReason` key; on an aborted controller yields `aborted: true` +
-  `abortReason: <sentence>`.
+- [ ] `buildResponse` on a fresh controller yields `aborted: false` and **no
+  own** `abortReason` key (a test asserting `Object.hasOwn(response,
+  "abortReason") === false` — not merely `abortReason === undefined`); on an
+  aborted controller yields `aborted: true` + a public-safe full-sentence
+  `abortReason`.
+- [ ] Guest-visible `abortReason` values are public-safe full sentences and do
+  **not** include raw `error.message`, stack text, serialized errors, database
+  errors, request URLs, secrets, internal IDs, or infrastructure paths — proven
+  by a test that throws an error with a recognizable secret-like token and
+  asserts that token is absent from the envelope.
+- [ ] The abnormal-exit path does not leave an unhandled promise rejection in
+  the autoplay launcher test/harness; the aborted controller remains registered
+  synchronously after the fault is handled.
+- [ ] Stage-specific fallback moves are dispatched only when present in
+  `getLegalMoves(G, ctx)`; a parked `resolveKoHeroChoice` /
+  `resolveOptionalKoReward` is dispatched ahead of any fallback in every stage.
+- [ ] A vanished (missing/null) post-dispatch state aborts with the
+  match-state-unavailable reason (`aborted: true`) instead of becoming a neutral
+  clean break.
+- [ ] A natural game-over post-dispatch state exits through the normal
+  game-over path (`gameOver: true`, `aborted: false`) and is never mislabeled
+  `aborted`.
 - [ ] `GET .../status` on an aborted-but-still-registered controller returns
   `200` with `aborted: true` + `abortReason` (not a 404).
+- [ ] `docs/05-ROADMAP-MINDMAP.md` shows the `WP-261` node flipped `📝 → ✅` and
+  `node scripts/roadmap-counts.mjs --check` exits 0 (no orphan, table current).
 - [ ] `botLoopProgress.mjs` exports pure functions covered by unit tests:
   pending-choice detection returns the resolve move when `getLegalMoves` is
   parked and `null` otherwise; has-progressed is `false` on equal `_stateID`.
@@ -246,6 +309,8 @@ from `getLegalMoves(G, ctx)`, honoring the parked-choice short-circuit in
 6. D-24026 live-verification is **N/A for WP-261 on its own** (no client
    surface changes; the observable change is an API field). It is exercised by
    WP-262 when the banner ships. Record this N/A explicitly at govern-close.
+7. `node scripts/roadmap-counts.mjs --check` — exits 0 after flipping the
+   `WP-261` mindmap node `📝 → ✅` and regenerating the count table.
 
 ---
 
@@ -257,8 +322,15 @@ from `getLegalMoves(G, ctx)`, honoring the parked-choice short-circuit in
 - [ ] `api-endpoints.md` updated (whole-row, D-11804); `00.3 §21` companion
   gate passes.
 - [ ] WORK_INDEX WP-261 checked off; EC_INDEX EC-292 → Done; STATUS.md note.
-- [ ] Commit prefix `EC-292:` for staged `apps/**` code; `SPEC:` for the
-  governance close (two-commit topology).
+- [ ] `docs/05-ROADMAP-MINDMAP.md` `WP-261` node flipped `📝 → ✅` and
+  `node scripts/roadmap-counts.mjs --check` exits 0.
+- [ ] Commit topology:
+  - **`EC-292:` implementation/schema commit** — `apps/server/src/autoplay/**`
+    changes **plus** the coupled `docs/ai/REFERENCE/api-endpoints.md` whole-row
+    update (the response schema changes with the server envelope, so D-11804's
+    same-commit obligation places the catalog row here, not in the close).
+  - **`SPEC:` governance close** — `DECISIONS.md`, `STATUS.md`, `WORK_INDEX.md`,
+    `EC_INDEX.md`, and `docs/05-ROADMAP-MINDMAP.md`.
 - [ ] No `packages/**` (engine) diff.
 
 ---
@@ -300,7 +372,7 @@ from `getLegalMoves(G, ctx)`, honoring the parked-choice short-circuit in
 - **Verdict:** READY — dependencies verified, scope closed, ambiguities
   resolved.
 
-### Copilot Check (`01.7`) — **PASS**
+### Copilot Check (`01.7`) — **PASS (with required tightening applied)**
 
 - **Separation of concerns:** all changes are server wiring; routing more
   decisions through the engine's `getLegalMoves` *reduces* server-side move
@@ -315,6 +387,19 @@ from `getLegalMoves(G, ctx)`, honoring the parked-choice short-circuit in
   Master harness; controller + envelope tested via existing precedents.
 - **Findings:** RISK (minor) — `withRegisteredController`'s 5-minute timer
   delete is not fake-timer-tested (RS-1 above); documented, acceptable.
+- **Required tightening applied (operator review, 2026-06-18):**
+  - guest-visible abort reasons are **public-safe** full sentences; raw
+    exception detail never enters the envelope (§6, §7);
+  - `withRegisteredController` abnormal-exit behavior is explicit about deferred
+    cleanup **without introducing an unhandled promise rejection** (§6, §7);
+  - every stage-specific fallback dispatch is **gated by `getLegalMoves`**
+    (§4(5), §6);
+  - post-dispatch state classification separates **missing state / natural
+    game-over / progressed / no-progress stall** (§6, §7);
+  - WP and EC file lists now agree on `docs/05-ROADMAP-MINDMAP.md`, with the
+    node flipped `📝 → ✅` + counts regenerated (§5, §7, §8, §9);
+  - API-catalog row updates ride the `EC-292:` implementation/schema commit;
+    governance close stays a separate `SPEC:` commit (§9, D-11804).
 - **Verdict:** PASS.
 
 ## Lint Gate Self-Review (`00.3`) — 21/21 resolved
