@@ -171,6 +171,84 @@ function resolveThemeSlugToExtId(
 }
 
 /**
+ * Resolves the villain group ext_ids a mastermind "Always Leads".
+ *
+ * A mastermind with an Always-Leads clause (e.g. Magneto Always Leads the
+ * Brotherhood) makes that villain group mandatory in the match deck — the
+ * printed rule is "you must include these villains." The mastermind card
+ * carries the requirement as bare group slugs in `alwaysLeads` (e.g.
+ * `["brotherhood"]`); this resolves each to the set-qualified villain group
+ * ext_id the loadout composition stores (e.g. "core/brotherhood").
+ *
+ * Resolution prefers the mastermind's OWN set printing of the led group
+ * (a `{mastermindSetAbbr}/{ledSlug}` villain that exists), so a non-core
+ * mastermind leads its own set's group rather than a core reprint. When no
+ * same-set printing exists it falls back to `resolveThemeSlugToExtId`'s
+ * core-preferred-else-lexicographic pick — the same id-space bridge the theme
+ * prefill uses (D-24018). An already-qualified slug (contains "/") passes
+ * through untouched. A slug that resolves to no villain group is dropped (the
+ * requirement is unenforceable without the group in the registry).
+ *
+ * @param mastermindExtId - The selected mastermind's set-qualified ext_id.
+ * @param cards - The registry's flat card list (extId + cardType + alwaysLeads).
+ */
+function resolveAlwaysLeadsGroupIds(
+  mastermindExtId: string,
+  cards: Array<{ extId: string; cardType: string; alwaysLeads?: readonly string[] }>,
+): string[] {
+  const trimmedMastermindId = mastermindExtId.trim();
+  if (trimmedMastermindId === "") {
+    return [];
+  }
+  let leadSlugs: readonly string[] = [];
+  for (const card of cards) {
+    if (card.cardType === "mastermind" && card.extId === trimmedMastermindId) {
+      leadSlugs = card.alwaysLeads ?? [];
+      break;
+    }
+  }
+  if (leadSlugs.length === 0) {
+    return [];
+  }
+  const slashIndex = trimmedMastermindId.indexOf("/");
+  const mastermindSetAbbr = slashIndex > 0 ? trimmedMastermindId.slice(0, slashIndex) : "";
+  const resolvedGroupIds: string[] = [];
+  for (const rawLeadSlug of leadSlugs) {
+    const ledSlug = rawLeadSlug.trim();
+    if (ledSlug === "") {
+      continue;
+    }
+    // why: an already-qualified slug ("{set}/{slug}") is passed through, mirroring
+    // resolveThemeSlugToExtId — future card data may qualify alwaysLeads at source.
+    if (ledSlug.includes("/")) {
+      if (!resolvedGroupIds.includes(ledSlug)) {
+        resolvedGroupIds.push(ledSlug);
+      }
+      continue;
+    }
+    // why: prefer the mastermind's own set printing of the led group so a
+    // non-core mastermind requires its own set's villains, not a core reprint.
+    let chosenGroupId: string | null = null;
+    if (mastermindSetAbbr !== "") {
+      const sameSetGroupId = `${mastermindSetAbbr}/${ledSlug}`;
+      for (const card of cards) {
+        if (card.cardType === "villain" && card.extId === sameSetGroupId) {
+          chosenGroupId = sameSetGroupId;
+          break;
+        }
+      }
+    }
+    if (chosenGroupId === null) {
+      chosenGroupId = resolveThemeSlugToExtId(ledSlug, "villain", cards);
+    }
+    if (chosenGroupId !== null && !resolvedGroupIds.includes(chosenGroupId)) {
+      resolvedGroupIds.push(chosenGroupId);
+    }
+  }
+  return resolvedGroupIds;
+}
+
+/**
  * Builds a fresh blank draft with all envelope defaults populated and
  * composition fields empty. Composition counts default per EC-091
  * §Locked Values; the user may override any field before export.
@@ -209,6 +287,19 @@ export interface UseLoadoutDraftApi {
   draft: Ref<MatchSetupDocument>;
   errors: ComputedRef<MatchSetupValidationError[]>;
   isValid: ComputedRef<boolean>;
+  /**
+   * Villain group ext_ids the selected mastermind "Always Leads" — mandatory
+   * villains the match deck must include (e.g. Magneto → "core/brotherhood").
+   * Empty when no mastermind is selected or it has no Always-Leads clause.
+   */
+  requiredVillainGroupIds: ComputedRef<string[]>;
+  /**
+   * The subset of `requiredVillainGroupIds` not currently in the draft's
+   * `villainGroupIds` — non-empty only when a required group was removed or an
+   * imported loadout omits it. The builder warns and blocks export while this
+   * is non-empty.
+   */
+  missingRequiredVillainGroupIds: ComputedRef<string[]>;
   setScheme: (schemeId: string) => void;
   setMastermind: (mastermindId: string) => void;
   addVillainGroup: (groupId: string) => void;
@@ -245,7 +336,15 @@ export interface UseLoadoutDraftApi {
  * satisfies this without change and the call signature is preserved.
  */
 interface LoadoutRegistryReader extends CardRegistryReader {
-  listCards(): Array<{ extId: string; cardType: string }>;
+  listCards(): Array<{
+    extId: string;
+    cardType: string;
+    // why: mastermind-only "Always Leads" villain group slugs — the builder
+    // resolves these to villain group ext_ids to auto-include and require them.
+    // Optional so non-mastermind cards and the lean test fixtures satisfy the
+    // shape without change (the real FlatCard always carries it on masterminds).
+    alwaysLeads?: readonly string[];
+  }>;
 }
 
 /**
@@ -274,12 +373,35 @@ export function useLoadoutDraft(registry: LoadoutRegistryReader): UseLoadoutDraf
 
   const isValid = computed<boolean>(() => validationResult.value.ok);
 
+  const requiredVillainGroupIds = computed<string[]>(() =>
+    resolveAlwaysLeadsGroupIds(draft.value.composition.mastermindId, registry.listCards()),
+  );
+
+  const missingRequiredVillainGroupIds = computed<string[]>(() => {
+    const present = draft.value.composition.villainGroupIds;
+    return requiredVillainGroupIds.value.filter((groupId) => !present.includes(groupId));
+  });
+
   function setScheme(schemeId: string): void {
     draft.value.composition.schemeId = schemeId.trim();
   }
 
   function setMastermind(mastermindId: string): void {
-    draft.value.composition.mastermindId = mastermindId.trim();
+    const trimmedMastermindId = mastermindId.trim();
+    draft.value.composition.mastermindId = trimmedMastermindId;
+    // why: "Always Leads" — a mastermind that always leads a villain group
+    // (e.g. Magneto → Brotherhood) makes that group mandatory in the match
+    // deck. Auto-include the led group(s) on selection so the loadout carries
+    // the villains the printed rule requires instead of silently omitting them.
+    // addUniqueId no-ops on a group already present, so this never duplicates a
+    // chip the user (or a theme prefill) already added.
+    const requiredGroupIds = resolveAlwaysLeadsGroupIds(
+      trimmedMastermindId,
+      registry.listCards(),
+    );
+    for (const requiredGroupId of requiredGroupIds) {
+      addUniqueId(draft.value.composition.villainGroupIds, requiredGroupId);
+    }
   }
 
   function addUniqueId(list: string[], groupId: string): void {
@@ -472,6 +594,8 @@ export function useLoadoutDraft(registry: LoadoutRegistryReader): UseLoadoutDraf
     draft,
     errors,
     isValid,
+    requiredVillainGroupIds,
+    missingRequiredVillainGroupIds,
     setScheme,
     setMastermind,
     addVillainGroup,

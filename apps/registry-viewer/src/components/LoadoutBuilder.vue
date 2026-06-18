@@ -56,6 +56,8 @@ const {
   draft,
   errors,
   isValid,
+  requiredVillainGroupIds,
+  missingRequiredVillainGroupIds,
   setScheme,
   setMastermind,
   addVillainGroup,
@@ -235,11 +237,11 @@ const importSuccessAt = ref<string | null>(null);
 
 function onDownload(): void {
   // why: Belt-and-suspenders guard mirroring onDownloadLagn. The button is
-  // already `:disabled="!isValid"`, but guarding the handler too prevents a
-  // known-invalid document (e.g. a theme prefill with an unresolved bare
-  // slug, D-24018) from being downloaded and then failing with an HTTP 500
-  // at match creation, should the template binding ever be bypassed.
-  if (!isValid.value) {
+  // already `:disabled`, but guarding the handler too prevents a known-invalid
+  // document (e.g. a theme prefill with an unresolved bare slug, D-24018) or a
+  // loadout missing a mastermind's Always-Leads villain group from being
+  // downloaded, should the template binding ever be bypassed.
+  if (!isValid.value || missingRequiredVillainGroupIds.value.length > 0) {
     return;
   }
   const blob = exportToJsonBlob();
@@ -254,7 +256,7 @@ function onDownload(): void {
 }
 
 function onDownloadLagn(): void {
-  if (!lagnExportApi.isValid.value) {
+  if (!lagnExportApi.isValid.value || missingRequiredVillainGroupIds.value.length > 0) {
     return;
   }
   const blob = lagnExportApi.exportToJsonBlob();
@@ -477,11 +479,29 @@ function slotLabel(slot: PickerSlot): string {
             >Pick…</button>
           </div>
           <ul class="chip-list">
-            <li v-for="groupId in draft.composition.villainGroupIds" :key="groupId" class="chip">
+            <li
+              v-for="groupId in draft.composition.villainGroupIds"
+              :key="groupId"
+              class="chip"
+              :class="{ required: requiredVillainGroupIds.includes(groupId) }"
+            >
               {{ groupId }}
-              <button type="button" class="chip-close" @click="removeVillainGroup(groupId)">✕</button>
+              <!-- why: a villain group the selected mastermind Always Leads is
+                   mandatory (e.g. Magneto → Brotherhood) — show a lock instead
+                   of a remove button so it can't be taken out of the deck. -->
+              <span
+                v-if="requiredVillainGroupIds.includes(groupId)"
+                class="chip-lock"
+                title="Always Leads — the selected mastermind requires this villain group; it can't be removed."
+              >🔒</span>
+              <button v-else type="button" class="chip-close" @click="removeVillainGroup(groupId)">✕</button>
             </li>
           </ul>
+          <p v-if="missingRequiredVillainGroupIds.length > 0" class="requirement-warning" role="alert">
+            ⚠ The selected mastermind Always Leads
+            <strong>{{ missingRequiredVillainGroupIds.join(", ") }}</strong> — this villain
+            group is required and must be in the deck. Add it before exporting.
+          </p>
         </div>
 
         <div class="field">
@@ -544,14 +564,19 @@ function slotLabel(slot: PickerSlot): string {
       <!-- Download / Upload -->
       <div class="field-group">
         <div class="action-row">
-          <button type="button" class="primary-btn" @click="onDownload" :disabled="!isValid">
+          <button
+            type="button"
+            class="primary-btn"
+            @click="onDownload"
+            :disabled="!isValid || missingRequiredVillainGroupIds.length > 0"
+          >
             ⬇ Download MATCH-SETUP
           </button>
           <button
             type="button"
             class="primary-btn"
             @click="onDownloadLagn"
-            :disabled="!isValid || !lagnExportApi.isValid.value"
+            :disabled="!isValid || !lagnExportApi.isValid.value || missingRequiredVillainGroupIds.length > 0"
           >
             ⬇ Download LAGN
           </button>
@@ -820,6 +845,19 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: #6060c0
   font-size: 0.75rem;
 }
 .chip-close:hover { color: #f87171; }
+.chip.required { border-color: #7070e0; background: #25254a; }
+.chip-lock { font-size: 0.7rem; cursor: help; }
+.requirement-warning {
+  margin: 0.45rem 0 0 0;
+  padding: 0.4rem 0.6rem;
+  background: #2a1f0a;
+  border: 1px solid #7a5a18;
+  border-radius: 6px;
+  color: #fcd34d;
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+.requirement-warning strong { font-family: ui-monospace, Consolas, monospace; color: #fde68a; }
 
 .action-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .primary-btn {

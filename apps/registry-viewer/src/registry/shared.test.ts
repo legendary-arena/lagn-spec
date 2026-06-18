@@ -667,6 +667,33 @@ describe("flattenSet groupName (loadout picker labels)", () => {
     }
   });
 
+  it("mastermind cards carry the mastermind's Always-Leads villain group slugs", () => {
+    const setData = {
+      id: 1, abbr: "core",
+      heroes: [],
+      masterminds: [
+        {
+          name: "Magneto", slug: "magneto",
+          alwaysLeads: ["brotherhood"],
+          cards: [
+            { name: "Magneto", slug: "magneto-main", abilities: [] },
+            { name: "Xavier's School", slug: "xaviers-school", abilities: [] },
+          ],
+        },
+      ],
+      villains: [], henchmen: [], schemes: [], bystanders: [], wounds: [], other: [],
+    } as unknown as SetData;
+
+    const result = flattenSet(setData, "Core Set");
+    assert.equal(result.length, 2);
+    for (const card of result) {
+      // why: Always-Leads is a group-level value carried on every mastermind
+      // card (like groupName) so the loadout builder can read it off the
+      // collapsed picker entry to auto-include + require the Brotherhood.
+      assert.deepEqual(card.alwaysLeads, ["brotherhood"]);
+    }
+  });
+
   it("henchman group carries the group name as groupName", () => {
     const setData = {
       id: 1, abbr: "core",

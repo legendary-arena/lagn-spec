@@ -63,6 +63,15 @@ export interface FlatCard {
    * the picker never renders.
    */
   groupName?: string;
+  /**
+   * Mastermind-only: the villain group slugs this mastermind "Always Leads".
+   * Bare entity slugs (e.g. `["brotherhood"]`), mirroring the card data's
+   * `Mastermind.alwaysLeads`. The loadout builder reads this to auto-include —
+   * and require — the led villain group(s) when the mastermind is selected
+   * (e.g. Magneto Always Leads the Brotherhood). Empty/absent for masterminds
+   * with no Always-Leads clause and for every non-mastermind card type.
+   */
+  alwaysLeads?: readonly string[];
   slug:      string;
   imageUrl:  string;
   /** Hero-only: image URL resolved from physicalCards[] (D-14103). */

@@ -27,11 +27,17 @@ import type { ThemeDefinition } from "../lib/themeClient.js";
 import { useLoadoutDraft } from "./useLoadoutDraft.js";
 
 // why: a minimal stand-in for the real CardRegistry (FlatCard[]). The
-// composable only reads `extId` (validation) and `cardType` (prefill
-// resolution) off each card, so the fixture carries just those two fields.
+// composable reads `extId` (validation), `cardType` (prefill resolution), and
+// `alwaysLeads` (mastermind Always-Leads auto-include) off each card, so the
+// fixture carries just those fields (alwaysLeads optional, masterminds only).
+type RegistryCardFixture = {
+  extId: string;
+  cardType: string;
+  alwaysLeads?: readonly string[];
+};
 function makeRegistry(
-  cards: Array<{ extId: string; cardType: string }>,
-): { listCards: () => Array<{ extId: string; cardType: string }> } {
+  cards: Array<RegistryCardFixture>,
+): { listCards: () => Array<RegistryCardFixture> } {
   return { listCards: () => cards };
 }
 
@@ -206,5 +212,76 @@ describe("useLoadoutDraft prefillFromTheme — ext_id resolution (D-24018)", () 
       makeTheme(makeSetupIntent({ schemeId: "core/midtown-bank-robbery" })),
     );
     assert.equal(api.draft.value.composition.schemeId, "core/midtown-bank-robbery");
+  });
+});
+
+// A registry whose core/magneto mastermind carries an Always-Leads clause
+// (Magneto Always Leads the Brotherhood), plus a cross-set case: an
+// xmen/magneto mastermind that also leads "brotherhood", with a same-set
+// xmen/brotherhood villain present so the resolver prefers the mastermind's
+// own set printing over the core reprint.
+const ALWAYS_LEADS_REGISTRY = makeRegistry([
+  { extId: "core/magneto", cardType: "mastermind", alwaysLeads: ["brotherhood"] },
+  { extId: "core/loki", cardType: "mastermind" },
+  { extId: "core/brotherhood", cardType: "villain" },
+  { extId: "core/hydra", cardType: "villain" },
+  { extId: "xmen/magneto", cardType: "mastermind", alwaysLeads: ["brotherhood"] },
+  { extId: "xmen/brotherhood", cardType: "villain" },
+]);
+
+describe("useLoadoutDraft setMastermind — Always-Leads villain groups", () => {
+  it("auto-includes the led villain group when a mastermind that Always Leads is selected", () => {
+    const api = useLoadoutDraft(ALWAYS_LEADS_REGISTRY);
+    assert.deepEqual(api.draft.value.composition.villainGroupIds, []);
+    api.setMastermind("core/magneto");
+    assert.deepEqual(api.draft.value.composition.villainGroupIds, ["core/brotherhood"]);
+    assert.deepEqual(api.requiredVillainGroupIds.value, ["core/brotherhood"]);
+    assert.deepEqual(api.missingRequiredVillainGroupIds.value, []);
+  });
+
+  it("does not duplicate the led group when the mastermind is re-selected", () => {
+    const api = useLoadoutDraft(ALWAYS_LEADS_REGISTRY);
+    api.setMastermind("core/magneto");
+    api.setMastermind("core/magneto");
+    assert.deepEqual(api.draft.value.composition.villainGroupIds, ["core/brotherhood"]);
+  });
+
+  it("flags the led group as missing when the user removes the required chip", () => {
+    const api = useLoadoutDraft(ALWAYS_LEADS_REGISTRY);
+    api.setMastermind("core/magneto");
+    api.removeVillainGroup("core/brotherhood");
+    assert.deepEqual(api.draft.value.composition.villainGroupIds, []);
+    assert.deepEqual(api.missingRequiredVillainGroupIds.value, ["core/brotherhood"]);
+  });
+
+  it("requires nothing for a mastermind with no Always-Leads clause", () => {
+    const api = useLoadoutDraft(ALWAYS_LEADS_REGISTRY);
+    api.setMastermind("core/loki");
+    assert.deepEqual(api.draft.value.composition.villainGroupIds, []);
+    assert.deepEqual(api.requiredVillainGroupIds.value, []);
+    assert.deepEqual(api.missingRequiredVillainGroupIds.value, []);
+  });
+
+  it("prefers the mastermind's own set printing of the led group over a core reprint", () => {
+    const api = useLoadoutDraft(ALWAYS_LEADS_REGISTRY);
+    api.setMastermind("xmen/magneto");
+    assert.deepEqual(api.draft.value.composition.villainGroupIds, ["xmen/brotherhood"]);
+    assert.deepEqual(api.requiredVillainGroupIds.value, ["xmen/brotherhood"]);
+  });
+
+  it("keeps villain groups the user added alongside the auto-included led group", () => {
+    const api = useLoadoutDraft(ALWAYS_LEADS_REGISTRY);
+    api.addVillainGroup("core/hydra");
+    api.setMastermind("core/magneto");
+    assert.deepEqual(api.draft.value.composition.villainGroupIds, [
+      "core/hydra",
+      "core/brotherhood",
+    ]);
+  });
+
+  it("requires nothing when no mastermind is selected", () => {
+    const api = useLoadoutDraft(ALWAYS_LEADS_REGISTRY);
+    assert.deepEqual(api.requiredVillainGroupIds.value, []);
+    assert.deepEqual(api.missingRequiredVillainGroupIds.value, []);
   });
 });

@@ -161,6 +161,11 @@ export function flattenSet(
         // why: group name for the loadout picker — the mastermind ("Dr. Doom"),
         // not whichever tactic/main card lands first in the collapsed entry.
         groupName: mm.name,
+        // why: surface the mastermind's "Always Leads" villain group slugs so
+        // the loadout builder can auto-include and require them (Magneto Always
+        // Leads the Brotherhood). Carried on every mastermind card (group-level
+        // value, like groupName); the builder reads it off the collapsed entry.
+        alwaysLeads: mm.alwaysLeads,
         slug:      card.slug,
         imageUrl:  card.imageUrl ?? "",
         abilities: card.abilities ?? [],
