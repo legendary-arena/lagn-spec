@@ -283,6 +283,7 @@ mindmap
         ["WP-260 ✅ Architect-lane gap intake (reporting-loop consumer 3 of 3's architect sibling; useArchitectGapIntake projects useCoverageLedger().runtimeObservedByMechanic → ArchitectGapCandidates folded into the Pipeline Architect lane via an optional 4th useAgentPipeline arg unshifted into architectBacklog only; consumer-owned ArchitectGapProjection D-23901 + single-lane D-23902 + WP-239 triageData backward-compat; fields copy the overlay entry, proposedTargetLayer from a fixed cardType map, reason opaque pass-through D-20703, invents no facts; live overlay zero-state ⇒ empty path; D-24036)"]
         ["WP-264 ✅ Parameterized simulation turn cap (maxTurns option; WP-265 enabler; optional trailing maxTurns default MAX_TURNS_PER_GAME on the six sim entry points runPerTurnLoop/buildGameOutcome/simulateOneGame/simulateOneGameAndCaptureMoves/runSimulation/sweepSetupMatrix → a downstream sweep runs short terminating games instead of grinding to the 200-turn safety cap; PARAM not a result field so field-set drift guards untouched; warm-up shares the same cap for PRNG parity; validity caller-owned no throw/clamp; finalStateHash unchanged replay-guarded; index.ts byte-unchanged; D-24040)"]
         ["WP-265 📝 Drafted — Real-signal runtime-observed hollows cron (flips WP-259's /coverage runtime-observed overlay from a recorded zero-state to real signal via a competent-heuristic maxTurns-bounded WP-264/D-24040 deeper-matrix sweep over the hollow-heavy board; weekly runtime-observed-refresh.yml cron opens a review-gated bot/runtime-observed-refresh PR on drift per the D-24002 roadmap-counts pattern; retires WP-259's per-PR sim:runtime-observed:check; no engine edit, dashboard untouched; D-24041)"]
+        ["WP-266 📝 Drafted — Simulation onBegin parity (WP-265 unblocker; the three observation-only per-turn loops runPerTurnLoop/par.aggregator simulateOneGame/runFixture rotateToNextTurn mirror the play-phase onBegin via ONE shared pure helper applyOnBeginParity = reset villainRevealedThisTurn+hasDrawnThisTurn + auto-draw to HAND_SIZE, rule hooks deferred D-0205, extracted at the third use since runFixture already had it inline WP-212+WP-236 but runner+aggregator did not → empty hand forever, playCard never legal; plus a one-shot reveal gate in getLegalMoves stage==='start' && !villainRevealedThisTurn ending the competent policy's turn-1 infinite re-reveal; game-determinism preserved, replay byte-behavior-identical, finalStateHash unchanged; scaffold-confirmed 1454/1454 + competent sweep surfaces ≥1 hero hollow in ~17ms; regenerates WP-259's runtime-observed-hollows.json off the zero-state; D-24043)"]
 
       Notable Events & Overlays
         ["WP-200 ✅ Notable game event log (engine)"]
@@ -417,7 +418,7 @@ mindmap
 | Legends Public Scoreboard | 2/2 | — |
 | Villain Deck Pipeline | 5/5 | — |
 | Villain & Henchman Effects | 11/11 | — |
-| Hero Ability Coverage & Markup Pipeline | 25/26 | 1 open |
+| Hero Ability Coverage & Markup Pipeline | 25/27 | 2 open |
 | Notable Events & Overlays | 4/4 | — |
 | Simulation Sweep & Analytics Pipeline | 7/7 | — |
 | Dashboard & Operator Analytics | 14/14 | — |
@@ -430,9 +431,9 @@ mindmap
 | Next Horizons | 0/4 | 4 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **260/262 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸, 1 open |
+| **Total** | **260/263 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸, 2 open |
 
-**Open / blocked WPs (derived from WORK_INDEX, 2):** WP-042.1 ⏸ blocked; WP-265 open.
+**Open / blocked WPs (derived from WORK_INDEX, 3):** WP-042.1 ⏸ blocked; WP-265 open; WP-266 open.
 <!-- ROADMAP-COUNTS:END -->
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. The table inside the markers above is **generated** by `scripts/roadmap-counts.mjs` (sole writer; D-24001), derived from `WORK_INDEX.md` status × mindmap cluster membership — it is no longer hand-maintained, so it no longer drifts. Status is authoritative from `WORK_INDEX.md`; cluster membership is authoritative from the mindmap nodes above. The generator **fails loudly** on a WORK_INDEX WP with no mindmap node (D-24002), so no work packet can be silently uncounted.
