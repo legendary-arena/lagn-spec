@@ -319,6 +319,13 @@ function runPerTurnLoop(
   gameIndex: number,
   nextRandom: () => number,
   onMoveDispatched?: (move: ReplayMove) => void,
+  // why: maxTurns defaults to MAX_TURNS_PER_GAME so every existing call site
+  // that omits it stays source-unchanged and its observable result is
+  // deep-equal to today's. The cap is a tooling override (the WP-265 bounded
+  // sweep passes a small literal), never a gameplay-rule change. Appended
+  // AFTER the optional onMoveDispatched? so the existing callback arg keeps
+  // its position.
+  maxTurns: number = MAX_TURNS_PER_GAME,
 ): PerTurnLoopResult {
   // why: buildInitialGameState initializes currentStage to TURN_STAGES[0]
   // ('start') and turnEconomy to all-zero; it does not set phase (the
@@ -331,7 +338,7 @@ function runPerTurnLoop(
   let endgameReached = false;
   let endgameWinner: EndgameOutcome | null = null;
 
-  while (turnsElapsed < MAX_TURNS_PER_GAME) {
+  while (turnsElapsed < maxTurns) {
     const endgameResult = evaluateEndgame(gameState);
     if (endgameResult !== null) {
       endgameReached = true;
@@ -404,7 +411,7 @@ function runPerTurnLoop(
       gameState.messages.push(
         `Simulation warning: policy "${activePolicy.name}" returned endTurn outside cleanup — flagging game ${gameIndex} as stuck.`,
       );
-      turnsElapsed = MAX_TURNS_PER_GAME;
+      turnsElapsed = maxTurns;
       break;
     }
 
@@ -453,6 +460,8 @@ function runPerTurnLoop(
  * @param registry - card registry reader.
  * @param gameIndex - 0-based index of this game within the run.
  * @param nextRandom - the run's mulberry32 closure (shared across games).
+ * @param maxTurns - per-game turn cap (default MAX_TURNS_PER_GAME); forwarded
+ *   to the per-turn loop and the outcome builder.
  * @returns per-game outcome record.
  */
 function simulateOneGame(
@@ -460,17 +469,22 @@ function simulateOneGame(
   registry: CardRegistryReader,
   gameIndex: number,
   nextRandom: () => number,
+  maxTurns: number = MAX_TURNS_PER_GAME,
 ): GameOutcome {
   const numPlayers = config.policies.length;
   const setupContext = makeMockCtx({ numPlayers });
   const gameState = buildInitialGameState(config.setupConfig, registry, setupContext);
 
+  // why: maxTurns sits after the optional onMoveDispatched? on runPerTurnLoop,
+  // so this non-capturing path passes undefined for the callback to reach it.
   const loopResult = runPerTurnLoop(
     gameState,
     config.policies,
     numPlayers,
     gameIndex,
     nextRandom,
+    undefined,
+    maxTurns,
   );
 
   return buildGameOutcome(
@@ -479,6 +493,7 @@ function simulateOneGame(
     numPlayers,
     loopResult.endgameReached,
     loopResult.endgameWinner,
+    maxTurns,
   );
 }
 
@@ -492,7 +507,8 @@ function simulateOneGame(
  * UIState does not surface per-player VP outside UIGameOverState.scores.
  *
  * @param gameState - terminal game state (mutated during the per-game loop).
- * @param turnsElapsed - number of turns taken; capped at MAX_TURNS_PER_GAME.
+ * @param turnsElapsed - number of turns taken; capped at maxTurns (default
+ *   MAX_TURNS_PER_GAME).
  * @param numPlayers - number of players (for lifecycle context).
  * @param endgameReached - whether the loop exited via `evaluateEndgame`
  *   returning non-null (true) vs the cap / stuck-game break (false).
@@ -500,6 +516,8 @@ function simulateOneGame(
  *   returned on the exiting turn; `null` when the loop exited via cap or
  *   stuck. Threaded through into `CapturedOutcomeSummary.winner` for the
  *   WP-193 capture path.
+ * @param maxTurns - per-game turn cap (default MAX_TURNS_PER_GAME); the
+ *   effectiveTurns clamp uses it so a non-default cap reports its own bound.
  * @returns per-game outcome record.
  */
 function buildGameOutcome(
@@ -508,6 +526,7 @@ function buildGameOutcome(
   numPlayers: number,
   endgameReached: boolean,
   endgameWinner: EndgameOutcome | null,
+  maxTurns: number = MAX_TURNS_PER_GAME,
 ): GameOutcome {
   // why: 'end' phase + explicit currentPlayer '0' produces a stable
   // post-endgame projection; turn count is the elapsed count capped at
@@ -539,7 +558,7 @@ function buildGameOutcome(
   }
 
   const effectiveTurns =
-    turnsElapsed >= MAX_TURNS_PER_GAME ? MAX_TURNS_PER_GAME : turnsElapsed;
+    turnsElapsed >= maxTurns ? maxTurns : turnsElapsed;
 
   return {
     turns: effectiveTurns,
@@ -622,11 +641,14 @@ function aggregateOutcomes(
  *
  * @param config - simulation parameters (games, seed, setupConfig, policies).
  * @param registry - card registry reader (setup-time resolution only).
+ * @param maxTurns - per-game turn cap (default MAX_TURNS_PER_GAME); forwarded
+ *   to every game so a bounded run terminates faster than the 200 safety cap.
  * @returns aggregate SimulationResult.
  */
 export function runSimulation(
   config: SimulationConfig,
   registry: CardRegistryReader,
+  maxTurns: number = MAX_TURNS_PER_GAME,
 ): SimulationResult {
   if (config.games < 1) {
     return zeroedResult(config.seed);
@@ -643,7 +665,7 @@ export function runSimulation(
 
   const perGame: GameOutcome[] = [];
   for (let gameIndex = 0; gameIndex < config.games; gameIndex++) {
-    perGame.push(simulateOneGame(config, registry, gameIndex, nextRandom));
+    perGame.push(simulateOneGame(config, registry, gameIndex, nextRandom, maxTurns));
   }
 
   return aggregateOutcomes(perGame, config.seed);
@@ -768,6 +790,9 @@ export function captureGameDiagnostics(
  * @param seed - run-level seed string; hashed via djb2 → mulberry32.
  * @param gameIndex - 0-based per-game index for PRNG-stream parity with
  *   `runSimulation`.
+ * @param maxTurns - per-game turn cap (default MAX_TURNS_PER_GAME); the
+ *   warm-up games and the captured game all run under the same cap so a
+ *   non-default value does not desync the PRNG stream.
  * @returns CapturedGameResult — moves, outcome summary, endgame-reached flag.
  */
 export function simulateOneGameAndCaptureMoves(
@@ -776,6 +801,7 @@ export function simulateOneGameAndCaptureMoves(
   policies: readonly AIPolicy[],
   seed: string,
   gameIndex: number,
+  maxTurns: number = MAX_TURNS_PER_GAME,
 ): CapturedGameResult {
   if (seed.length === 0) {
     return {
@@ -809,8 +835,12 @@ export function simulateOneGameAndCaptureMoves(
     setupConfig,
     policies: [...policies],
   };
+  // why: the warm-up games use the SAME maxTurns as the captured game so a
+  // non-default cap shortens every game identically and the captured game
+  // observes the same PRNG state runSimulation's game `gameIndex` would
+  // (D-19303 PRNG-stream parity). A different cap here would desync the stream.
   for (let priorGameIndex = 0; priorGameIndex < gameIndex; priorGameIndex++) {
-    simulateOneGame(warmupConfig, registry, priorGameIndex, nextRandom);
+    simulateOneGame(warmupConfig, registry, priorGameIndex, nextRandom, maxTurns);
   }
 
   const numPlayers = policies.length;
@@ -827,6 +857,7 @@ export function simulateOneGameAndCaptureMoves(
     (move) => {
       capturedMoves.push(move);
     },
+    maxTurns,
   );
 
   const outcome = buildGameOutcome(
@@ -835,6 +866,7 @@ export function simulateOneGameAndCaptureMoves(
     numPlayers,
     loopResult.endgameReached,
     loopResult.endgameWinner,
+    maxTurns,
   );
   const diagnostics = captureGameDiagnostics(gameState);
 

@@ -525,3 +525,101 @@ describe('captureGameDiagnostics (WP-263)', () => {
     );
   });
 });
+
+describe('simulateOneGameAndCaptureMoves — maxTurns turn cap (WP-264)', () => {
+  const setupConfig = createTestConfig();
+  const registry = createMockRegistry();
+
+  test('a small maxTurns bounds the captured trace (moves.length <= the uncapped run)', () => {
+    const seed = 'wp264-bound-respected-seed';
+    const buildPolicies = (): AIPolicy[] => [
+      createRandomPolicy(`${seed}::seat:0`),
+      createRandomPolicy(`${seed}::seat:1`),
+    ];
+
+    const capped = simulateOneGameAndCaptureMoves(
+      setupConfig,
+      registry,
+      buildPolicies(),
+      seed,
+      0,
+      5,
+    );
+    const uncapped = simulateOneGameAndCaptureMoves(
+      setupConfig,
+      registry,
+      buildPolicies(),
+      seed,
+      0,
+    );
+
+    // why (WP-264): CapturedGameResult exposes no turn-count field (its set is
+    // drift-locked to { endgameReached, hollowEffects, hollowEffectsDropped,
+    // moves, outcome }), so the bound is asserted on moves.length only. The
+    // 2-seat random fixture never reaches endgame under the mock registry, so
+    // the uncapped run spins to the 200 safety cap and a cap of 5 bounds it.
+    assert.equal(
+      capped.moves.length <= uncapped.moves.length,
+      true,
+      'a maxTurns of 5 must bound the captured trace at or below the uncapped run',
+    );
+  });
+
+  test('default-equivalence: omitting maxTurns deep-equals passing the literal 200 (gameIndex 0)', () => {
+    const seed = 'wp264-default-equivalence-g0-seed';
+    const buildPolicies = (): AIPolicy[] => [
+      createRandomPolicy(`${seed}::seat:0`),
+      createRandomPolicy(`${seed}::seat:1`),
+    ];
+
+    const omitted = simulateOneGameAndCaptureMoves(
+      setupConfig,
+      registry,
+      buildPolicies(),
+      seed,
+      0,
+    );
+    // why (WP-264): MAX_TURNS_PER_GAME is module-local (not exported), so the
+    // default-equivalence assertion uses the literal 200 rather than the const.
+    const explicit = simulateOneGameAndCaptureMoves(
+      setupConfig,
+      registry,
+      buildPolicies(),
+      seed,
+      0,
+      200,
+    );
+
+    assert.deepStrictEqual(omitted, explicit);
+  });
+
+  test('default-equivalence at gameIndex 1 exercises warm-up forwarding (omit === literal 200)', () => {
+    const seed = 'wp264-default-equivalence-g1-seed';
+    const buildPolicies = (): AIPolicy[] => [
+      createRandomPolicy(`${seed}::seat:0`),
+      createRandomPolicy(`${seed}::seat:1`),
+    ];
+
+    // why (WP-264): gameIndex = 1 runs one warm-up game before the captured
+    // game, so this proves the warm-up loop forwards the same maxTurns and the
+    // PRNG stream stays in parity (a gameIndex = 0 run collapses the warm-up to
+    // a no-op and never exercises the forwarding path).
+    const omitted = simulateOneGameAndCaptureMoves(
+      setupConfig,
+      registry,
+      buildPolicies(),
+      seed,
+      1,
+    );
+    const explicit = simulateOneGameAndCaptureMoves(
+      setupConfig,
+      registry,
+      buildPolicies(),
+      seed,
+      1,
+      200,
+    );
+
+    assert.deepStrictEqual(omitted, explicit);
+  });
+});

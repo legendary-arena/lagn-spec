@@ -389,3 +389,87 @@ describe('sweepSetupMatrix — dispatcher invariants', () => {
     assert.equal(collected[0]!.hollowEffectsDropped, 0);
   });
 });
+
+describe('sweepSetupMatrix — maxTurns turn cap (WP-264)', () => {
+  test('a small maxTurns lowers the cell moveCount (forwarded to the capture call)', () => {
+    const cappedCells: SweepCellResult[] = [];
+    const uncappedCells: SweepCellResult[] = [];
+
+    sweepSetupMatrix(
+      createBaseSetupConfig(),
+      1,
+      ['scheme-a'],
+      ['mastermind-x'],
+      createMockRegistry(),
+      buildSinglePolicyFromCellSeed,
+      'run-seed-wp264-bound',
+      (cell) => {
+        cappedCells.push(cell);
+      },
+      undefined,
+      5,
+    );
+    sweepSetupMatrix(
+      createBaseSetupConfig(),
+      1,
+      ['scheme-a'],
+      ['mastermind-x'],
+      createMockRegistry(),
+      buildSinglePolicyFromCellSeed,
+      'run-seed-wp264-bound',
+      (cell) => {
+        uncappedCells.push(cell);
+      },
+    );
+
+    assert.equal(cappedCells.length, 1);
+    assert.equal(uncappedCells.length, 1);
+    // why (WP-264): maxTurns is forwarded to simulateOneGameAndCaptureMoves, so
+    // a small cap bounds the per-turn loop and the cell's moveCount drops at or
+    // below the uncapped run (the mock registry never reaches endgame, so the
+    // uncapped run spins to the 200 safety cap).
+    assert.equal(
+      cappedCells[0]!.moveCount <= uncappedCells[0]!.moveCount,
+      true,
+      'a maxTurns of 5 must bound the cell moveCount at or below the uncapped run',
+    );
+  });
+
+  test('default-equivalence: omitting maxTurns deep-equals passing the literal 200', () => {
+    const omitted: SweepCellResult[] = [];
+    const explicit: SweepCellResult[] = [];
+
+    sweepSetupMatrix(
+      createBaseSetupConfig(),
+      1,
+      ['scheme-a', 'scheme-b'],
+      ['mastermind-x', 'mastermind-y'],
+      createMockRegistry(),
+      buildSinglePolicyFromCellSeed,
+      'run-seed-wp264-default',
+      (cell) => {
+        omitted.push(cell);
+      },
+    );
+    // why (WP-264): maxTurns is the trailing param after shouldSkipCell?, so the
+    // explicit-200 call passes undefined for shouldSkipCell to reach it. The two
+    // full callback sequences must be deep-equal — omitting === the 200 default.
+    sweepSetupMatrix(
+      createBaseSetupConfig(),
+      1,
+      ['scheme-a', 'scheme-b'],
+      ['mastermind-x', 'mastermind-y'],
+      createMockRegistry(),
+      buildSinglePolicyFromCellSeed,
+      'run-seed-wp264-default',
+      (cell) => {
+        explicit.push(cell);
+      },
+      undefined,
+      200,
+    );
+
+    assert.equal(omitted.length, 4);
+    assert.deepStrictEqual(omitted, explicit);
+  });
+});

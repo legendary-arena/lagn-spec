@@ -25407,7 +25407,7 @@ The simulation entry points (`runPerTurnLoop`, `buildGameOutcome`, `simulateOneG
 **Why:** `MAX_TURNS_PER_GAME` is a behavior-only safety cap ("Not a gameplay rule"), but it was hardcoded with no override. A competent-play diagnostics sweep over not-yet-implemented heroes either runs multi-minute/game at 200 turns or never terminates (the cards do nothing → no progress → 200-turn spin), which is neither CI- nor cron-affordable. An opt-in `maxTurns` lets a sweep run short, terminating games (~30–50 turns still exercise the early-game recruit/play/fight where hollow abilities fire) while the default keeps multiplayer, replay, and every existing sim call byte-identical. Determinism is preserved: capping is deterministic, the default path is byte-identical, and the sentinel `finalStateHash` (replay-fixture-guarded, default path) is unchanged. The 10-arg `sweepSetupMatrix` signature smell is accepted as the minimal additive change; an options-object refactor is deferred.
 
 **Packet:** WP-264 / EC-294. Enables WP-265 (the bounded-heuristic real-signal runtime-observed cron).
-**Status:** Drafted 2026-06-18; not yet landed (flips to Active when WP-264 executes).
+**Status:** Active (landed 2026-06-18, EC-294 commit `a7fd83a2`).
 
 ---
 

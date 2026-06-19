@@ -209,6 +209,10 @@ function lexSortedCopy(axis: readonly string[]): string[] {
  *   true for a `(schemeId, mastermindId)` pair, the dispatcher skips that
  *   cell entirely. `cellIndex` still advances over skipped cells so the
  *   index reflects the full lex-sorted enumeration.
+ * @param maxTurns - Optional per-cell turn cap forwarded verbatim to
+ *   `simulateOneGameAndCaptureMoves`; when omitted, that function's own
+ *   default (`MAX_TURNS_PER_GAME`, 200) applies. Lets the WP-265 bounded
+ *   sweep run short, terminating games instead of grinding to the safety cap.
  */
 // why (D-19401): both axes are lex-sorted ascending here so iteration order
 // is a deterministic property of the dispatcher rather than the caller. The
@@ -237,6 +241,7 @@ export function sweepSetupMatrix(
   runSeed: string,
   onCellComplete: (cell: SweepCellResult) => void,
   shouldSkipCell?: (schemeId: string, mastermindId: string) => boolean,
+  maxTurns?: number,
 ): void {
   const sortedSchemes = lexSortedCopy(schemeIds);
   const sortedMasterminds = lexSortedCopy(mastermindIds);
@@ -259,12 +264,16 @@ export function sweepSetupMatrix(
     };
     const policies = buildPolicies(cellSeed, playerCount);
 
+    // why: forward maxTurns verbatim; when the caller omits it (undefined),
+    // simulateOneGameAndCaptureMoves applies its own MAX_TURNS_PER_GAME default,
+    // so the omitting sweep path stays byte-identical to today's.
     const captured = simulateOneGameAndCaptureMoves(
       perCellComposition,
       registry,
       policies,
       cellSeed,
       0,
+      maxTurns,
     );
 
     const cell: SweepCellResult = {
