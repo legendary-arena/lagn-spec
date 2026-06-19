@@ -41,7 +41,7 @@ import { createRegistryFromLocalFiles } from '../packages/registry/dist/index.js
 // precedent). `cell.hollowEffects` / `cell.hollowEffectsDropped` are the WP-263
 // sibling fields the dispatcher surfaces off each finished game.
 import { sweepSetupMatrix } from '../packages/game-engine/dist/simulation/sweep.runner.js';
-import { createRandomPolicy } from '../packages/game-engine/dist/simulation/ai.random.js';
+import { createCompetentHeuristicPolicy } from '../packages/game-engine/dist/simulation/ai.competent.js';
 
 // why: __dirname is unavailable in ESM; anchor data + artifact paths to the repo
 // root (one level above scripts/) regardless of the invoking cwd.
@@ -55,51 +55,103 @@ const ARTIFACT_PATH = join(REPO_ROOT, 'docs', 'ai', 'coverage', 'runtime-observe
 // otherwise compare incompatible shapes silently.
 const SCHEMA_VERSION = 1;
 
-// why (the fixed run seed): determinism is load-bearing. A fixed seed through the
-// engine's `ctx.random.*` makes the bounded sweep produce a byte-identical
-// artifact every run, so `--check` can regenerate + diff (the hero-effect-coverage
-// precedent). Changing this re-baselines the artifact.
-const RUN_SEED = 'wp259-runtime-observed-v1';
+// why (the fixed run seed): determinism is load-bearing. A fixed RUN_SEED through
+// the engine's `ctx.random.*` makes the bounded competent sweep produce a
+// byte-identical artifact every run, so `--check` can regenerate + diff (the
+// hero-effect-coverage precedent). Changing this re-baselines the artifact.
+const RUN_SEED = 'wp265-real-v1';
 
 // why: per-seat seeds nest on the per-cell seed via the WP-193 `::seat:`
 // convention (D-19303), so the two-domain PRNG invariant holds at every level.
 const SEAT_SEED_SEPARATOR = '::seat:';
 
-// why (locked matrix — fast per-PR smoke baseline; recorded zero-state):
-// a single 1-player game over a known-valid board, driven by the RANDOM policy
-// so the `:check` stays sub-second and per-PR-affordable. The random policy is
-// PASSIVE — it reveals villains + advances the stage but does not recruit / play
-// / fight — so it executes no declared card abilities and surfaces no runtime
-// hollows on the current baseline: this harness therefore commits a RECORDED
-// ZERO-STATE (summary.* all 0, byMechanic empty). The HQ heroes are drawn from
-// `wwhk` (the set with the most heroes whose declared mechanics reach no handler)
-// so the heavier COMPETENT-PLAY sweep — which drives recruit/play/fight and thus
-// executes those abilities — would surface real hero hollows over this same
-// board. That deeper sweep is multi-minute per game (the real-registry decision
-// cost) and is therefore deferred to a scheduled cron per the D-24035
-// CI-affordability fallback, not run per-PR. Recorded verbatim in
-// generatedFrom.matrixDescription. The composition's schemeId/mastermindId are
-// substituted per cell; the axes hold a single scheme × mastermind (one game).
+// why (the locked competent hero-diverse matrix — real signal, per-PR-affordable):
+// runtime hollows surface only when a competent policy actually recruits / plays /
+// fights (the random policy is too passive), and only for the hero abilities a
+// given board's heroes declare. Measurement (WP-265 re-scope, post-WP-266) showed
+// the signal lever is BOARD/HERO DIVERSITY, not seeds — 40 seeds over one board
+// surface the same single mechanic, while sweeping hero decks across every set
+// surfaces many. So the matrix sweeps one hero-deck board per set (HERO_DECK_SETS)
+// over the known-valid SENTINEL_CORE, each board run over SEEDS_PER_BOARD seeds so
+// its hollow-able abilities are actually drawn + played. maxTurns (WP-264) bounds
+// each game so the whole sweep is ~1 s (39 sets × 8 seeds = 312 competent games,
+// ~2.7 ms each) — well within a per-PR budget, which is why WP-259's per-PR
+// `--check` is kept (no cron). This matrix is a hardcoded locked value — the
+// harness must NEVER read hero-mechanic-ledger.json (or any generated artifact) at
+// runtime; the sets / heroes below were chosen at scaffold time and the
+// distinct-mechanic count plateaus at 16 by 8 seeds.
 const PLAYER_COUNT = 1;
-const BASE_COMPOSITION = {
+
+// why: bounding each competent game (WP-264 / D-24040); 50 is well above the
+// ~20–40 turns a real game runs yet low enough that an unproductive board
+// terminates fast instead of grinding to the 200-turn cap.
+const MAX_TURNS = 50;
+
+// why: a few seeds per board so each board's hollow-able abilities get drawn +
+// played across runs; the distinct-mechanic count plateaus at 8 seeds (8, 16, and
+// 24 seeds all surface 16 mechanics), so 8 is the affordable lock.
+const SEEDS_PER_BOARD = 8;
+
+// why: the known-valid board core every hero-deck set is dropped onto (the only
+// committed valid-board fixture, sentinel-core-doom). Heroes vary per set; scheme /
+// mastermind / villain group / henchman group / supply counts are fixed.
+const SENTINEL_CORE = {
   schemeId: 'core/legacy-virus-the',
   mastermindId: 'core/dr-doom',
   villainGroupIds: ['core/brotherhood'],
   henchmanGroupIds: ['core/savage-land-mutates'],
-  heroDeckIds: [
-    'wwhk/amadeus-cho',
-    'wwhk/gladiator-hulk',
-    'wwhk/hiroim',
-    'wwhk/korg',
-    'wwhk/bruce-banner',
-  ],
   bystandersCount: 12,
   woundsCount: 30,
   officersCount: 16,
   sidekicksCount: 16,
 };
-const SCHEME_IDS = ['core/legacy-virus-the'];
-const MASTERMIND_IDS = ['core/dr-doom'];
+
+// why: the hardcoded hero-deck-set matrix — one board per set, 5 hero IDs each
+// (the first five sorted heroes of each set with >= 5 heroes). Locked at scaffold
+// time, NOT read from hero-mechanic-ledger.json at runtime. Each set's heroes are
+// dropped onto SENTINEL_CORE to form a valid board (all 39 validated at scaffold
+// time with 0 setup failures).
+const HERO_DECK_SETS = [
+  { set: '2099', heroDeckIds: ['2099/doctor-doom-2099', '2099/ghost-rider-2099', '2099/hulk-2099', '2099/ravage-2099', '2099/spider-man-2099'] },
+  { set: '3dtc', heroDeckIds: ['3dtc/black-widow', '3dtc/deadpool', '3dtc/howard-the-duck', '3dtc/hulk', '3dtc/man-thing'] },
+  { set: 'amwp', heroDeckIds: ['amwp/ant-army', 'amwp/ant-man', 'amwp/cassie-lang', 'amwp/freedom-fighters', 'amwp/janet-van-dyne'] },
+  { set: 'anni', heroDeckIds: ['anni/brainstorm', 'anni/fantastic-four-united', 'anni/heralds-of-galactus', 'anni/psi-lord', 'anni/super-skrull'] },
+  { set: 'antm', heroDeckIds: ['antm/ant-man', 'antm/black-knight', 'antm/jocasta', 'antm/wasp', 'antm/wonder-man'] },
+  { set: 'asrd', heroDeckIds: ['asrd/beta-ray-bill', 'asrd/lady-sif', 'asrd/thor', 'asrd/valkyrie', 'asrd/warriors-three-the'] },
+  { set: 'bkpt', heroDeckIds: ['bkpt/general-okoye', 'bkpt/king-black-panther', 'bkpt/princess-shuri', 'bkpt/queen-storm-of-wakanda', 'bkpt/white-wolf'] },
+  { set: 'bkwd', heroDeckIds: ['bkwd/black-widow', 'bkwd/falcon-winter-soldier', 'bkwd/red-guardian', 'bkwd/white-tiger', 'bkwd/yelena-belova'] },
+  { set: 'ca75', heroDeckIds: ['ca75/agent-x-13', 'ca75/captain-america-1941', 'ca75/captain-america-falcon', 'ca75/steve-rogers-director-of-shield', 'ca75/winter-soldier'] },
+  { set: 'chmp', heroDeckIds: ['chmp/gwenpool', 'chmp/ms-marvel', 'chmp/nova', 'chmp/totally-awesome-hulk', 'chmp/viv-vision'] },
+  { set: 'core', heroDeckIds: ['core/black-widow', 'core/captain-america', 'core/cyclops', 'core/deadpool', 'core/emma-frost'] },
+  { set: 'cosm', heroDeckIds: ['cosm/adam-warlock', 'cosm/captain-mar-vell', 'cosm/moondragon', 'cosm/nebula', 'cosm/nova'] },
+  { set: 'cvwr', heroDeckIds: ['cvwr/captain-america-secret-avenger', 'cvwr/cloak-dagger', 'cvwr/daredevil', 'cvwr/falcon', 'cvwr/goliath'] },
+  { set: 'dead', heroDeckIds: ['dead/bob-agent-of-hydra', 'dead/deadpool', 'dead/slapstick', 'dead/solo', 'dead/stingray'] },
+  { set: 'dims', heroDeckIds: ['dims/howard-the-duck', 'dims/jessica-jones', 'dims/man-thing', 'dims/ms-america', 'dims/squirrel-girl'] },
+  { set: 'dkcy', heroDeckIds: ['dkcy/angel', 'dkcy/bishop', 'dkcy/blade', 'dkcy/cable', 'dkcy/colossus'] },
+  { set: 'dstr', heroDeckIds: ['dstr/ancient-one-the', 'dstr/clea', 'dstr/doctor-strange', 'dstr/doctor-voodoo', 'dstr/vishanti-the'] },
+  { set: 'fear', heroDeckIds: ['fear/greithoth-breaker-of-wills', 'fear/kuurth-breaker-of-stone', 'fear/nerkkod-breaker-of-oceans', 'fear/nul-breaker-of-worlds', 'fear/skadi'] },
+  { set: 'ff04', heroDeckIds: ['ff04/human-torch', 'ff04/invisible-woman', 'ff04/mr-fantastic', 'ff04/silver-surfer', 'ff04/thing'] },
+  { set: 'gotg', heroDeckIds: ['gotg/drax-the-destroyer', 'gotg/gamora', 'gotg/groot', 'gotg/rocket-raccoon', 'gotg/star-lord'] },
+  { set: 'mdns', heroDeckIds: ['mdns/blade-daywalker', 'mdns/elsa-bloodstone', 'mdns/morbius', 'mdns/werewolf-by-night', 'mdns/wong-master-of-the-mystic-arts'] },
+  { set: 'mgtg', heroDeckIds: ['mgtg/drax', 'mgtg/gamora', 'mgtg/mantis', 'mgtg/rocket-groot', 'mgtg/star-lord'] },
+  { set: 'msis', heroDeckIds: ['msis/black-panther', 'msis/bruce-banner', 'msis/captain-marvel', 'msis/doctor-strange', 'msis/wanda-vision'] },
+  { set: 'msmc', heroDeckIds: ['msmc/m', 'msmc/multiple-man', 'msmc/rictor', 'msmc/shatterstar', 'msmc/siryn'] },
+  { set: 'msp1', heroDeckIds: ['msp1/black-widow', 'msp1/captain-america', 'msp1/hawkeye', 'msp1/hulk', 'msp1/iron-man'] },
+  { set: 'nmut', heroDeckIds: ['nmut/karma', 'nmut/mirage', 'nmut/sunspot', 'nmut/warlock', 'nmut/wolfsbane'] },
+  { set: 'noir', heroDeckIds: ['noir/angel-noir', 'noir/daredevil-noir', 'noir/iron-man-noir', 'noir/luke-cage-noir', 'noir/spider-man-noir'] },
+  { set: 'pttr', heroDeckIds: ['pttr/black-cat', 'pttr/moon-knight', 'pttr/scarlet-spider', 'pttr/spider-woman', 'pttr/symbiote-spider-man'] },
+  { set: 'rlmk', heroDeckIds: ['rlmk/black-bolt', 'rlmk/crystal', 'rlmk/gorgon', 'rlmk/karnak', 'rlmk/medusa'] },
+  { set: 'rvlt', heroDeckIds: ['rvlt/captain-marvel-agent-of-shield', 'rvlt/darkhawk', 'rvlt/hellcat', 'rvlt/photon', 'rvlt/quicksilver'] },
+  { set: 'shld', heroDeckIds: ['shld/agent-phil-coulson', 'shld/deathlok', 'shld/dum-dum-dugan', 'shld/grant-ward', 'shld/gw-bridge'] },
+  { set: 'smhc', heroDeckIds: ['smhc/happy-hogan', 'smhc/high-tech-spider-man', 'smhc/peter-parker-homecoming', 'smhc/peters-allies', 'smhc/tony-stark'] },
+  { set: 'ssw1', heroDeckIds: ['ssw1/apocalyptic-kitty-pryde', 'ssw1/black-bolt', 'ssw1/black-panther', 'ssw1/captain-marvel', 'ssw1/dr-strange'] },
+  { set: 'ssw2', heroDeckIds: ['ssw2/agent-venom', 'ssw2/arkon-the-magnificent', 'ssw2/beast', 'ssw2/black-swan', 'ssw2/captain-and-the-devil-the'] },
+  { set: 'vill', heroDeckIds: ['vill/bullseye', 'vill/dr-octopus', 'vill/electro', 'vill/enchantress', 'vill/green-goblin'] },
+  { set: 'vnom', heroDeckIds: ['vnom/carnage', 'vnom/venom', 'vnom/venom-rocket', 'vnom/venomized-dr-strange', 'vnom/venompool'] },
+  { set: 'wtif', heroDeckIds: ['wtif/apocalyptic-black-widow', 'wtif/captain-carter', 'wtif/doctor-strange-supreme', 'wtif/gamora-destroyer-of-thanos', 'wtif/killmonger-spec-ops'] },
+  { set: 'wwhk', heroDeckIds: ['wwhk/amadeus-cho', 'wwhk/bruce-banner', 'wwhk/caiera', 'wwhk/gladiator-hulk', 'wwhk/hiroim'] },
+  { set: 'xmen', heroDeckIds: ['xmen/aurora-northstar', 'xmen/banshee', 'xmen/beast', 'xmen/cannonball', 'xmen/colossus-wolverine'] },
+];
 
 // why: a small per-mechanic example cap keeps the artifact compact + the diff
 // stable; examples are sorted deterministically BEFORE truncation so the same
@@ -131,14 +183,19 @@ function emptyByReason() {
 /**
  * Builds the per-seat policy list for one cell using the WP-193 nested seed.
  *
+ * why: the competent-heuristic policy (not the passive random policy) is what
+ * actually recruits / plays / fights, so it executes declared card abilities and
+ * surfaces the runtime hollows this artifact records. Seeded per seat for
+ * determinism.
+ *
  * @param {string} cellSeed - the dispatcher-derived per-cell seed.
  * @param {number} playerCount - seat count.
- * @returns {readonly object[]} one random policy per seat (the fast per-PR path).
+ * @returns {readonly object[]} one competent-heuristic policy per seat.
  */
 function buildPoliciesForCell(cellSeed, playerCount) {
   const policies = [];
   for (let seatIndex = 0; seatIndex < playerCount; seatIndex++) {
-    policies.push(createRandomPolicy(`${cellSeed}${SEAT_SEED_SEPARATOR}${seatIndex}`));
+    policies.push(createCompetentHeuristicPolicy(`${cellSeed}${SEAT_SEED_SEPARATOR}${seatIndex}`));
   }
   return policies;
 }
@@ -157,48 +214,71 @@ function buildPoliciesForCell(cellSeed, playerCount) {
  */
 function harvest(registry) {
   const byMechanic = new Map();
-  let gamesPlayed = 0;
-  let totalObservations = 0;
-  let hollowEffectsDropped = 0;
+  const counters = { gamesPlayed: 0, totalObservations: 0, hollowEffectsDropped: 0 };
   const summaryByReason = emptyByReason();
 
-  sweepSetupMatrix(
-    BASE_COMPOSITION,
-    PLAYER_COUNT,
-    SCHEME_IDS,
-    MASTERMIND_IDS,
-    registry,
-    buildPoliciesForCell,
-    RUN_SEED,
-    (cell) => {
-      gamesPlayed += 1;
-      hollowEffectsDropped += cell.hollowEffectsDropped ?? 0;
-      for (const record of cell.hollowEffects ?? []) {
-        totalObservations += 1;
-        summaryByReason[record.reason] += 1;
-        const entry = byMechanic.get(record.mechanic) ?? {
-          hitCount: 0,
-          lastSeenTurn: 0,
-          byReason: emptyByReason(),
-          examples: [],
-        };
-        entry.hitCount += 1;
-        if (record.turn > entry.lastSeenTurn) {
-          entry.lastSeenTurn = record.turn;
-        }
-        entry.byReason[record.reason] += 1;
-        entry.examples.push({
-          cardId: record.cardId,
-          cardType: record.cardType,
-          timing: record.timing,
-          reason: record.reason,
-        });
-        byMechanic.set(record.mechanic, entry);
+  // why: one aggregation callback shared across every board × seed cell — counts
+  // what each finished game's `cell.hollowEffects` (WP-263) carries; never
+  // re-detects. hollowEffectsDropped is summed so a cap hit becomes a visible
+  // lower bound (guarded to 0 before commit).
+  const aggregateCell = (cell) => {
+    counters.gamesPlayed += 1;
+    counters.hollowEffectsDropped += cell.hollowEffectsDropped ?? 0;
+    for (const record of cell.hollowEffects ?? []) {
+      counters.totalObservations += 1;
+      summaryByReason[record.reason] += 1;
+      const entry = byMechanic.get(record.mechanic) ?? {
+        hitCount: 0,
+        lastSeenTurn: 0,
+        byReason: emptyByReason(),
+        examples: [],
+      };
+      entry.hitCount += 1;
+      if (record.turn > entry.lastSeenTurn) {
+        entry.lastSeenTurn = record.turn;
       }
-    },
-  );
+      entry.byReason[record.reason] += 1;
+      entry.examples.push({
+        cardId: record.cardId,
+        cardType: record.cardType,
+        timing: record.timing,
+        reason: record.reason,
+      });
+      byMechanic.set(record.mechanic, entry);
+    }
+  };
 
-  return { byMechanic, gamesPlayed, totalObservations, hollowEffectsDropped, summaryByReason };
+  // why: sweep one hero-deck board per set over the sentinel core, each board over
+  // SEEDS_PER_BOARD seeds so its hollow-able abilities are actually drawn + played.
+  // Each sweepSetupMatrix call runs the single sentinel scheme × mastermind = one
+  // competent game, bounded by MAX_TURNS (WP-264). The run seed nests the set +
+  // seed index so every game is a distinct, reproducible trajectory (D-19303).
+  for (const board of HERO_DECK_SETS) {
+    const composition = { ...SENTINEL_CORE, heroDeckIds: board.heroDeckIds };
+    for (let seedIndex = 0; seedIndex < SEEDS_PER_BOARD; seedIndex++) {
+      const boardRunSeed = `${RUN_SEED}::${board.set}::seed${seedIndex}`;
+      sweepSetupMatrix(
+        composition,
+        PLAYER_COUNT,
+        [SENTINEL_CORE.schemeId],
+        [SENTINEL_CORE.mastermindId],
+        registry,
+        buildPoliciesForCell,
+        boardRunSeed,
+        aggregateCell,
+        undefined,
+        MAX_TURNS,
+      );
+    }
+  }
+
+  return {
+    byMechanic,
+    gamesPlayed: counters.gamesPlayed,
+    totalObservations: counters.totalObservations,
+    hollowEffectsDropped: counters.hollowEffectsDropped,
+    summaryByReason,
+  };
 }
 
 /**
@@ -261,16 +341,16 @@ function buildArtifact(harvested) {
       runSeed: RUN_SEED,
       gamesPlayed,
       matrixDescription:
-        `policy=random (fast per-PR smoke baseline). Since WP-266's onBegin ` +
-        `parity gives the simulation loop a drawn hand each turn, the random ` +
-        `policy now plays cards and surfaces the runtime hollows those plays ` +
-        `trigger — this is no longer a zero-state, but it is still a shallow ` +
-        `RANDOM-policy sample, not the competent-play coverage WP-265's deferred ` +
-        `cron will provide (the D-24035 CI-affordability fallback). ` +
-        `playerCount=${PLAYER_COUNT}; schemeIds=[${SCHEME_IDS.join(', ')}] × ` +
-        `mastermindIds=[${MASTERMIND_IDS.join(', ')}]; heroes=[${BASE_COMPOSITION.heroDeckIds.join(', ')}]; ` +
-        `villainGroups=[${BASE_COMPOSITION.villainGroupIds.join(', ')}]; ` +
-        `henchmanGroups=[${BASE_COMPOSITION.henchmanGroupIds.join(', ')}]`,
+        `policy=competent-heuristic; maxTurns=${MAX_TURNS}; playerCount=${PLAYER_COUNT}; ` +
+        `seedsPerBoard=${SEEDS_PER_BOARD}; runSeed=${RUN_SEED}. Real signal (WP-265): ` +
+        `the competent policy recruits / plays / fights (enabled by WP-266 onBegin ` +
+        `parity) and surfaces the runtime hollows those plays trigger. The signal ` +
+        `lever is hero/board diversity, not seeds — each hero-deck set below is ` +
+        `swept over the sentinel core × ${SEEDS_PER_BOARD} seeds. sentinelCore: ` +
+        `scheme=${SENTINEL_CORE.schemeId}, mastermind=${SENTINEL_CORE.mastermindId}, ` +
+        `villainGroups=[${SENTINEL_CORE.villainGroupIds.join(', ')}], ` +
+        `henchmanGroups=[${SENTINEL_CORE.henchmanGroupIds.join(', ')}]. heroDeckSets: ` +
+        HERO_DECK_SETS.map((board) => `${board.set}{${board.heroDeckIds.join(', ')}}`).join('; '),
     },
     summary: {
       distinctMechanics: byMechanic.size,

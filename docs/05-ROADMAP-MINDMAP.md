@@ -282,7 +282,7 @@ mindmap
         ["WP-259 ✅ Runtime-observed hollow-effect /coverage overlay (reporting-loop surface 3 of 3; runtime-observed-hollows.mjs drives sweepSetupMatrix + reads cell.hollowEffects off the WP-263 sibling fields → committed canonical artifact + per-PR sim:runtime-observed:check in the hero-effect-coverage job; dashboard /coverage purple 'Observed in play' overlay + 'not observed in play' empty state via build-time-copy; committed artifact = fast random-policy RECORDED ZERO-STATE, heavier competent-play sweep deferred to cron per the CI-affordability fallback; D-24035)"]
         ["WP-260 ✅ Architect-lane gap intake (reporting-loop consumer 3 of 3's architect sibling; useArchitectGapIntake projects useCoverageLedger().runtimeObservedByMechanic → ArchitectGapCandidates folded into the Pipeline Architect lane via an optional 4th useAgentPipeline arg unshifted into architectBacklog only; consumer-owned ArchitectGapProjection D-23901 + single-lane D-23902 + WP-239 triageData backward-compat; fields copy the overlay entry, proposedTargetLayer from a fixed cardType map, reason opaque pass-through D-20703, invents no facts; live overlay zero-state ⇒ empty path; D-24036)"]
         ["WP-264 ✅ Parameterized simulation turn cap (maxTurns option; WP-265 enabler; optional trailing maxTurns default MAX_TURNS_PER_GAME on the six sim entry points runPerTurnLoop/buildGameOutcome/simulateOneGame/simulateOneGameAndCaptureMoves/runSimulation/sweepSetupMatrix → a downstream sweep runs short terminating games instead of grinding to the 200-turn safety cap; PARAM not a result field so field-set drift guards untouched; warm-up shares the same cap for PRNG parity; validity caller-owned no throw/clamp; finalStateHash unchanged replay-guarded; index.ts byte-unchanged; D-24040)"]
-        ["WP-265 📝 Drafted (re-scoped) — Real-signal runtime-observed hollows via a competent hero-diverse per-PR sweep (flips WP-259's /coverage overlay from zero-state to real signal via a competent-heuristic maxTurns-bounded WP-264 hero-diverse sweep — hero decks across many sets over the sentinel core × a few seeds/board, the measured signal lever; enabled by WP-266/D-24043 onBegin parity; RE-SCOPE 2026-06-19 DROPS the weekly cron — measurement showed competent ~4ms/game so the per-PR sim:runtime-observed:check is kept, no runtime-observed-refresh.yml, no ci.yml change; matrix is a hardcoded locked value not a ledger read; 2 files down from 5; no engine edit, dashboard untouched; D-24041 rewritten)"]
+        ["WP-265 ✅ Real-signal runtime-observed hollows via a competent hero-diverse per-PR sweep (flips WP-259's /coverage overlay from zero-state to real signal via a competent-heuristic maxTurns-bounded WP-264 hero-diverse sweep — 39 hero-deck sets over the sentinel core × 8 seeds/board, the measured signal lever; enabled by WP-266/D-24043 onBegin parity; RE-SCOPE 2026-06-19 DROPPED the weekly cron — competent ~2.7ms/game so the per-PR sim:runtime-observed:check is kept, no runtime-observed-refresh.yml, no ci.yml change; matrix is a hardcoded locked value not a ledger read; artifact = 16 mechanics/176 obs/dropped 0/312 games, byte-identical; 2 files; no engine edit, dashboard untouched; D-24041 Active, D-24026 pending deploy)"]
         ["WP-266 ✅ Simulation onBegin parity (WP-265 unblocker; the three observation-only per-turn loops runPerTurnLoop/par.aggregator simulateOneGame/runFixture rotateToNextTurn mirror the play-phase onBegin via ONE shared pure helper applyOnBeginParity = reset villainRevealedThisTurn+hasDrawnThisTurn + auto-draw to HAND_SIZE, rule hooks deferred D-0205, extracted at the third use since runFixture already had it inline WP-212+WP-236 but runner+aggregator did not → empty hand forever, playCard never legal; plus a one-shot reveal gate in getLegalMoves stage==='start' && !villainRevealedThisTurn ending the competent policy's turn-1 infinite re-reveal; game-determinism preserved, replay byte-behavior-identical, finalStateHash unchanged; scaffold-confirmed 1454/1454 + competent sweep surfaces ≥1 hero hollow in ~17ms; regenerates WP-259's runtime-observed-hollows.json off the zero-state; D-24043)"]
 
       Notable Events & Overlays
@@ -418,7 +418,7 @@ mindmap
 | Legends Public Scoreboard | 2/2 | — |
 | Villain Deck Pipeline | 5/5 | — |
 | Villain & Henchman Effects | 11/11 | — |
-| Hero Ability Coverage & Markup Pipeline | 26/27 | 1 open |
+| Hero Ability Coverage & Markup Pipeline | 27/27 | — |
 | Notable Events & Overlays | 4/4 | — |
 | Simulation Sweep & Analytics Pipeline | 7/7 | — |
 | Dashboard & Operator Analytics | 14/14 | — |
@@ -431,9 +431,9 @@ mindmap
 | Next Horizons | 0/4 | 4 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **261/263 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸, 1 open |
+| **Total** | **262/263 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
 
-**Open / blocked WPs (derived from WORK_INDEX, 2):** WP-042.1 ⏸ blocked; WP-265 open.
+**Open / blocked WPs (derived from WORK_INDEX, 1):** WP-042.1 ⏸ blocked.
 <!-- ROADMAP-COUNTS:END -->
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. The table inside the markers above is **generated** by `scripts/roadmap-counts.mjs` (sole writer; D-24001), derived from `WORK_INDEX.md` status × mindmap cluster membership — it is no longer hand-maintained, so it no longer drifts. Status is authoritative from `WORK_INDEX.md`; cluster membership is authoritative from the mindmap nodes above. The generator **fails loudly** on a WORK_INDEX WP with no mindmap node (D-24002), so no work packet can be silently uncounted.
