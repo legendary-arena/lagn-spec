@@ -1,6 +1,6 @@
 # WP-265 — Real-Signal Runtime-Observed Hollows Cron (Bounded Heuristic Sweep + Scheduled Refresh)
 
-**Status:** Draft — pending review. Pre-flight READY; copilot CONFIRM; lint 21/21 (§Pre-Flight & Copilot Verdicts).
+**Status:** Draft — ready for execution after scaffold value selection. Pre-flight READY; copilot CONFIRM; lint 21/21 (§Pre-Flight & Copilot Verdicts). WP-264's `maxTurns` dependency is now met (✅ `main` #396 / `436de971`). The one empirical unknown is the execution-time scaffold lock: execution must first lock `runSeed`, `maxTurns`, the scheme × mastermind matrix, and **explicit board / HQ hero IDs** by an observed run that confirms real signal ≥1 `byMechanic`, `hollowEffectsDropped: 0`, byte-identical re-run, and cron-affordable cost.
 **Primary Layer:** Shared Tooling (`scripts/runtime-observed-hollows.mjs`) **+** CI (`.github/workflows/**`). Two surfaces, one WP — the standard generator-tooling / scheduled-refresh pattern (the D-24002 `roadmap-counts.yml` cron precedent).
 **User-Visible Surface:** `dashboard.legendary-arena.com` — the existing `/coverage` runtime-observed overlay (shipped by WP-259) flips from a recorded **zero-state** to **real signal** (mechanics actually hit during competent simulation play). (D-24026 live-verification applies, post-deploy + post-first-cron-or-execution refresh.)
 **Dependencies:** **WP-264 ✅ / D-24040** (the `maxTurns` sim turn cap — bounded, terminating heuristic games; the enabler this consumes). WP-259 ✅ / D-24035 (the harness `scripts/runtime-observed-hollows.mjs` + the committed artifact + the dashboard `/coverage` overlay + the per-PR `sim:runtime-observed:check` this retires). WP-263 ✅ / D-24039 (the `SweepCellResult.hollowEffects` channel the harness reads). The D-24002 `roadmap-counts.yml` weekly-cron + bot-PR-on-drift precedent.
@@ -37,18 +37,20 @@ After this session, the dashboard `/coverage` runtime-observed overlay shows **r
 
 **`summary.hollowEffectsDropped` MUST be `0` in the committed artifact:** bounded turns (WP-264) keep each game's hollow count well under `HOLLOW_EFFECTS_CAP = 256`; if the deeper matrix risks the cap, reduce the matrix or the per-game bound rather than commit a lower-bound undercount (the WP-259 / §Locked values guard, unchanged).
 
-**Cron, not per-PR (the realized D-24035 fallback):** the competent-play sweep is heavier than a per-PR gate should carry, so its freshness lives in a **scheduled cron** (the D-24002 pattern), and WP-259's per-PR `sim:runtime-observed:check` step is **removed** from the `hero-effect-coverage` job. The cron is **review-gated** — it opens a bot PR on drift; it never commits to `main` or auto-merges. `continue-on-error` on the regen step + the visible-failure invariant (no `|| true` exit-swallowing) per the `roadmap-counts.yml` precedent.
+**Cron, not per-PR (the realized D-24035 fallback):** the competent-play sweep is heavier than a per-PR gate should carry, so its freshness lives in a **scheduled cron** (the D-24002 pattern). WP-259's per-PR `Runtime-observed hollows freshness` (`sim:runtime-observed:check`) step is **removed** from the `hero-effect-coverage` job. The cron is **review-gated** — it opens a bot PR on drift; it never commits to `main` and never auto-merges.
+
+The regen step may be marked `continue-on-error: true` **only** so the workflow can still run its later diff / reporting / PR steps. That does **not** mean a failed regen is tolerated: the workflow must surface a regen failure in the job result (an explicit later failure / reporting step, or the run summary). No `|| true`, no shell exit-code swallowing, no pattern that hides a failed regeneration command — the D-24002 visible-failure invariant per the `roadmap-counts.yml` precedent.
 
 **Execution-time locked values (the requirement, not the literals):** the exact `maxTurns`, the competent-play `runSeed`, the deeper scheme × mastermind matrix, and the board are **execution-time locked values** the executor SETS, RECORDS in `generatedFrom.matrixDescription`, and **scaffold-confirms by an observed run** that (a) surfaces ≥1 `byMechanic` entry (real signal), (b) keeps `hollowEffectsDropped` at `0`, and (c) is CI/cron-affordable (a few minutes, not hours). If no bounded matrix surfaces a hollow OR the run is unaffordable, STOP — that is a WP-264 / board-selection issue, not something to force.
 
-**Dashboard untouched:** the `/coverage` overlay code, types, composable, page, and build-copy (WP-259) are **unchanged** — they already render whatever the artifact carries (real or zero). This packet does not touch `apps/dashboard/**`.
+**Dashboard source untouched:** the `/coverage` overlay code, types, composable, page, and build-copy script (WP-259) are **unchanged** — they already render whatever the artifact carries (real or zero). This packet modifies no tracked dashboard file: `apps/dashboard/src/**` and `apps/dashboard/scripts/**` tracked diff must be **empty**. Verification *does* run `node apps/dashboard/scripts/build-coverage-ledger.mjs`, which regenerates the **gitignored** dashboard-side copy at `apps/dashboard/src/data/runtime-observed-hollows.json` (confirmed gitignored). That copy is touched on disk but stays untracked / absent from `git diff --name-only` — so do not assert that all of `apps/dashboard/**` is byte-unchanged; assert the tracked `src/**` and `scripts/**` diff is empty.
 
 ## Scope (In)
 
 ### A) Harness — the competent-play bounded sweep
 - `scripts/runtime-observed-hollows.mjs` — **modified**: switch the committed-artifact sweep to the **competent-heuristic** policy (`createCompetentHeuristicPolicy` from the engine dist), pass a bounded `maxTurns` (WP-264) into `sweepSetupMatrix`, and use the **deeper** scheme × mastermind matrix + the known-valid hollow-heavy board (the locked values, recorded in `generatedFrom.matrixDescription`). The deterministic serializer, the `cell.hollowEffects` read, the `byReason` closed order, the `--check` contract, and the `hollowEffectsDropped`-must-be-0 guard are all **preserved** from WP-259. (Whether this is a `--deep` flag with the random smoke retained for dev, or the new default, is an execution detail — the locked requirement is: the committed artifact is the competent-play real-signal output.)
 - `docs/ai/coverage/runtime-observed-hollows.json` — **modified (regenerated)**: now carries **real** `byMechanic` entries + a non-zero `summary` (with `hollowEffectsDropped: 0`).
-- `package.json` (root) — **modified**: the `sim:runtime-observed` / `:check` scripts repoint to the competent-play sweep (and/or a `:deep` variant); the random-smoke script is retired or kept as a dev convenience (executor records which).
+- `package.json` (root) — **modified**: `sim:runtime-observed` writes the committed competent-play real-signal artifact. `sim:runtime-observed:check` **may remain** as a local / cron / debug deterministic freshness check — it is simply **no longer invoked by per-PR CI** (the per-PR retirement is a `ci.yml` change, §B; do not delete the script just because the per-PR step is gone). Any retained random-policy smoke script must be clearly named dev-only and must **not** be the committed-artifact path. The executor records the final script contract in the closeout notes.
 
 ### B) CI — retire the per-PR check, add the cron
 - `.github/workflows/ci.yml` — **modified**: **remove** the `Runtime-observed hollows freshness` (`sim:runtime-observed:check`) step from the `hero-effect-coverage` job (WP-259's per-PR gate; superseded by the cron).
@@ -65,46 +67,70 @@ After this session, the dashboard `/coverage` runtime-observed overlay shows **r
 ## Files Expected to Change
 - `scripts/runtime-observed-hollows.mjs` — **modified** — competent-heuristic + bounded-turn (WP-264) + deeper-matrix sweep; serializer / read / guards preserved.
 - `docs/ai/coverage/runtime-observed-hollows.json` — **modified (regenerated)** — real signal; `hollowEffectsDropped: 0`.
-- `package.json` (root) — **modified** — repoint the `sim:runtime-observed` scripts to the competent-play sweep (record the choice).
-- `.github/workflows/ci.yml` — **modified** — remove WP-259's per-PR `sim:runtime-observed:check` step.
-- `.github/workflows/runtime-observed-refresh.yml` — **new** — the weekly cron + bot-PR-on-drift (D-24002 pattern).
+- `package.json` (root) — **modified** — committed-artifact script (`sim:runtime-observed`) points to the competent-play sweep; per-PR CI no longer invokes `sim:runtime-observed:check` (the script may remain for local / cron / debug use).
+- `.github/workflows/ci.yml` — **modified** — remove WP-259's per-PR `Runtime-observed hollows freshness` (`sim:runtime-observed:check`) step.
+- `.github/workflows/runtime-observed-refresh.yml` — **new** — the weekly cron + review-gated bot-PR-on-drift (D-24002 pattern).
 
 Governance at close: `docs/ai/STATUS.md`, `docs/ai/work-packets/WORK_INDEX.md` (WP-265 ✅), `docs/ai/execution-checklists/EC_INDEX.md` (EC-295 Done), `docs/ai/DECISIONS.md` (D-24041 → Active), `docs/05-ROADMAP-MINDMAP.md` (WP-265 node + `node scripts/roadmap-counts.mjs --check`).
 
-No other files modified. `packages/**` diff empty; `data/cards/**` byte-unchanged; `apps/dashboard/**` untouched.
+No other tracked files modified. `packages/**` diff empty; `data/cards/**` byte-unchanged; tracked `apps/dashboard/src/**` and `apps/dashboard/scripts/**` diff empty. The generated dashboard-side copy `apps/dashboard/src/data/runtime-observed-hollows.json` remains gitignored / untracked.
 
 ## Contract
 
-- **The committed artifact** keeps the WP-259 §Contract shape (`schemaVersion: 1`, `generatedFrom { runSeed, gamesPlayed, matrixDescription }`, `summary { distinctMechanics, totalObservations, hollowEffectsDropped, byReason }`, `byMechanic { <mechanic>: { hitCount, lastSeenTurn, byReason, examples } }`) — only the **values** change (real, non-zero; `hollowEffectsDropped: 0`). `byReason` always carries the three closed WP-257 keys in order. `generatedFrom.matrixDescription` records the competent-play policy + `maxTurns` + the matrix + the board (reproducibility).
+- **The committed artifact** keeps the WP-259 §Contract shape exactly (`schemaVersion: 1`, `generatedFrom { runSeed, gamesPlayed, matrixDescription }`, `summary { distinctMechanics, totalObservations, hollowEffectsDropped, byReason }`, `byMechanic { <mechanic>: { hitCount, lastSeenTurn, byReason, examples } }`) — only the **values** change from the WP-259 zero-state to real observed signal. Hard requirements on the committed artifact:
+  - `Object.keys(byMechanic).length >= 1`
+  - `summary.totalObservations >= 1`
+  - `summary.distinctMechanics >= 1`
+  - `summary.hollowEffectsDropped === 0`
+  - `byReason` always carries the three closed WP-257 keys in the locked order: `no-handler`, `unsupported-keyword`, `parse-unrecognized`.
+  - `generatedFrom.matrixDescription` records: policy (`competent-heuristic`), the fixed `runSeed`, `maxTurns`, the scheme IDs, the mastermind IDs, the villain / henchman board configuration, and the **explicit HQ hero IDs** — plus any execution-time matrix narrowing used to keep the run affordable and `hollowEffectsDropped: 0`. Do **not** record shorthand such as "wwhk heroes" as the only board description; reproducibility requires explicit IDs even though the final five-hero selection is an execution-time scaffold choice.
 - **Determinism / drift-gate direction (unchanged from WP-259):** fixed seed + bounded matrix ⇒ byte-identical artifact; a mechanic newly appearing in `byMechanic` (or a `hitCount` rise) is the meaningful signal; a mechanic leaving (its handler implemented) is progress. The **cron** (not a per-PR gate) regenerates + diffs and opens a refresh PR on drift.
-- **The cron** (`runtime-observed-refresh.yml`): weekly + `workflow_dispatch`; `permissions: contents: write, pull-requests: write`; regen under `continue-on-error`; bot PR via `peter-evans/create-pull-request` scoped (`add-paths`) to `docs/ai/coverage/runtime-observed-hollows.json`, branch `bot/runtime-observed-refresh`, **review-gated** (no auto-merge, no direct commit to `main`).
+- **The cron** (`runtime-observed-refresh.yml`): weekly + `workflow_dispatch`; `permissions: contents: write, pull-requests: write`; regen under `continue-on-error` (visible-failure invariant, above); bot PR via `peter-evans/create-pull-request` scoped (`add-paths`) to `docs/ai/coverage/runtime-observed-hollows.json`, branch `bot/runtime-observed-refresh`, **review-gated** (no auto-merge, no direct commit to `main`). The create-PR step must be conditioned on an **artifact diff**, not on arbitrary workspace dirtiness. The PR body must include: the selected policy / seed / `maxTurns` / matrix description from the regenerated artifact; whether the regen command succeeded or failed; the artifact path that changed; and a reminder that the PR is review-gated and not auto-merged — enough context for a reviewer without opening the run logs.
 
 ## Acceptance Criteria
 
 ### A) Real-signal harness + artifact
-- [ ] The harness runs a **competent-heuristic**, **`maxTurns`-bounded** (WP-264), deeper-matrix sweep over the known-valid hollow-heavy board, reads `cell.hollowEffects` (WP-263), and writes `runtime-observed-hollows.json` with **≥1 real `byMechanic` entry** and `summary.hollowEffectsDropped: 0`. (If no bounded matrix surfaces a hollow at an affordable cost, STOP — board/`maxTurns` issue.)
-- [ ] Two runs with the same seed produce a **byte-identical** artifact (determinism — the seeded heuristic); the serializer (sorted keys, closed-order `byReason`, sorted/bounded `examples`) is preserved from WP-259.
-- [ ] `generatedFrom.matrixDescription` records the policy (competent-heuristic), `maxTurns`, the matrix, and the board (reproducibility).
-- [ ] The harness reads the channel; it does NOT re-detect; `packages/**` diff empty.
+- [ ] `scripts/runtime-observed-hollows.mjs` uses `createCompetentHeuristicPolicy` for the committed-artifact path and passes a bounded `maxTurns` (WP-264) into `sweepSetupMatrix`, sweeping the deeper matrix over the known-valid hollow-heavy board.
+- [ ] The harness **reads** `cell.hollowEffects` / `cell.hollowEffectsDropped` (WP-263); it does **not** re-detect hollow mechanics from card text or outcomes; `packages/**` diff empty.
+- [ ] The committed artifact has `schemaVersion: 1`, `Object.keys(byMechanic).length >= 1`, `summary.totalObservations >= 1`, `summary.distinctMechanics >= 1`, and `summary.hollowEffectsDropped === 0`. (If no bounded matrix surfaces a hollow at an affordable cost, STOP — board/`maxTurns` issue.)
+- [ ] The WP-259 deterministic serializer is preserved: sorted `byMechanic` keys, closed-order `byReason`, sorted-then-bounded `examples`, two-space indent, one trailing newline.
+- [ ] Two consecutive `pnpm sim:runtime-observed` runs with the same selected values produce a **byte-identical** artifact.
+- [ ] `generatedFrom.matrixDescription` records policy (`competent-heuristic`), `runSeed`, `maxTurns`, the matrix, and **explicit board / HQ hero IDs** (no "wwhk heroes" shorthand).
 
 ### B) Cron + CI
-- [ ] WP-259's per-PR `sim:runtime-observed:check` step is removed from the `hero-effect-coverage` job.
-- [ ] `runtime-observed-refresh.yml` is a weekly + `workflow_dispatch` cron that builds, regenerates, and opens a **review-gated** `bot/runtime-observed-refresh` PR scoped to the artifact on drift (the D-24002 pattern); no auto-merge / no direct-to-main; `continue-on-error` on regen; no exit-code-swallowing.
+- [ ] `.github/workflows/ci.yml` no longer invokes `sim:runtime-observed:check` in the per-PR `hero-effect-coverage` job.
+- [ ] `.github/workflows/runtime-observed-refresh.yml` supports both `workflow_dispatch` and a weekly `schedule`.
+- [ ] The refresh workflow installs, builds, regenerates the artifact, detects **artifact drift** (not arbitrary dirtiness), and opens a review-gated PR on branch `bot/runtime-observed-refresh` scoped to `docs/ai/coverage/runtime-observed-hollows.json` (the D-24002 pattern).
+- [ ] The cron never commits directly to `main`, never auto-merges, and modifies no file beyond the artifact.
+- [ ] Regen failure remains **visible** (explicit failure / reporting step or run summary); no `|| true` / exit-code-swallowing.
 
 ### C) Boundaries / unchanged surfaces
-- [ ] `packages/**` diff empty (no engine edit); `data/cards/**` byte-unchanged; `apps/dashboard/**` untouched (the overlay renders the new values unchanged).
-- [ ] `git diff --name-only` shows only the five Files Expected to Change + governance (the gitignored `src/data/runtime-observed-hollows.json` correctly absent).
+- [ ] `packages/**` diff empty (no engine edit); `data/cards/**` byte-unchanged.
+- [ ] Tracked `apps/dashboard/src/**` and `apps/dashboard/scripts/**` diff empty (the overlay renders the new values unchanged).
+- [ ] `git diff --name-only` shows only the five Files Expected to Change + governance; the generated dashboard-side copy `apps/dashboard/src/data/runtime-observed-hollows.json` remains gitignored / untracked.
 
 ## Verification Steps
 
 ```pwsh
 pnpm -r build                                          # exits 0 (produces the dist the harness imports)
-pnpm sim:runtime-observed                              # writes the real-signal artifact (≥1 byMechanic; hollowEffectsDropped 0)
-pnpm sim:runtime-observed                              # re-run is byte-identical (determinism)
-node apps/dashboard/scripts/build-coverage-ledger.mjs  # copies the real-signal artifact into src/data
+
+pnpm sim:runtime-observed                              # writes the real-signal artifact
+$hash1 = (Get-FileHash docs/ai/coverage/runtime-observed-hollows.json -Algorithm SHA256).Hash
+
+# Mechanical JSON sanity gate: real signal + dropped 0 (binary, no eyeballing)
+node -e "const fs=require('node:fs'); const p='docs/ai/coverage/runtime-observed-hollows.json'; const j=JSON.parse(fs.readFileSync(p,'utf8')); if(Object.keys(j.byMechanic ?? {}).length < 1) throw new Error('expected >=1 byMechanic entry'); if((j.summary?.totalObservations ?? 0) < 1) throw new Error('expected totalObservations >=1'); if((j.summary?.distinctMechanics ?? 0) < 1) throw new Error('expected distinctMechanics >=1'); if(j.summary?.hollowEffectsDropped !== 0) throw new Error('expected hollowEffectsDropped 0'); console.log('runtime-observed artifact sanity ok')"
+
+pnpm sim:runtime-observed                              # re-run
+$hash2 = (Get-FileHash docs/ai/coverage/runtime-observed-hollows.json -Algorithm SHA256).Hash
+if ($hash1 -ne $hash2) { throw "runtime-observed artifact is not byte-identical across runs" }
+
+node apps/dashboard/scripts/build-coverage-ledger.mjs  # copies the real-signal artifact into the gitignored src/data
 pnpm --filter @legendary-arena/dashboard test          # all pass (the overlay join still green with real data)
 pnpm --filter @legendary-arena/dashboard typecheck     # vue-tsc 0
-git diff --name-only -- packages/ data/cards/ apps/dashboard/src/   # empty (no engine/card/dashboard-src change)
+
+# Forbidden-scope guard: no engine / card / dashboard-src / dashboard-scripts change
+git diff --name-only -- packages/ data/cards/ apps/dashboard/src/ apps/dashboard/scripts/   # empty
+node scripts/roadmap-counts.mjs --check                # mindmap node counts in sync
 ```
 
 Live (D-24026, **post-deploy**): on `dashboard.legendary-arena.com /coverage`, confirm the runtime-observed overlay now shows **real "Observed in play"** counts (a purple badge with a hitCount + reason) for ≥1 mechanic the sweep encountered as hollow — the zero-state empty state no longer applies to those rows. (Operator-viewed; the dashboard is Cloudflare-Access-gated, so bundle-content fetch is not available — see the dashboard memory.)
@@ -134,14 +160,29 @@ All 21 sections resolved (PASS or justified N/A):
 
 > **Drafting status (per 01.0a):** WP + EC-295 written; pre-flight READY; copilot CONFIRM; lint 21/21; D-24041 reserved; session prompt written. **Sequencing:** WP-264 must land first (the harness passes its `maxTurns`); then WP-265.
 
+## Executor Stop Conditions
+
+STOP and return for packet revision if any of the following is required to proceed:
+
+- editing `packages/**`;
+- editing `data/cards/**`;
+- editing a tracked dashboard source or script file (`apps/dashboard/src/**`, `apps/dashboard/scripts/**`);
+- adding a dependency;
+- committing an artifact with `byMechanic = {}` (zero-state) or `summary.hollowEffectsDropped > 0` (undercount);
+- using unseeded randomness, clock time, network data, timestamps, or unordered serializer output anywhere on the artifact path;
+- making the runtime-observed sweep a per-PR gate again;
+- creating a cron that commits directly to `main`, auto-merges, hides regen failure, or opens a PR touching files outside `docs/ai/coverage/runtime-observed-hollows.json`.
+
+Do not force a zero artifact, commit an undercount, modify the engine, or broaden scope to get past any of these — each is a boundary that means the packet (or a predecessor) needs revision, not a workaround.
+
 ## Definition of Done
 
 ### Pre-merge Done
 - [ ] All acceptance criteria pass
 - [ ] `pnpm -r build` 0; `pnpm sim:runtime-observed` writes a real-signal artifact (≥1 `byMechanic`, `hollowEffectsDropped: 0`), byte-identical on re-run; dashboard `test` 0; dashboard `typecheck` 0
-- [ ] `packages/**` diff empty; `data/cards/**` byte-unchanged; `apps/dashboard/**` untouched
-- [ ] WP-259's per-PR `sim:runtime-observed:check` step removed; `runtime-observed-refresh.yml` cron added (review-gated bot PR; `continue-on-error` regen; no exit-swallowing)
-- [ ] No files outside `## Files Expected to Change` modified (the gitignored `src/data` copy correctly absent)
+- [ ] `packages/**` diff empty; `data/cards/**` byte-unchanged; tracked `apps/dashboard/src/**` and `apps/dashboard/scripts/**` diff empty
+- [ ] WP-259's per-PR `Runtime-observed hollows freshness` (`sim:runtime-observed:check`) step removed; `runtime-observed-refresh.yml` cron added (review-gated bot PR; `continue-on-error` regen with visible-failure surfacing; no exit-swallowing)
+- [ ] No files outside `## Files Expected to Change` modified (the gitignored `apps/dashboard/src/data/runtime-observed-hollows.json` copy correctly absent from the diff)
 - [ ] `docs/ai/work-packets/WORK_INDEX.md` WP-265 ✅; `docs/ai/execution-checklists/EC_INDEX.md` EC-295 Done; `docs/05-ROADMAP-MINDMAP.md` WP-265 node; `node scripts/roadmap-counts.mjs --check` passes
 - [ ] `docs/ai/DECISIONS.md` D-24041 → Active
 - [ ] `docs/ai/STATUS.md` records the change with **D-24026 pending deploy verification** (the overlay flips to real signal)
