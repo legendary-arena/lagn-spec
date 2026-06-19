@@ -11,6 +11,7 @@ tags:
   - brevo
   - designer-reference
 related:
+  - hugo-onboarding.md
   - architecture-inventory.md
   - wiki-viewer.md
   - brevo-email-pipeline.md
@@ -30,6 +31,11 @@ source:
   - C:\www\legendary-arena-com\themes\PaperMod\layouts\_partials\head.html
 last-reviewed: 2026-06-18
 ---
+
+> 👋 **New to this codebase?** Start with
+> [Hugo Onboarding](hugo-onboarding.md) — local setup, the
+> WordPress→Hugo mental model, and step-by-step recipes for common
+> tasks. This page is the deep technical reference it ramps into.
 
 ## Repository base URLs
 
