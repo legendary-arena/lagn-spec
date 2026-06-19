@@ -39,6 +39,7 @@ import { getLegalMoves } from './ai.legalMoves.js';
 import { computeFinalScores } from '../scoring/scoring.logic.js';
 import { evaluateEndgame } from '../endgame/endgame.evaluate.js';
 import { resetTurnEconomy } from '../economy/economy.logic.js';
+import { applyOnBeginParity } from './onBeginParity.js';
 
 // Move function imports — these files import boardgame.io types internally,
 // but this file does NOT import boardgame.io directly. Same dispatch pattern
@@ -338,6 +339,15 @@ function runPerTurnLoop(
   let endgameReached = false;
   let endgameWinner: EndgameOutcome | null = null;
 
+  // why (WP-266): the real onBegin runs at the start of every turn including
+  // turn 1; mirror it before the first move-step so the opening hand is drawn
+  // (buildInitialGameState defers the opening draw to onBegin, which this
+  // observation-only loop never runs). Without this the bot hand stays empty
+  // forever and playCard is never legal.
+  applyOnBeginParity(gameState, currentPlayer, {
+    random: { Shuffle: <T>(deck: T[]): T[] => shuffleWithPrng(deck, nextRandom) },
+  });
+
   while (turnsElapsed < maxTurns) {
     const endgameResult = evaluateEndgame(gameState);
     if (endgameResult !== null) {
@@ -442,6 +452,12 @@ function runPerTurnLoop(
       turnsElapsed += 1;
       gameState.currentStage = 'start';
       gameState.turnEconomy = resetTurnEconomy();
+      // why (WP-266): mirror the rest of onBegin for the incoming player —
+      // reset the once-per-turn flags and auto-draw their hand to HAND_SIZE so
+      // the next turn can actually play cards.
+      applyOnBeginParity(gameState, currentPlayer, {
+        random: { Shuffle: <T>(deck: T[]): T[] => shuffleWithPrng(deck, nextRandom) },
+      });
     }
   }
 

@@ -28,9 +28,11 @@ function makeG(overrides: {
   inPlay?: CardExtId[];
   currentStage?: LegendaryGameState['currentStage'];
   pendingKoHeroChoices?: PendingKoHeroChoice[];
+  villainRevealedThisTurn?: boolean;
 }): LegendaryGameState {
   return {
     currentStage: overrides.currentStage ?? 'main',
+    villainRevealedThisTurn: overrides.villainRevealedThisTurn ?? false,
     playerZones: {
       '0': {
         deck: [],
@@ -173,5 +175,30 @@ describe('getLegalMoves — pending optional-KO-reward short-circuit (WP-248 / D
     const names = legalMoves.map((m) => m.name);
     assert.equal(names.includes('resolveOptionalKoReward'), false, 'absent when not pending');
     assert.equal(names.includes('playCard'), true, 'normal main-stage moves enumerated');
+  });
+});
+
+describe('getLegalMoves — once-per-turn reveal gate (WP-266)', () => {
+  test('offers revealVillainCard at the start stage when the reveal allowance is unspent', () => {
+    const gameState = makeG({ currentStage: 'start', villainRevealedThisTurn: false });
+    const names = getLegalMoves(gameState, CONTEXT).map((m) => m.name);
+    assert.equal(
+      names.includes('revealVillainCard'),
+      true,
+      'reveal is offered while villainRevealedThisTurn is false',
+    );
+  });
+
+  test('suppresses revealVillainCard at the start stage once the reveal allowance is spent', () => {
+    const gameState = makeG({ currentStage: 'start', villainRevealedThisTurn: true });
+    const names = getLegalMoves(gameState, CONTEXT).map((m) => m.name);
+    assert.equal(
+      names.includes('revealVillainCard'),
+      false,
+      'reveal is gated out once villainRevealedThisTurn is true (mirrors the move-level guard)',
+    );
+    // why: the gate must not strand the turn — advanceStage stays available so
+    // the bot can progress to main after its single start-stage reveal.
+    assert.equal(names.includes('advanceStage'), true, 'advanceStage remains available');
   });
 });

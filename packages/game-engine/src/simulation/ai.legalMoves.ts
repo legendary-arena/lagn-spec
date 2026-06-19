@@ -197,8 +197,12 @@ export function getLegalMoves(
     }
   }
 
-  // 5. revealVillainCard — one entry if stage === 'start'.
-  if (stage === 'start') {
+  // 5. revealVillainCard — one entry if stage === 'start' AND the once-per-turn
+  //    reveal allowance has not been consumed. The !villainRevealedThisTurn
+  //    guard mirrors the move-level guard in villainDeck.reveal.ts so a bot
+  //    policy that scores reveal highly cannot re-pick a guaranteed no-op reveal
+  //    every move-step and spin the turn forever (never advancing to 'main').
+  if (stage === 'start' && !gameState.villainRevealedThisTurn) {
     legalMoves.push({ name: 'revealVillainCard', args: {} });
   }
 

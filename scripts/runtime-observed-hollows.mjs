@@ -261,10 +261,12 @@ function buildArtifact(harvested) {
       runSeed: RUN_SEED,
       gamesPlayed,
       matrixDescription:
-        `policy=random (fast per-PR smoke baseline; RECORDED ZERO-STATE — the ` +
-        `passive random policy executes no declared card abilities, so it surfaces ` +
-        `no runtime hollows; the heavier competent-play sweep over this board is ` +
-        `deferred to a scheduled cron per the D-24035 CI-affordability fallback). ` +
+        `policy=random (fast per-PR smoke baseline). Since WP-266's onBegin ` +
+        `parity gives the simulation loop a drawn hand each turn, the random ` +
+        `policy now plays cards and surfaces the runtime hollows those plays ` +
+        `trigger — this is no longer a zero-state, but it is still a shallow ` +
+        `RANDOM-policy sample, not the competent-play coverage WP-265's deferred ` +
+        `cron will provide (the D-24035 CI-affordability fallback). ` +
         `playerCount=${PLAYER_COUNT}; schemeIds=[${SCHEME_IDS.join(', ')}] × ` +
         `mastermindIds=[${MASTERMIND_IDS.join(', ')}]; heroes=[${BASE_COMPOSITION.heroDeckIds.join(', ')}]; ` +
         `villainGroups=[${BASE_COMPOSITION.villainGroupIds.join(', ')}]; ` +
