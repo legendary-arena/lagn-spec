@@ -10,7 +10,7 @@ Authoritative execution contract for WP-268. Compliance is binary.
 ---
 
 ## Before Starting
-- [ ] On `main`, clean, ff-synced to `f40480b3` (or later). `pnpm -r build` + `pnpm --filter @legendary-arena/game-engine test` + `pnpm ledger:heroes:check` + `pnpm sim:coverage --check` all 0.
+- [ ] On `main`, clean, ff-synced (re-baseline to current `origin/main`; WP-269 landed via #412). `pnpm -r build` + `pnpm --filter @legendary-arena/game-engine test` + `pnpm ledger:heroes:check` + `pnpm sim:coverage --check` + `pnpm mechanics:metadata:check` all 0. (The last is WP-269's feed gate — this ledger is now its input; baseline-green confirms the starting point.)
 - [ ] Read `setup/heroAbility.setup.ts`: the `parseAbilityText` locals + return shape (where `unresolvedMarkers` is declared/returned), the TWO composition-resolve branches (static `HERO_COMPOSITION_MARKERS[name]` push; parameterized `empowered` push), and the `buildHeroAbilityHooks` assembly (where `hook.unresolvedMarkers` is conditionally assigned).
 - [ ] Read `scripts/hero-effect-coverage.mjs` — the per-hero `buildHeroAbilityHooks(registry, { heroDeckIds: [extId] })` + `deduplicateHooks` drive (the pattern the ledger mirrors).
 - [ ] Read `scripts/hero-mechanic-ledger.mjs` `buildLedger` + `statusForMechanic` + `handlerForMechanic` (today by-name; becomes per-card for composition markers).
@@ -57,9 +57,12 @@ Authoritative execution contract for WP-268. Compliance is binary.
 - `packages/game-engine/src/setup/heroAbility.setup.ts` — **modified** — declare/return `resolvedMarkers`; push in the two resolve branches; conditional-assign in `buildHeroAbilityHooks`.
 - `packages/game-engine/src/rules/heroAbility.setup.test.ts` — **modified** — resolved (berserk + empowered core) / deferred (empowered variant) / non-composition coverage.
 - `scripts/hero-mechanic-ledger.mjs` — **modified** — per-hero hook build + by-hook `statusForMechanic` for composition markers.
-- `docs/ai/coverage/hero-mechanic-ledger.json` + `.csv` — **regenerated** (deferred-variant composition cards flip `executable → unsupported`).
-- (NO coverage-probe / `hero-effect-coverage.baseline.json` / interpreter / executor / `index.ts` / dashboard-source / replay-hash files.)
-- Governance: `STATUS.md`, `DECISIONS.md` (D-24045), `WORK_INDEX.md` (WP-268 ✅), `EC_INDEX.md` (EC-299 Done), `05-ROADMAP-MINDMAP.md`.
+- `docs/ai/coverage/hero-mechanic-ledger.json` — **regenerated** (deferred-variant composition cards flip `executable → unsupported`).
+- `docs/ai/coverage/hero-mechanic-ledger.csv` — **regenerated** (same flips; byte-stable).
+- (NO coverage-probe / `hero-effect-coverage.baseline.json` / interpreter / executor / `index.ts` / dashboard-source / replay-hash files. **NO `data/metadata/card-mechanics.json`** — WP-269's feed; this WP only verifies it stays fresh, see After Completing.)
+- Governance: `STATUS.md`, `DECISIONS.md` (D-24045), `WORK_INDEX.md` (WP-268 ✅), `EC_INDEX.md` (EC-299 Done), `05-ROADMAP-MINDMAP.md` (**update** the existing WP-268 node `📝 → ✅`, backfilled by #413 — do not add a second).
+
+**6 implementation/artifact files + 5 governance** (the JSON + CSV are two files; `git diff` is file-based).
 
 ---
 
@@ -68,8 +71,9 @@ Authoritative execution contract for WP-268. Compliance is binary.
 - [ ] Parser: a resolved composition → `hook.resolvedMarkers` has the marker; a deferred empowered variant → `hook.resolvedMarkers` excludes it + `hook.unresolvedMarkers` includes it; a legacy keyword line → `resolvedMarkers` absent.
 - [ ] `pnpm ledger:heroes` then `:check` OK; run twice → byte-identical. **Inspect the diff:** bkpt/wtif deferred `empowered` rows flip `executable → unsupported`; antm core-form `empowered` + all `berserk` rows stay `executable`; no keyword mechanic's status moves; record the executable-count delta (est. ~126 → ~122).
 - [ ] `pnpm sim:coverage --check` OK and `git diff --name-only -- scripts/coverage/hero-effect-coverage.baseline.json scripts/hero-effect-coverage.mjs` empty (probe untouched).
+- [ ] `pnpm mechanics:metadata:check` OK (WP-269's feed is status-independent — reads only `row.extId`+`row.mechanic`; a status-only ledger regen must not drift it); `git diff --name-only -- data/metadata/card-mechanics.json` empty (the feed is WP-269's artifact — a diff or red check = unexpected coupling, STOP).
 - [ ] `git diff --name-only -- data/cards/ packages/game-engine/src/hero/ packages/game-engine/src/index.ts apps/` empty; sentinel `finalStateHash` unchanged.
-- [ ] `git diff --name-only` = the 5 Files to Produce + governance (gitignored dashboard `src/data/*.json` absent).
+- [ ] `git diff --name-only` = exactly the 11-path allowlist (6 implementation/artifact + 5 governance; gitignored dashboard `src/data/*.json` + `data/metadata/card-mechanics.json` absent).
 - [ ] `docs/ai/DECISIONS.md` D-24045 → Active; STATUS records the WP-267 over-claim resolved + **D-24026 pending deploy verification**.
 - [ ] `WORK_INDEX.md` WP-268 ✅; `EC_INDEX.md` EC-299 Done; `05-ROADMAP-MINDMAP.md` WP-268 node; `node scripts/roadmap-counts.mjs --check` 0.
 
@@ -84,3 +88,4 @@ Authoritative execution contract for WP-268. Compliance is binary.
 - A deferred empowered card still shows `executable` in the ledger → the ledger still classifies by-name (didn't build hooks / didn't read `resolvedMarkers`).
 - `berserk` flipped to `unsupported` → the resolve branch for the static composition didn't push `resolvedMarkers` (berserk always resolves, so it must stay executable).
 - `data/cards/**` or `index.ts` in the diff → re-marking or a barrel edit crept in; revert.
+- `data/metadata/card-mechanics.json` in the diff, or `mechanics:metadata:check` goes red → unexpected coupling to WP-269's feed. The feed reads only `row.extId`+`row.mechanic` and drops `status`, so a status-only ledger regen must not move it. STOP and find what changed beyond status (a row added/removed, an extId/mechanic renamed); do not commit the feed.

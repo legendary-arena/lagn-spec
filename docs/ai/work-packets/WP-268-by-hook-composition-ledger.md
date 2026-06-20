@@ -1,9 +1,9 @@
 # WP-268 — By-Hook Composition Ledger (Honest Per-Card Resolution via Parser `resolvedMarkers`)
 
-**Status:** Draft — pending review.
+**Status:** Reviewed — ready to execute (tightened + re-gated 2026-06-20: file-count 5→6 fix, explicit 11-path diff allowlist, softened the "no other files" boundary, ledger absence=`unsupported`-not-`deferred` clarification, duplicate-marker Set note, and the **`mechanics:metadata:check` cross-gate** — WP-269's feed now consumes this ledger). Must merge before WP-268 execution opens.
 **Primary Layer:** Game Engine (`packages/game-engine/src/rules/**`, `setup/**`) + Lever-3 tooling (`scripts/hero-mechanic-ledger.mjs`, `docs/ai/coverage/**`).
 **Dependencies:** WP-257 ✅ (the `unresolvedMarkers` hook field this mirrors), WP-256 ✅ / D-24031 (the static composition markers), WP-267 ✅ / D-24044 (the first parameterized composition — the mechanic that exposed the by-name over-claim), WP-250 ✅ (the coverage probe whose `buildHeroAbilityHooks(registry, { heroDeckIds: [extId] })` per-hero drive the ledger mirrors).
-**Baseline:** `origin/main` @ `f40480b3`.
+**Baseline:** `origin/main` @ `f40480b3` at draft; re-baseline to current `origin/main` at execution (WP-269 landed via #412; its `mechanics:metadata:check` feed gate is now in CI — see Assumes).
 **User-Visible Surface:** dashboard.legendary-arena.com/coverage — the By-card view stops marking deferred-variant composition cards as Executable; the By-mechanic + KPI counts drop to the honest per-card number.
 
 ---
@@ -18,7 +18,8 @@ After this session, the hero mechanic ledger classifies a **composition-marker**
 - **WP-256 ✅ / WP-267 ✅** — composition markers resolve in two parser branches in `setup/heroAbility.setup.ts`: the static branch (`HERO_COMPOSITION_MARKERS[name]` → `primitiveEffects.push(structuredClone(...))`) and the parameterized branch (`empowered` → `buildEmpoweredComposition` on an anchored tail). Both are where `resolvedMarkers.push(name)` belongs.
 - **WP-250 ✅** — `scripts/hero-effect-coverage.mjs` already drives `buildHeroAbilityHooks(registry, { heroDeckIds: [extId] })` per hero + `deduplicateHooks`; this WP mirrors that hook-building in the ledger (which today only regex-extracts `[keyword:X]` tokens and classifies by-name).
 - **Ledger structure** — `scripts/hero-mechanic-ledger.mjs` `buildLedger` iterates heroes (`registry.listCards()` filtered to `cardType === 'hero'`) → `extractMechanics(abilities)` → `statusForMechanic(mechanic)` per (card × mechanic). `statusForMechanic` is mechanic-keyed today; this WP makes it per-card for composition markers.
-- **Baseline:** `origin/main` @ `f40480b3`; `pnpm -r build`, `pnpm --filter @legendary-arena/game-engine test`, `pnpm ledger:heroes:check`, `pnpm sim:coverage --check` all green.
+- **Baseline:** `origin/main` @ `f40480b3` at draft; **re-baseline to current `origin/main` at execution** (WP-269 has since landed via #412). `pnpm -r build`, `pnpm --filter @legendary-arena/game-engine test`, `pnpm ledger:heroes:check`, `pnpm sim:coverage --check` all green.
+- **WP-269 ✅ (landed since this WP drafted) — the ledger now has a SECOND consumer.** `scripts/build-card-mechanics-metadata.mjs` (WP-269's feed transform) reads `docs/ai/coverage/hero-mechanic-ledger.json` to build `data/metadata/card-mechanics.json`, CI-gated by `mechanics:metadata:check`. Verified this session: the transform reads ONLY `row.extId` + `row.mechanic` (zero `status` references), so this WP's status-only regen does NOT change the feed and `mechanics:metadata:check` stays green. This WP MUST run that check (Verification) and MUST NOT commit `data/metadata/card-mechanics.json` — a red check or a feed diff signals an unexpected coupling and is a STOP.
 
 ## Context (Read First)
 
@@ -69,7 +70,8 @@ The parser already records which composition markers FAILED to resolve (`unresol
 ### C) By-hook ledger — `scripts/hero-mechanic-ledger.mjs` (modified)
 - Import `buildHeroAbilityHooks` from the engine `dist` (mirror the coverage probe) + reuse the existing `deduplicateHooks` shape if needed.
 - In `buildLedger`, per hero `extId`: build `hooks = buildHeroAbilityHooks(registry, { heroDeckIds: [extId] })`; aggregate a `cardResolvedMarkers` `Set` from each hook's `resolvedMarkers ?? []`.
-- `statusForMechanic(mechanic, cardResolvedMarkers)`: composition-marker branch → `cardResolvedMarkers.has(mechanic) ? 'executable' : 'unsupported'`. `MVP_KEYWORDS`/`KNOWN_KEYWORDS`/`unmarked` paths unchanged.
+- `statusForMechanic(mechanic, cardResolvedMarkers)`: composition-marker branch → `cardResolvedMarkers.has(mechanic) ? 'executable' : 'unsupported'`. `MVP_KEYWORDS`/`KNOWN_KEYWORDS`/`unmarked` paths unchanged. **Absence from `cardResolvedMarkers` is intentionally `unsupported`, NOT `deferred`** — a composition-marker row represents executable support (a resolved primitive), not mere parser recognition; a deferred composition variant has no executable primitive yet, so `unsupported` is the honest status (matching the by-hook coverage probe + the runtime hollow detector). Do not reach for the `KNOWN_KEYWORDS`-style `deferred` here.
+- **Duplicate-marker safety:** multiple hooks on one card may resolve the same marker; `cardResolvedMarkers` is a `Set`, so duplicate hook-level `resolvedMarkers` collapse — no duplicate ledger rows, no byte-stability impact.
 - `handlerForMechanic` already returns the interpreter module for an executable composition marker — a now-`unsupported` composition row correctly returns `''` (handled by the `status !== 'executable'` guard).
 
 ### D) Tests — `rules/heroAbility.setup.test.ts` (modified)
@@ -93,15 +95,40 @@ The parser already records which composition markers FAILED to resolve (`unresol
 ---
 
 ## Files Expected to Change
+
+**6 implementation/artifact files + 5 governance files** (`git diff` is file-based, so the regenerated JSON + CSV count as two).
+
+### Implementation / generated artifacts (6)
 - `packages/game-engine/src/rules/heroAbility.types.ts` — **modified** — `resolvedMarkers?: string[]` on `HeroAbilityHook`.
 - `packages/game-engine/src/setup/heroAbility.setup.ts` — **modified** — emit `resolvedMarkers` in the two resolve branches + return + assembly.
 - `packages/game-engine/src/rules/heroAbility.setup.test.ts` — **modified** — `resolvedMarkers` resolved/deferred/non-composition coverage.
 - `scripts/hero-mechanic-ledger.mjs` — **modified** — build hooks per hero; `statusForMechanic` by-hook for composition markers.
-- `docs/ai/coverage/hero-mechanic-ledger.json` + `.csv` — **regenerated**.
+- `docs/ai/coverage/hero-mechanic-ledger.json` — **regenerated** — deferred-variant composition rows flip `executable → unsupported`; resolved rows stay `executable`.
+- `docs/ai/coverage/hero-mechanic-ledger.csv` — **regenerated** — same flips; byte-stable across runs.
 
-Governance at close: `docs/ai/STATUS.md`, `docs/ai/DECISIONS.md` (**D-24045**), `docs/ai/work-packets/WORK_INDEX.md` (WP-268 ✅), `docs/ai/execution-checklists/EC_INDEX.md` (EC-299 Done), `docs/05-ROADMAP-MINDMAP.md` (WP-268 node).
+### Governance closeout (5)
+- `docs/ai/STATUS.md` — WP-268 done + the WP-267 by-name over-claim resolved (D-24026 live-verify pending post-deploy).
+- `docs/ai/DECISIONS.md` — D-24045 → Active.
+- `docs/ai/work-packets/WORK_INDEX.md` — WP-268 ✅.
+- `docs/ai/execution-checklists/EC_INDEX.md` — EC-299 Done.
+- `docs/05-ROADMAP-MINDMAP.md` — **update** the existing WP-268 node `📝 → ✅` (the node was backfilled by #413 — do NOT add a second) + regenerate the count table via `roadmap-counts.mjs --write`.
 
-No other files may be modified. **No coverage-probe / interpreter / executor / `data/cards` / barrel / dashboard-source change.**
+### Explicit final-diff allowlist (exactly these 11 paths)
+```
+packages/game-engine/src/rules/heroAbility.types.ts
+packages/game-engine/src/setup/heroAbility.setup.ts
+packages/game-engine/src/rules/heroAbility.setup.test.ts
+scripts/hero-mechanic-ledger.mjs
+docs/ai/coverage/hero-mechanic-ledger.json
+docs/ai/coverage/hero-mechanic-ledger.csv
+docs/ai/STATUS.md
+docs/ai/DECISIONS.md
+docs/ai/work-packets/WORK_INDEX.md
+docs/ai/execution-checklists/EC_INDEX.md
+docs/05-ROADMAP-MINDMAP.md
+```
+
+No other implementation, generated-artifact, card-data, coverage-probe, interpreter, executor, or barrel file may be modified; governance is limited to the closeout files above. **`data/metadata/card-mechanics.json` (WP-269's feed) MUST NOT appear in the diff** — WP-268 only verifies it stays fresh via the `mechanics:metadata:check` cross-gate (below); it does not regenerate it. Gitignored dashboard `apps/dashboard/src/data/*.json` copies may regenerate on disk but must not be committed. **No coverage-probe / interpreter / executor / `data/cards` / barrel / dashboard-source change.**
 
 ---
 
@@ -120,7 +147,9 @@ No other files may be modified. **No coverage-probe / interpreter / executor / `
 - [ ] Regenerated `hero-mechanic-ledger.{json,csv}`: deferred-variant `empowered` cards (bkpt/wtif) flip `executable → unsupported`; antm core-form `empowered` + all `berserk` rows stay `executable` (exact set verified by inspecting the diff).
 - [ ] `pnpm ledger:heroes:check` OK (regen is byte-stable across two runs).
 - [ ] `pnpm --filter @legendary-arena/game-engine test` 0 fail; `pnpm sim:coverage --check` OK (coverage baseline unchanged — the probe was already by-hook); sentinel `finalStateHash` unchanged.
-- [ ] `git diff --name-only` = the 5 Files Expected to Change + governance; no coverage-probe/interpreter/executor/`data/cards`/barrel/dashboard-source.
+- [ ] Duplicate-marker safety holds: a card whose multiple hooks resolve the same marker yields exactly one ledger row (Set aggregation); regen stays byte-stable.
+- [ ] `pnpm mechanics:metadata:check` stays green (WP-269's feed reads the ledger but drops `status`; this status-only regen must not drift it); `data/metadata/card-mechanics.json` is NOT in the diff.
+- [ ] `git diff --name-only` = exactly the 11-path allowlist (6 implementation/artifact + 5 governance); no coverage-probe/interpreter/executor/`data/cards`/barrel/dashboard-source/feed file.
 
 ---
 
@@ -133,6 +162,8 @@ pnpm ledger:heroes                                      # regenerate the by-hook
 pnpm ledger:heroes                                      # run again — byte-identical
 pnpm ledger:heroes:check                                # OK
 pnpm sim:coverage --check                               # OK — coverage baseline UNCHANGED (probe already by-hook)
+pnpm mechanics:metadata:check                           # OK — WP-269's feed unchanged (it drops status; this regen is status-only)
+git diff --name-only -- data/metadata/card-mechanics.json   # empty — the feed is WP-269's artifact, not this WP's
 git diff --name-only -- data/cards/ scripts/hero-effect-coverage.mjs packages/game-engine/src/hero/   # empty
 Select-String -Path "docs\ai\coverage\hero-mechanic-ledger.csv" -Pattern "bkpt/princess-shuri,.*,empowered,unsupported"   # deferred card now unsupported
 Select-String -Path "docs\ai\coverage\hero-mechanic-ledger.csv" -Pattern "berserk,executable"   # berserk still executable
@@ -142,13 +173,13 @@ Select-String -Path "docs\ai\coverage\hero-mechanic-ledger.csv" -Pattern "berser
 
 ## Lint Gate Self-Review (`00.3`)
 
-All 21 sections resolved (PASS or justified N/A); Final Gate clear.
+Run 2026-06-20; **re-run 2026-06-20 post-tightening**. All 21 sections resolved (PASS or justified N/A); Final Gate clear.
 
 - **§1 Structure:** PASS — Goal, Assumes, Context (Read First), Scope (In), Out of Scope, Files Expected to Change, Non-Negotiable Constraints, Acceptance Criteria, Verification Steps, Definition of Done all present + non-empty; Out of Scope excludes ≥2 related things (coverage-probe; interpreter/executor; villain ledger).
 - **§2 Constraints:** PASS — full file contents, forbids diffs, ESM/Node v22+, references `00.6-code-style.md`.
 - **§3 Assumes:** PASS — each dependency + the exact files/exports (`unresolvedMarkers` assign site, the two resolve branches, the coverage-probe `buildHeroAbilityHooks({heroDeckIds:[extId]})` pattern, the ledger `statusForMechanic`).
 - **§4 Context:** PASS — ARCHITECTURE layer, code-style, DECISIONS D-24031/D-24044, the parser + coverage-probe source. No `00.2` field added.
-- **§5 Files:** PASS — 5 files marked + described; bounded; no partial-output language.
+- **§5 Files:** PASS — 6 implementation/artifact + 5 governance files, each marked + described, with an explicit 11-path final-diff allowlist; bounded; no partial-output language.
 - **§6 Naming:** PASS — `resolvedMarkers` mirrors `unresolvedMarkers`; `cardResolvedMarkers` descriptive; no abbreviations.
 - **§7 Dependencies:** PASS — no new npm deps.
 - **§8 Architecture:** PASS — Game Engine + Shared Tooling; the ledger imports engine `dist` (no reverse import); `resolvedMarkers` is a plain `string[]`, `G` JSON-serializable; no DB/network; parse-time only.
@@ -168,7 +199,9 @@ Verdict: **PASS** — all 21 sections resolved; Final Gate clear.
 
 ## Pre-Flight & Copilot Verdicts
 
-- **Pre-flight (`01.4`): READY TO EXECUTE (2026-06-20, baseline `f40480b3`).** Dependencies on `main` (WP-257 `unresolvedMarkers`; WP-256/WP-267 composition-resolve branches; WP-250 coverage-probe hook-building — all Done). Contract fidelity verified against source: `HeroAbilityHook.unresolvedMarkers?` + its non-empty conditional-assign in `buildHeroAbilityHooks` (the symmetry `resolvedMarkers` mirrors), the two composition-resolve branches in `setup/heroAbility.setup.ts` (static `HERO_COMPOSITION_MARKERS[name]` push + parameterized `empowered` push), the coverage probe's `buildHeroAbilityHooks(registry, { heroDeckIds: [extId] })` + `deduplicateHooks` drive (the ledger mirrors), and the ledger `statusForMechanic`/`handlerForMechanic` (composition-marker branch becomes per-card). Scope is a closed 5-file allowlist (engine provenance + ledger + regen; coverage-probe/interpreter/executor/`data/cards`/barrel/dashboard-source out). **Empirical Scaffold (01.4 §Validation-Tightening): N/A** — this is *additive provenance* (a new positive record) + a *classification refinement* (composition markers by-hook), not validation-tightening; no previously-accepted input is newly-rejected. Per the WP-267 precedent (reasoned draft after the subagent scaffold was sandboxed), the allowlist is reasoned from the proven coverage-probe hook-building pattern, and the **observed regen + byte-stability + the exact executable→unsupported flip are measured at execution** (the ledger is regenerated + `:check`-gated in-WP). Residual risk is low + bounded: the ledger-hook-building mirrors an existing, byte-stable-gated generator; the one execution-time confirm is the exact flip set + byte-stability.
+**Re-gate 2026-06-20 (post-tightening, per 01.0a Step 5 re-run rule).** The tightening materially changed the contract (file-count 5→6, explicit 11-path allowlist, the `mechanics:metadata:check` cross-gate), so all three gates were re-run against the tightened WP-268 + EC-299. **Pre-flight: READY · Copilot: PASS · Lint: PASS.** The re-gate (a) corrected the 5→6 file-count off-by-one (`git diff` is file-based; the regenerated JSON + CSV are two files); (b) added the cross-gate for WP-269's feed — now a second consumer of this ledger — after verifying the feed transform reads only `row.extId` + `row.mechanic` (zero `status` references), so this status-only regen keeps `mechanics:metadata:check` green; and (c) confirmed the dist import path (`dist/setup/heroAbility.setup.js`) and the coverage baseline path (`scripts/coverage/hero-effect-coverage.baseline.json`) were ALREADY correct in the EC — rejecting a review suggestion to swap the baseline to `docs/ai/coverage/`, which would have been wrong.
+
+- **Pre-flight (`01.4`): READY TO EXECUTE (re-run 2026-06-20; original 2026-06-20, baseline `f40480b3`).** Dependencies on `main` (WP-257 `unresolvedMarkers`; WP-256/WP-267 composition-resolve branches; WP-250 coverage-probe hook-building — all Done). Contract fidelity verified against source: `HeroAbilityHook.unresolvedMarkers?` + its non-empty conditional-assign in `buildHeroAbilityHooks` (the symmetry `resolvedMarkers` mirrors), the two composition-resolve branches in `setup/heroAbility.setup.ts` (static `HERO_COMPOSITION_MARKERS[name]` push + parameterized `empowered` push), the coverage probe's `buildHeroAbilityHooks(registry, { heroDeckIds: [extId] })` + `deduplicateHooks` drive (the ledger mirrors), and the ledger `statusForMechanic`/`handlerForMechanic` (composition-marker branch becomes per-card). Scope is a closed 5-file allowlist (engine provenance + ledger + regen; coverage-probe/interpreter/executor/`data/cards`/barrel/dashboard-source out). **Empirical Scaffold (01.4 §Validation-Tightening): N/A** — this is *additive provenance* (a new positive record) + a *classification refinement* (composition markers by-hook), not validation-tightening; no previously-accepted input is newly-rejected. Per the WP-267 precedent (reasoned draft after the subagent scaffold was sandboxed), the allowlist is reasoned from the proven coverage-probe hook-building pattern, and the **observed regen + byte-stability + the exact executable→unsupported flip are measured at execution** (the ledger is regenerated + `:check`-gated in-WP). Residual risk is low + bounded: the ledger-hook-building mirrors an existing, byte-stable-gated generator; the one execution-time confirm is the exact flip set + byte-stability.
 - **Copilot (`01.7`): PASS (2026-06-20) — 30 modes walked; 0 BLOCK; disposition CONFIRM.** Boundary (#1/#29 — provenance stays parse-time; no execution-path leak; ledger imports engine `dist` one-way). Determinism (#2/#23 — no RNG; byte-stable regen; membership-Set classification is order-independent; emitted via the existing sorted rows). Contract drift (#4 — `resolvedMarkers` symmetric with `unresolvedMarkers`; no closed-union/drift-array change). Persistence (#7/#19 — `string[]`, never persisted; `G` JSON-serializable). Silent-vs-loud (#22 — `resolvedMarkers ?? []` tolerant read in the ledger). Scope creep (#12/#30 — 5-file allowlist + `git diff` checks; coverage-probe + interpreter explicitly untouched). Naming (#27 — mirrors `unresolvedMarkers`). **Disposition: CONFIRM** — pre-flight READY stands; session-prompt generation authorized.
 
 ---
@@ -179,7 +212,8 @@ Verdict: **PASS** — all 21 sections resolved; Final Gate clear.
 - [ ] `pnpm -r build` + engine `test` 0; `pnpm ledger:heroes:check` OK; `pnpm sim:coverage --check` OK (baseline unchanged)
 - [ ] `resolvedMarkers` symmetric with `unresolvedMarkers`; interpreter/executor/`primitiveEffects`/`finalStateHash` unchanged
 - [ ] `data/cards/**` byte-unchanged; no coverage-probe/barrel/dashboard-source change
-- [ ] No files outside `## Files Expected to Change` modified
+- [ ] `pnpm mechanics:metadata:check` green; `data/metadata/card-mechanics.json` (WP-269's feed) NOT modified — the feed drops `status`, so this status-only regen must not drift it
+- [ ] Final diff = exactly the 11-path allowlist (6 implementation/artifact + 5 governance); no files outside it modified
 - [ ] **D-24026 live-on-surface verification (post-deploy):** after merge + dashboard redeploy, `/coverage` By-card shows the bkpt/wtif deferred `empowered` cards as Unsupported and the executable KPI drops to the honest count — observable evidence, not tests+merge alone. STATUS records it pending until verified.
 - [ ] `docs/ai/STATUS.md` updated — the WP-267 by-name over-claim resolved (ledger now by-hook)
 - [ ] `docs/ai/DECISIONS.md` updated — **D-24045** (parser `resolvedMarkers` + by-hook composition ledger)
