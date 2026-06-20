@@ -189,6 +189,9 @@ mindmap
         ["WP-208 ✅ devLog category union extension (cardPatterns + schemeTwist)"]
         ["WP-213 ✅ devLog category single-source LOG_CATEGORIES array"]
         ["WP-245 ✅ LAGN export in registry viewer loadout tab"]
+        ["WP-269 ✅ Hero mechanic metadata feed (producer half of the mechanic-query slice; deterministic transform turns the committed hero ledger into a normalized viewer-safe data/metadata/card-mechanics.json + data-only CardMechanicsIndexSchema + CI freshness gate; hidden fail-closed; D-24046)"]
+        ["WP-270 📝 Registry-viewer hero mechanic filter surface (consumer half; cardMechanicsClient + MechanicFilter ribbon over WP-269's feed, hidden!==true, OR-within / AND-across the text query; consumes D-24046)"]
+        ["WP-271 📦 Extend mechanic ledger generation beyond heroes (villain / mastermind / scheme / henchman → a future all-card-type mechanic feed; queued data-production follow-up to WP-269/270)"]
 
       Phase 8 — Interactive Board Layout
         ["WP-128 ✅ UIState board projections"]
@@ -284,6 +287,7 @@ mindmap
         ["WP-264 ✅ Parameterized simulation turn cap (maxTurns option; WP-265 enabler; optional trailing maxTurns default MAX_TURNS_PER_GAME on the six sim entry points runPerTurnLoop/buildGameOutcome/simulateOneGame/simulateOneGameAndCaptureMoves/runSimulation/sweepSetupMatrix → a downstream sweep runs short terminating games instead of grinding to the 200-turn safety cap; PARAM not a result field so field-set drift guards untouched; warm-up shares the same cap for PRNG parity; validity caller-owned no throw/clamp; finalStateHash unchanged replay-guarded; index.ts byte-unchanged; D-24040)"]
         ["WP-265 ✅ Real-signal runtime-observed hollows via a competent hero-diverse per-PR sweep (flips WP-259's /coverage overlay from zero-state to real signal via a competent-heuristic maxTurns-bounded WP-264 hero-diverse sweep — 39 hero-deck sets over the sentinel core × 8 seeds/board, the measured signal lever; enabled by WP-266/D-24043 onBegin parity; RE-SCOPE 2026-06-19 DROPPED the weekly cron — competent ~2.7ms/game so the per-PR sim:runtime-observed:check is kept, no runtime-observed-refresh.yml, no ci.yml change; matrix is a hardcoded locked value not a ledger read; artifact = 16 mechanics/176 obs/dropped 0/312 games, byte-identical; 2 files; no engine edit, dashboard untouched; D-24041 Active, D-24026 ✅ live-verified 2026-06-19 — /coverage Observed-in-play column populated, completes the hollow reporting loop end-to-end)"]
         ["WP-266 ✅ Simulation onBegin parity (WP-265 unblocker; the three observation-only per-turn loops runPerTurnLoop/par.aggregator simulateOneGame/runFixture rotateToNextTurn mirror the play-phase onBegin via ONE shared pure helper applyOnBeginParity = reset villainRevealedThisTurn+hasDrawnThisTurn + auto-draw to HAND_SIZE, rule hooks deferred D-0205, extracted at the third use since runFixture already had it inline WP-212+WP-236 but runner+aggregator did not → empty hand forever, playCard never legal; plus a one-shot reveal gate in getLegalMoves stage==='start' && !villainRevealedThisTurn ending the competent policy's turn-1 infinite re-reveal; game-determinism preserved, replay byte-behavior-identical, finalStateHash unchanged; scaffold-confirmed 1454/1454 + competent sweep surfaces ≥1 hero hollow in ~17ms; regenerates WP-259's runtime-observed-hollows.json off the zero-state; D-24043)"]
+        ["WP-268 📝 By-hook composition ledger (parser resolvedMarkers — the positive counterpart of WP-257's unresolvedMarkers — so the mechanic ledger marks a composition marker executable only when that card's hook resolved it, resolving the WP-267 by-name over-claim on /coverage By-card; parse-time provenance only, finalStateHash unchanged; D-24045)"]
         ["WP-267 ✅ Empowered via a class-count value primitive (first effect-authoring grind mechanic off /coverage; first PARAMETERIZED composition over the WP-256 substrate — new count-cards-by-class-in-zone value expr + its own shared-zone EffectCountZoneKind=['hq'] separate from per-player EFFECT_ZONE_KINDS, reads G.cardTraits[id].heroClass over G.hq no self-exclusion; buildEmpoweredComposition(color) + PARAMETERIZED_COMPOSITION_MARKER_NAMES deduped into HERO_COMPOSITION_MARKER_NAMES; parser parameterized-marker branch resolves the core ONLY on an anchored by-[hc:COLOR] tail whose color is the line's sole condition + suppresses it from heroClassConditions; Honest-Partial — deferred variants color-of-choice/Double-Triple/conditional-prefix/multi-class stay parse-unrecognized runtime hollows; no executor edit, no coverage-script edit, no HeroKeyword/node-type/EFFECT_ZONE_KINDS change, data/cards byte-unchanged; engine test 1462→1473/0, runtime-observed empowered cleared 16→15/176→163 dropped 0 byte-stable, coverage +5 core-form hooks, ledger 119→126 by-name over-claims ~4 deferred cards follow-up; finalStateHash unchanged EMPTY_REGISTRY; D-24044 Active, D-24026 ✅ live-verified 2026-06-20)"]
 
       Notable Events & Overlays
@@ -409,7 +413,7 @@ mindmap
 | Client Integration Cluster | 21/21 | — |
 | Auth Stack & Profile Surface | 14/14 | — |
 | Engine + Server Wiring & Leaderboard HTTP | 3/3 | — |
-| Registry Viewer Enhancements | 14/14 | — |
+| Registry Viewer Enhancements | 15/17 | 2 open |
 | Phase 8 — Interactive Board Layout | 3/3 | — |
 | G-State Extensions | 4/4 | — |
 | Monetization Stack | 3/3 | — |
@@ -420,7 +424,7 @@ mindmap
 | Legends Public Scoreboard | 2/2 | — |
 | Villain Deck Pipeline | 5/5 | — |
 | Villain & Henchman Effects | 11/11 | — |
-| Hero Ability Coverage & Markup Pipeline | 28/28 | — |
+| Hero Ability Coverage & Markup Pipeline | 28/29 | 1 open |
 | Notable Events & Overlays | 4/4 | — |
 | Simulation Sweep & Analytics Pipeline | 7/7 | — |
 | Dashboard & Operator Analytics | 14/14 | — |
@@ -433,9 +437,9 @@ mindmap
 | Next Horizons | 0/5 | 5 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **263/264 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
+| **Total** | **264/268 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸, 3 open |
 
-**Open / blocked WPs (derived from WORK_INDEX, 1):** WP-042.1 ⏸ blocked.
+**Open / blocked WPs (derived from WORK_INDEX, 4):** WP-042.1 ⏸ blocked; WP-268 open; WP-270 open; WP-271 open.
 <!-- ROADMAP-COUNTS:END -->
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. The table inside the markers above is **generated** by `scripts/roadmap-counts.mjs` (sole writer; D-24001), derived from `WORK_INDEX.md` status × mindmap cluster membership — it is no longer hand-maintained, so it no longer drifts. Status is authoritative from `WORK_INDEX.md`; cluster membership is authoritative from the mindmap nodes above. The generator **fails loudly** on a WORK_INDEX WP with no mindmap node (D-24002), so no work packet can be silently uncounted.
@@ -521,7 +525,9 @@ mindmap
 
 ---
 
-*Last updated: 2026-06-12 (WP-241 ✅ done — Dashboard Operator Auth + Bearer Cutover. The dashboard's mock login is replaced with real Hanko auth (mirroring `apps/arena-client`: local-copy `auth/hankoClient.ts` + the WP-160 token store + `<hanko-auth>`), and the three LIVE fetchers attach `Authorization: Bearer` via the shared `services/authToken.ts` seam instead of `credentials:'include'` — superseding D-20601's cookie posture so the client complies with the bearer-only server (D-11202). Added the **WP-241** node to Dashboard & Operator Analytics; the generated count table moved **13 → 14/14**, Total **237/238 WP ✅** (WP-241 was a latent orphan — drafted after WP-240's generator shipped — now noded). D-24003/D-24004/D-24005 Active. Operator cutover (post-merge): set `VITE_HANKO_TENANT_BASE_URL` + `VITE_API_BASE_URL=https://api.legendary-arena.com` + `VITE_USE_MOCKS=false` in CF Pages + redeploy.)*
+*Last updated: 2026-06-20 (mindmap orphan backfill — added the 4 latent orphans the D-24002 loud-fail gate named: **WP-269 ✅** + **WP-270 📝** + **WP-271 📦** to **Registry Viewer Enhancements** (the mechanic-query slice — hero mechanic metadata feed producer, the viewer filter consumer, and the beyond-heroes ledger extension) and **WP-268 📝** to **Hero Ability Coverage & Markup Pipeline** (the by-hook composition ledger). Regenerated count table: Registry Viewer Enhancements **14 → 15/17** (2 open), Hero Ability Coverage **28 → 28/29** (1 open), Total **263/264 → 264/268 WP ✅**, open/blocked now 1 ⏸ + 3 open. Pure navigation hygiene, no WP/EC execution; `roadmap:counts:check` green.)*
+
+*Prior: 2026-06-12 (WP-241 ✅ done — Dashboard Operator Auth + Bearer Cutover. The dashboard's mock login is replaced with real Hanko auth (mirroring `apps/arena-client`: local-copy `auth/hankoClient.ts` + the WP-160 token store + `<hanko-auth>`), and the three LIVE fetchers attach `Authorization: Bearer` via the shared `services/authToken.ts` seam instead of `credentials:'include'` — superseding D-20601's cookie posture so the client complies with the bearer-only server (D-11202). Added the **WP-241** node to Dashboard & Operator Analytics; the generated count table moved **13 → 14/14**, Total **237/238 WP ✅** (WP-241 was a latent orphan — drafted after WP-240's generator shipped — now noded). D-24003/D-24004/D-24005 Active. Operator cutover (post-merge): set `VITE_HANKO_TENANT_BASE_URL` + `VITE_API_BASE_URL=https://api.legendary-arena.com` + `VITE_USE_MOCKS=false` in CF Pages + redeploy.)*
 
 *Prior: 2026-06-12 (WP-240 ✅ done — Roadmap Count-Table Generator. The Progress Summary count table is now **generated content** bounded by the `ROADMAP-COUNTS` start/end markers, derived by `scripts/roadmap-counts.mjs` from `WORK_INDEX.md` status × mindmap cluster membership (sole writer; hand-edits inside the markers are overwritten by the next run). Added the missing **WP-236** node (Phase 2 — Core Turn Engine) + the **WP-240** node (Domain Cutover & Infrastructure) — both were orphans the loud-fail gate (D-24002) named on the first run. The generated table corrected the WP-238 count drift the prior note flagged: Dashboard & Operator Analytics **12 → 13/13**, Total **WP ✅ 236/237** (= the raw WORK_INDEX checkbox count). Weekly cron `.github/workflows/roadmap-counts.yml` (`'0 6 * * 1'`) PRs the regenerated table on diff. D-24001/D-24002 Active.)*
 
