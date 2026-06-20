@@ -16,7 +16,7 @@ import type { LegendaryGameState, PendingHeroChoice } from '../types.js';
 import type { HeroAbilityHook, HeroEffectDescriptor } from '../rules/heroAbility.types.js';
 import type { HeroKeyword } from '../rules/heroKeywords.js';
 import { revealRulesForLegacyKeyword } from '../rules/revealRule.js';
-import { HERO_COMPOSITION_MARKERS } from '../rules/heroCompositions.js';
+import { HERO_COMPOSITION_MARKERS, buildEmpoweredComposition } from '../rules/heroCompositions.js';
 
 // why: WP-253 Amendment-A — the pre-existing reveal fixtures hand-built legacy
 // `{ type: 'reveal-ko' }` descriptors; once those keywords lose their handlers
@@ -2632,6 +2632,32 @@ describe('executeHeroEffects primitiveEffects path (WP-256 / D-24031)', () => {
     assert.equal(gameState.turnEconomy.recruit, 2, 'the legacy recruit effect fired');
     assert.equal(gameState.turnEconomy.attack, 4, 'the Berserk composition also fired');
     assert.deepEqual(gameState.playerZones['0'].discard, ['top'], 'Berserk discarded the deck-top card');
+  });
+
+  it('a hook with the Empowered composition grants +Attack equal to the HQ class count (WP-267)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+          primitiveEffects: [buildEmpoweredComposition('strength')],
+        },
+      ],
+    });
+    // Populate the shared HQ + card traits the count reads (makeTestState defaults HQ empty).
+    gameState.hq = ['s1', 't1', 's2', null, 's3'] as unknown as LegendaryGameState['hq'];
+    gameState.cardTraits = {
+      s1: { heroClass: 'strength', team: null },
+      t1: { heroClass: 'tech', team: null },
+      s2: { heroClass: 'strength', team: null },
+      s3: { heroClass: 'strength', team: null },
+    };
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 3, '+Attack equals the 3 strength cards in the HQ');
   });
 });
 

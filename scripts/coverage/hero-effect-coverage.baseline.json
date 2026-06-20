@@ -1,9 +1,9 @@
 {
   "corpus": {
-    "executable": 2609,
+    "executable": 2614,
     "heroes": 309,
     "hooks": 5949,
-    "noEffect": 3335,
+    "noEffect": 3330,
     "parsedNotExecuted": 5
   },
   "perSet": {
@@ -28,9 +28,9 @@
       "noEffect": 54
     },
     "antm": {
-      "executable": 37,
+      "executable": 42,
       "hooks": 109,
-      "noEffect": 72
+      "noEffect": 67
     },
     "asrd": {
       "executable": 38,
@@ -248,7 +248,6 @@
     "dodge": 24,
     "don't-speak": 1,
     "double-striker": 1,
-    "empowered": 19,
     "endgame": 5,
     "excessive-kindness": 7,
     "excessive-violence": 21,

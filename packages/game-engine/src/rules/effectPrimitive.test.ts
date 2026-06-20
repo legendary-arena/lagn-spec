@@ -20,6 +20,7 @@ import {
   EFFECT_ZONE_KINDS,
   EFFECT_CARD_POSITIONS,
   EFFECT_OWNER_KINDS,
+  EFFECT_COUNT_ZONE_KINDS,
 } from './effectPrimitive.types.js';
 import type { EffectNode } from './effectPrimitive.types.js';
 import {
@@ -27,7 +28,7 @@ import {
   VALUE_EXPRESSION_EVALUATORS,
   interpretHeroPrimitiveEffect,
 } from '../hero/effectPrimitive.interpret.js';
-import { HERO_COMPOSITION_MARKERS } from './heroCompositions.js';
+import { HERO_COMPOSITION_MARKERS, buildEmpoweredComposition } from './heroCompositions.js';
 import type { LegendaryGameState } from '../types.js';
 import type { CardStatEntry } from '../economy/economy.types.js';
 
@@ -59,6 +60,8 @@ function makeState(options: {
   attack?: number;
   recruit?: number;
   cardStats?: Record<string, CardStatEntry>;
+  hq?: (string | null)[];
+  cardTraits?: Record<string, { heroClass: string | null; team: string | null }>;
   omitMessages?: boolean;
   omitTurnEconomy?: boolean;
 }): LegendaryGameState {
@@ -83,6 +86,12 @@ function makeState(options: {
       woundsDrawn: 0,
     },
   };
+  if (options.hq !== undefined) {
+    state.hq = options.hq;
+  }
+  if (options.cardTraits !== undefined) {
+    state.cardTraits = options.cardTraits;
+  }
   if (options.omitMessages) {
     delete state.messages;
   }
@@ -126,14 +135,15 @@ describe('effect primitive closed-array drift (D-24030)', () => {
     assert.equal(new Set(EFFECT_NODE_TYPES).size, EFFECT_NODE_TYPES.length, 'no duplicate node types');
   });
 
-  it('VALUE_EXPRESSION_TYPES has exactly the 1 canonical value-expression type', () => {
-    assert.deepStrictEqual([...VALUE_EXPRESSION_TYPES], ['card-printed-stat']);
-    assert.equal(VALUE_EXPRESSION_TYPES.length, 1, 'VALUE_EXPRESSION_TYPES must have exactly 1 entry');
+  it('VALUE_EXPRESSION_TYPES has exactly the 2 canonical value-expression types', () => {
+    assert.deepStrictEqual([...VALUE_EXPRESSION_TYPES], ['card-printed-stat', 'count-cards-by-class-in-zone']);
+    assert.equal(VALUE_EXPRESSION_TYPES.length, 2, 'VALUE_EXPRESSION_TYPES must have exactly 2 entries');
   });
 
   it('parameter unions match their canonical arrays exactly', () => {
     assert.deepStrictEqual([...EFFECT_RESOURCE_KINDS], ['attack', 'recruit']);
     assert.deepStrictEqual([...EFFECT_ZONE_KINDS], ['deck', 'discard']);
+    assert.deepStrictEqual([...EFFECT_COUNT_ZONE_KINDS], ['hq']);
     assert.deepStrictEqual([...EFFECT_CARD_POSITIONS], ['top']);
     assert.deepStrictEqual([...EFFECT_OWNER_KINDS], ['current-player']);
   });
@@ -326,5 +336,70 @@ describe('interpretHeroPrimitiveEffect — runtime dispatch guard', () => {
     assert.doesNotThrow(() => interpretHeroPrimitiveEffect(G, CTX, '0', HERO_COMPOSITION_MARKERS['berserk']!));
     // The move still ran (deck-top discarded); only the gain skipped.
     assert.deepStrictEqual(G.playerZones['0']!.discard, ['top'], 'the move-card step still ran');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Empowered — count-cards-by-class-in-zone as parameterized data (D-24044)
+// ---------------------------------------------------------------------------
+
+describe('interpretHeroPrimitiveEffect — Empowered (count-cards-by-class-in-zone)', () => {
+  it('grants +Attack equal to the number of that-class cards in the HQ (no self-exclusion)', () => {
+    const G = makeState({
+      hq: ['a', 'b', 'c', null, 'd'],
+      cardTraits: {
+        a: { heroClass: 'strength', team: null },
+        b: { heroClass: 'tech', team: null },
+        c: { heroClass: 'strength', team: null },
+        d: { heroClass: 'strength', team: null },
+      },
+    });
+
+    interpretHeroPrimitiveEffect(G, CTX, '0', buildEmpoweredComposition('strength'));
+
+    assert.equal(G.turnEconomy!.attack, 3, '+Attack equals every strength card in the HQ (a, c, d)');
+  });
+
+  it('skips empty (null) HQ slots', () => {
+    const G = makeState({
+      hq: [null, 'a', null, null, null],
+      cardTraits: { a: { heroClass: 'ranged', team: null } },
+    });
+
+    interpretHeroPrimitiveEffect(G, CTX, '0', buildEmpoweredComposition('ranged'));
+
+    assert.equal(G.turnEconomy!.attack, 1, 'only the one non-null ranged slot counts');
+  });
+
+  it('a class with no HQ matches grants +0', () => {
+    const G = makeState({
+      hq: ['a', 'b', null, null, null],
+      cardTraits: {
+        a: { heroClass: 'strength', team: null },
+        b: { heroClass: 'tech', team: null },
+      },
+    });
+
+    interpretHeroPrimitiveEffect(G, CTX, '0', buildEmpoweredComposition('covert'));
+
+    assert.equal(G.turnEconomy!.attack, 0, 'no covert cards in the HQ → +0');
+  });
+
+  it('missing G.hq → +0 and warns (never throws)', () => {
+    const G = makeState({ cardTraits: { a: { heroClass: 'strength', team: null } } });
+
+    assert.doesNotThrow(() => interpretHeroPrimitiveEffect(G, CTX, '0', buildEmpoweredComposition('strength')));
+    assert.equal(G.turnEconomy!.attack, 0, 'no HQ zone → +0');
+    assert.ok(
+      G.messages.some((message) => message.includes('no HQ zone or no card traits')),
+      'a missing HQ warns',
+    );
+  });
+
+  it('missing G.cardTraits → +0 and warns (never throws)', () => {
+    const G = makeState({ hq: ['a', 'b', null, null, null] });
+
+    assert.doesNotThrow(() => interpretHeroPrimitiveEffect(G, CTX, '0', buildEmpoweredComposition('strength')));
+    assert.equal(G.turnEconomy!.attack, 0, 'no card traits → +0');
   });
 });

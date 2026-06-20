@@ -284,6 +284,7 @@ mindmap
         ["WP-264 ✅ Parameterized simulation turn cap (maxTurns option; WP-265 enabler; optional trailing maxTurns default MAX_TURNS_PER_GAME on the six sim entry points runPerTurnLoop/buildGameOutcome/simulateOneGame/simulateOneGameAndCaptureMoves/runSimulation/sweepSetupMatrix → a downstream sweep runs short terminating games instead of grinding to the 200-turn safety cap; PARAM not a result field so field-set drift guards untouched; warm-up shares the same cap for PRNG parity; validity caller-owned no throw/clamp; finalStateHash unchanged replay-guarded; index.ts byte-unchanged; D-24040)"]
         ["WP-265 ✅ Real-signal runtime-observed hollows via a competent hero-diverse per-PR sweep (flips WP-259's /coverage overlay from zero-state to real signal via a competent-heuristic maxTurns-bounded WP-264 hero-diverse sweep — 39 hero-deck sets over the sentinel core × 8 seeds/board, the measured signal lever; enabled by WP-266/D-24043 onBegin parity; RE-SCOPE 2026-06-19 DROPPED the weekly cron — competent ~2.7ms/game so the per-PR sim:runtime-observed:check is kept, no runtime-observed-refresh.yml, no ci.yml change; matrix is a hardcoded locked value not a ledger read; artifact = 16 mechanics/176 obs/dropped 0/312 games, byte-identical; 2 files; no engine edit, dashboard untouched; D-24041 Active, D-24026 ✅ live-verified 2026-06-19 — /coverage Observed-in-play column populated, completes the hollow reporting loop end-to-end)"]
         ["WP-266 ✅ Simulation onBegin parity (WP-265 unblocker; the three observation-only per-turn loops runPerTurnLoop/par.aggregator simulateOneGame/runFixture rotateToNextTurn mirror the play-phase onBegin via ONE shared pure helper applyOnBeginParity = reset villainRevealedThisTurn+hasDrawnThisTurn + auto-draw to HAND_SIZE, rule hooks deferred D-0205, extracted at the third use since runFixture already had it inline WP-212+WP-236 but runner+aggregator did not → empty hand forever, playCard never legal; plus a one-shot reveal gate in getLegalMoves stage==='start' && !villainRevealedThisTurn ending the competent policy's turn-1 infinite re-reveal; game-determinism preserved, replay byte-behavior-identical, finalStateHash unchanged; scaffold-confirmed 1454/1454 + competent sweep surfaces ≥1 hero hollow in ~17ms; regenerates WP-259's runtime-observed-hollows.json off the zero-state; D-24043)"]
+        ["WP-267 ✅ Empowered via a class-count value primitive (first effect-authoring grind mechanic off /coverage; first PARAMETERIZED composition over the WP-256 substrate — new count-cards-by-class-in-zone value expr + its own shared-zone EffectCountZoneKind=['hq'] separate from per-player EFFECT_ZONE_KINDS, reads G.cardTraits[id].heroClass over G.hq no self-exclusion; buildEmpoweredComposition(color) + PARAMETERIZED_COMPOSITION_MARKER_NAMES deduped into HERO_COMPOSITION_MARKER_NAMES; parser parameterized-marker branch resolves the core ONLY on an anchored by-[hc:COLOR] tail whose color is the line's sole condition + suppresses it from heroClassConditions; Honest-Partial — deferred variants color-of-choice/Double-Triple/conditional-prefix/multi-class stay parse-unrecognized runtime hollows; no executor edit, no coverage-script edit, no HeroKeyword/node-type/EFFECT_ZONE_KINDS change, data/cards byte-unchanged; engine test 1462→1473/0, runtime-observed empowered cleared 16→15/176→163 dropped 0 byte-stable, coverage +5 core-form hooks, ledger 119→126 by-name over-claims ~4 deferred cards follow-up; finalStateHash unchanged EMPTY_REGISTRY; D-24044 Active, D-24026 pending deploy)"]
 
       Notable Events & Overlays
         ["WP-200 ✅ Notable game event log (engine)"]
@@ -418,7 +419,7 @@ mindmap
 | Legends Public Scoreboard | 2/2 | — |
 | Villain Deck Pipeline | 5/5 | — |
 | Villain & Henchman Effects | 11/11 | — |
-| Hero Ability Coverage & Markup Pipeline | 27/27 | — |
+| Hero Ability Coverage & Markup Pipeline | 28/28 | — |
 | Notable Events & Overlays | 4/4 | — |
 | Simulation Sweep & Analytics Pipeline | 7/7 | — |
 | Dashboard & Operator Analytics | 14/14 | — |
@@ -431,7 +432,7 @@ mindmap
 | Next Horizons | 0/4 | 4 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **262/263 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
+| **Total** | **263/264 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
 
 **Open / blocked WPs (derived from WORK_INDEX, 1):** WP-042.1 ⏸ blocked.
 <!-- ROADMAP-COUNTS:END -->

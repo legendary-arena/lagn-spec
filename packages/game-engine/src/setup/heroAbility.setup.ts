@@ -22,7 +22,12 @@ import { HERO_COUNT_SOURCES } from '../rules/heroCountSource.js';
 import type { RevealRule, RevealPredicate, RevealAction } from '../rules/revealRule.js';
 import { revealRulesForLegacyKeyword, REVEAL_KEYWORDS } from '../rules/revealRule.js';
 import type { EffectNode } from '../rules/effectPrimitive.types.js';
-import { HERO_COMPOSITION_MARKERS, HERO_COMPOSITION_MARKER_NAMES } from '../rules/heroCompositions.js';
+import {
+  HERO_COMPOSITION_MARKERS,
+  HERO_COMPOSITION_MARKER_NAMES,
+  PARAMETERIZED_COMPOSITION_MARKER_NAMES,
+  buildEmpoweredComposition,
+} from '../rules/heroCompositions.js';
 import { normalizeTraitSlug } from '../state/traits.normalize.js';
 // why: D-18705 / D-18706 — hero hooks must key by the canonical-face slash
 // instance id (the id the played card carries in `G` zones), resolving
@@ -113,6 +118,13 @@ const TEAM_PATTERN = /\[team:([^\]]+)\]/g;
 // why: hyphen allowed in keyword names to support reveal-ko and reveal-min tokens (D-21701, D-21702)
 /** Regex for [keyword:X] or [keyword:X:N] keyword markup (N = non-negative integer). */
 const KEYWORD_PATTERN = /\[keyword:([a-zA-Z][a-zA-Z-]*)(?::(\d+))?\]/g;
+
+// why: D-24044 — the ANCHORED Empowered parameter tail. The color must immediately follow
+// the `[keyword:Empowered]` token as `by [hc:COLOR]` (the `^` anchors to the text right after
+// the marker — a broad forward scan could wrongly bind a later, unrelated [hc:...] to
+// Empowered). Non-global + stateless: a fresh `.exec` against the post-marker slice.
+/** Regex for the anchored `by [hc:COLOR]` tail immediately after `[keyword:Empowered]`. */
+const EMPOWERED_PARAM_TAIL_PATTERN = /^\s*by\s*\[hc:([a-z0-9-]+)\]/i;
 
 // why: D-24016 — the count-scaled attack token has three segments
 // ([keyword:attack-per-count:<source>:<perUnit>]); KEYWORD_PATTERN only captures
@@ -295,6 +307,27 @@ function parseAbilityText(abilityText: string): {
       const magnitudeString = keywordMatch[2];
       if (magnitudeString !== undefined && /^\d+$/.test(magnitudeString)) {
         magnitudes.set(normalizedKeyword, parseInt(magnitudeString, 10));
+      }
+    } else if (isParameterizedCompositionMarker(normalizedKeyword)) {
+      // why: D-24044 — a PARAMETERIZED composition marker (empowered) whose AST is BUILT per
+      // a parameter parsed from the text immediately after the marker, not a static
+      // HERO_COMPOSITION_MARKERS row. It resolves to a built composition ONLY for the
+      // unconditional core form (an anchored `by [hc:COLOR]` tail whose color is the line's
+      // sole condition); any deferred variant (no anchored tail, a prefix gate, multi-class,
+      // a team gate) instead records an unresolved marker so the WP-257 hollow detector still
+      // flags it — the Honest-Partial Invariant. Checked BEFORE isHeroCompositionMarker since
+      // `empowered` is in HERO_COMPOSITION_MARKER_NAMES (the deduped union) too.
+      const textAfterMarker = abilityText.slice(keywordMatch.index + keywordMatch[0]!.length);
+      const empoweredComposition = tryResolveEmpoweredCore(textAfterMarker, conditions);
+      if (empoweredComposition !== undefined) {
+        primitiveEffects.push(empoweredComposition);
+        // why: D-24044 — suppress the consumed [hc:COLOR] param so it does not ALSO gate the
+        // hook (it is the count parameter, not a condition). The resolve gate guarantees it is
+        // the line's sole condition, so clearing `conditions` removes exactly it — which also
+        // prevents the 'conditional' keyword being added downstream.
+        conditions.splice(0, conditions.length);
+      } else {
+        unresolvedMarkers.push(normalizedKeyword);
       }
     } else if (isHeroCompositionMarker(normalizedKeyword)) {
       // why: D-24031 — a composition marker (berserk) attaches a DEEP COPY of its AST to
@@ -578,6 +611,60 @@ function isHeroCompositionMarker(value: string): boolean {
     }
   }
   return false;
+}
+
+/**
+ * Checks if a string is a parameterized composition marker
+ * (a name in PARAMETERIZED_COMPOSITION_MARKER_NAMES).
+ *
+ * Mirrors isHeroCompositionMarker, but for markers whose AST is BUILT per a parsed parameter
+ * (empowered) rather than stored as a static HERO_COMPOSITION_MARKERS row (D-24044).
+ */
+function isParameterizedCompositionMarker(value: string): boolean {
+  for (const markerName of PARAMETERIZED_COMPOSITION_MARKER_NAMES) {
+    if (markerName === value) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Resolves the unconditional core form of a parameterized Empowered marker, or undefined for
+ * a deferred variant. Returns a built `gain-resource` composition ONLY when (a) the text
+ * immediately after the marker is an anchored `by [hc:COLOR]` tail, AND (b) that color is the
+ * line's SOLE condition (no prefix gate, no multi-class, no team gate). Any miss → undefined,
+ * so the caller records an unresolved marker (the Honest-Partial Invariant). Does not mutate
+ * `conditions`; the caller suppresses the consumed param on a match.
+ *
+ * @param textAfterMarker - The ability text immediately following the `[keyword:Empowered]` token.
+ * @param conditions - The line's conditions (heroClassMatch + requiresTeam), in hook order.
+ * @returns The built Empowered composition, or undefined for a deferred variant.
+ */
+function tryResolveEmpoweredCore(
+  textAfterMarker: string,
+  conditions: HeroCondition[],
+): EffectNode | undefined {
+  // why: D-24044 — anchored marker-tail match only; the color must immediately follow as
+  // `by [hc:COLOR]`. A non-anchored scan would bind a later unrelated [hc:...] to Empowered.
+  const tailMatch = EMPOWERED_PARAM_TAIL_PATTERN.exec(textAfterMarker);
+  if (tailMatch === null) {
+    return undefined;
+  }
+  const heroClass = normalizeTraitSlug(tailMatch[1]!);
+  // why: D-24044 Honest-Partial — resolve ONLY when the consumed [hc:COLOR] param is the
+  // line's sole condition. A residual condition (an [hc:X]:/[team:X]: prefix gate, a
+  // multi-class `and [hc:Y]`, or a team gate) means a deferred variant → keep it hollow.
+  const onlyCondition = conditions[0];
+  if (
+    conditions.length !== 1
+    || onlyCondition === undefined
+    || onlyCondition.type !== 'heroClassMatch'
+    || onlyCondition.value !== heroClass
+  ) {
+    return undefined;
+  }
+  return buildEmpoweredComposition(heroClass);
 }
 
 // ---------------------------------------------------------------------------

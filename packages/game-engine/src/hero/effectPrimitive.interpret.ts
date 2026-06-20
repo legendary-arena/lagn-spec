@@ -28,6 +28,7 @@ import type {
   MoveCardNode,
   GainResourceNode,
   CardPrintedStatExpression,
+  CountCardsByClassInZoneExpression,
   EffectZoneKind,
   EffectExecutionContext,
 } from '../rules/effectPrimitive.types.js';
@@ -150,11 +151,57 @@ function evaluateCardPrintedStat(
   return cardStats.recruit;
 }
 
+/**
+ * `count-cards-by-class-in-zone` — counts the cards of a given hero class in a shared board
+ * zone (the HQ) and returns that count. The Empowered mechanic composes it into a
+ * `gain-resource` (+Attack per class card in the HQ). A missing HQ / missing `cardTraits`
+ * resolves to 0, warns, and never throws.
+ *
+ * @param G - Game state (reads `G.hq` + `G.cardTraits`; warns to messages).
+ * @param expression - The count-cards-by-class-in-zone value expression.
+ * @param _context - The transient bind/ref store (unused — this count needs no bindings).
+ * @returns The number of matching cards in the HQ, or 0 when unresolved.
+ */
+function evaluateCountCardsByClassInZone(
+  G: LegendaryGameState,
+  expression: ValueExpression,
+  _context: EffectExecutionContext,
+): number {
+  const countExpression = expression as CountCardsByClassInZoneExpression;
+  // why: D-24044 — reads the SHARED `G.hq` board zone (not a per-player zone) + the same
+  // `G.cardTraits[id].heroClass` map the WP-179 heroClassMatch evaluator reads. No
+  // self-exclusion: Empowered counts ALL HQ cards of the class. A missing/non-array `G.hq`
+  // or missing `G.cardTraits` (a minimal fixture) → 0 deterministically, never throws —
+  // the same tolerant posture as the card-printed-stat starter limitation.
+  const hqZone = G.hq;
+  if (!Array.isArray(hqZone) || !G.cardTraits) {
+    pushPrimitiveWarning(
+      G,
+      'A count-cards-by-class-in-zone value expression found no HQ zone or no card traits and resolved to 0. This is a setup invariant the count tolerates.',
+    );
+    return 0;
+  }
+  // why: 'hq' is the only EffectCountZoneKind (closed union) → read `G.hq` directly, no
+  // dynamic property access. Iteration is index-ordered over the 5 HQ slots (deterministic).
+  let matchCount = 0;
+  for (const slotCardId of hqZone) {
+    if (slotCardId === null) {
+      continue;
+    }
+    const traitEntry = G.cardTraits[slotCardId];
+    if (traitEntry !== undefined && traitEntry.heroClass === countExpression.heroClass) {
+      matchCount += 1;
+    }
+  }
+  return matchCount;
+}
+
 // why: D-24030 — value-expression ImplementationMap (mirrors HERO_EFFECT_HANDLERS), held
 // OUTSIDE G. Partial so the runtime dispatch guard typechecks and the drift test pins its
 // keys == VALUE_EXPRESSION_TYPES bidirectionally (the WP-251 HANDLED_KEYWORDS pattern).
 export const VALUE_EXPRESSION_EVALUATORS: Partial<Record<ValueExpressionType, ValueExpressionEvaluator>> = {
   'card-printed-stat': evaluateCardPrintedStat,
+  'count-cards-by-class-in-zone': evaluateCountCardsByClassInZone,
 };
 
 /**

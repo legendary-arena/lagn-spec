@@ -732,6 +732,71 @@ describe('buildHeroAbilityHooks composition-marker parsing (WP-256 / D-24031)', 
   });
 });
 
+describe('buildHeroAbilityHooks Empowered parameterized composition (WP-267 / D-24044)', () => {
+  /** Builds a single-ability hook from one Empowered-bearing ability line. */
+  function empoweredHookFor(abilityText: string) {
+    const registry = makeHeroRegistry('core', 'empowered-hero', [
+      { slug: 'empowered-card', rarityLabel: 'Common 1', abilities: [abilityText] },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/empowered-hero'] };
+    const hooks = buildHeroAbilityHooks(registry, config);
+    return hooks[0]!;
+  }
+
+  it('core form "Empowered by [hc:strength]" → built count composition; param suppressed from conditions', () => {
+    const hook = empoweredHookFor('You get [keyword:Empowered] by [hc:strength].');
+    assert.ok(hook.primitiveEffects !== undefined, 'primitiveEffects must be present for the core form');
+    assert.equal(hook.primitiveEffects!.length, 1, 'exactly one built composition');
+    assert.deepStrictEqual(
+      hook.primitiveEffects![0],
+      {
+        type: 'gain-resource',
+        resource: 'attack',
+        amount: { type: 'count-cards-by-class-in-zone', heroClass: 'strength', zone: 'hq' },
+      },
+      'the built composition counts strength HQ cards into +Attack',
+    );
+    // why: the consumed [hc:strength] is the count PARAMETER, not a gating condition — it is
+    // suppressed, so the hook has no conditions and no 'conditional' keyword (fires unconditionally).
+    assert.equal(hook.conditions, undefined, 'the consumed [hc:strength] is suppressed → no conditions');
+    assert.ok(!(hook.keywords as string[]).includes('empowered'), 'empowered is never a hook keyword');
+    assert.ok(!(hook.keywords as string[]).includes('conditional'), 'no conditional keyword (param suppressed)');
+    assert.equal(hook.unresolvedMarkers, undefined, 'a resolved core form records no unresolved marker');
+  });
+
+  it('no anchored tail ("Empowered. Then by [hc:strength]") → deferred, no broad forward scan', () => {
+    const hook = empoweredHookFor('You get [keyword:Empowered]. Then by [hc:strength] draw a card.');
+    assert.equal(hook.primitiveEffects, undefined, 'no composition — the [hc:strength] is not the anchored tail');
+    assert.ok(
+      (hook.unresolvedMarkers ?? []).includes('empowered'),
+      'a deferred Empowered records an unresolved marker (Honest-Partial)',
+    );
+  });
+
+  it('conditional-prefix ("[hc:strength]: ...Empowered by [hc:tech]") → deferred (residual gate)', () => {
+    const hook = empoweredHookFor('[hc:strength]: You get [keyword:Empowered] by [hc:tech].');
+    assert.equal(hook.primitiveEffects, undefined, 'no composition — a residual prefix-gate condition defers');
+    assert.ok(
+      (hook.unresolvedMarkers ?? []).includes('empowered'),
+      'a deferred conditional-prefix Empowered records an unresolved marker',
+    );
+  });
+
+  it('[keyword:Double Empowered] is not the bare empowered marker → no composition', () => {
+    const hook = empoweredHookFor('You get [keyword:Double Empowered] by [hc:strength].');
+    assert.equal(hook.primitiveEffects, undefined, 'Double Empowered is not the parameterized empowered marker');
+  });
+
+  it('multi-class ("Empowered by [hc:ranged] and [hc:strength]") → deferred (residual condition)', () => {
+    const hook = empoweredHookFor('You get [keyword:Empowered] by [hc:ranged] and [hc:strength].');
+    assert.equal(hook.primitiveEffects, undefined, 'a second class param leaves a residual condition → defer');
+    assert.ok(
+      (hook.unresolvedMarkers ?? []).includes('empowered'),
+      'a deferred multi-class Empowered records an unresolved marker',
+    );
+  });
+});
+
 describe('HERO_ABILITY_TIMINGS drift-detection', () => {
   // why: same pattern as HERO_KEYWORDS drift detection
   it('contains exactly the 5 canonical timing values', () => {

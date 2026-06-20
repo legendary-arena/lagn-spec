@@ -46,13 +46,15 @@ export const EFFECT_NODE_TYPES: readonly EffectNodeType[] = [
  * number at interpretation time (the amount a `gain-resource` grants).
  */
 export type ValueExpressionType =
-  | 'card-printed-stat';
+  | 'card-printed-stat'
+  | 'count-cards-by-class-in-zone';
 
 // why: canonical drift array (D-24030) — adding a value-expression type requires
 // updating THIS array, the ValueExpressionType union, the VALUE_EXPRESSION_EVALUATORS
 // registry, AND a DECISIONS.md entry together (code-style §Drift Detection).
 export const VALUE_EXPRESSION_TYPES: readonly ValueExpressionType[] = [
   'card-printed-stat',
+  'count-cards-by-class-in-zone',
 ] as const;
 
 // ---------------------------------------------------------------------------
@@ -88,6 +90,21 @@ export type EffectZoneKind =
 export const EFFECT_ZONE_KINDS: readonly EffectZoneKind[] = [
   'deck',
   'discard',
+] as const;
+
+/**
+ * Closed canonical union of SHARED/board zone kinds a `count-cards-by-class-in-zone` value
+ * expression can read. Only `hq` (the 5-slot recruit row) is seeded.
+ */
+export type EffectCountZoneKind =
+  | 'hq';
+
+// why: D-24044 — a SEPARATE shared/board-zone union, distinct from the per-player move-card
+// `EFFECT_ZONE_KINDS` (deck/discard, resolved off `playerZones`). The count reads the shared
+// `G.hq` zone directly. Canonical drift array (D-24030 §Drift Detection) — adding a member
+// needs array + union + DECISIONS together.
+export const EFFECT_COUNT_ZONE_KINDS: readonly EffectCountZoneKind[] = [
+  'hq',
 ] as const;
 
 /**
@@ -155,9 +172,22 @@ export interface CardPrintedStatExpression {
 }
 
 /**
+ * Resolves to the number of cards of a given hero class in a shared board zone. Reads
+ * `G.cardTraits[id].heroClass` over `zone` (the HQ) and counts matches. The Empowered
+ * mechanic composes this into a `gain-resource` (+Attack per class card in the HQ).
+ */
+export interface CountCardsByClassInZoneExpression {
+  type: 'count-cards-by-class-in-zone';
+  heroClass: string;
+  zone: EffectCountZoneKind;
+}
+
+/**
  * A value expression resolving to a number at interpretation time.
  */
-export type ValueExpression = CardPrintedStatExpression;
+export type ValueExpression =
+  | CardPrintedStatExpression
+  | CountCardsByClassInZoneExpression;
 
 // ---------------------------------------------------------------------------
 // Effect nodes (the homogeneous AST)
