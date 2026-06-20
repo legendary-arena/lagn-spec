@@ -320,6 +320,11 @@ Forward-looking phase. Promote a candidate to a real WP only when a concrete pro
 | Future-WP-F | End-to-end smoke suite (live match through full turn) | Client + Server | 📝 Placeholder |
 | Future-WP-G | Disconnect / reconnect stress suite    | Server + Client | 📝 Placeholder |
 | Future-WP-H | Synthetic load generator (multi-match concurrency) | Scripts | 📝 Placeholder |
+| Future-WP-I | Durable boardgame.io match storage (survive deploy / restart) | Server / Infra | 📦 Queued |
+
+> **Future-WP-I (durable match storage).** The game `Server()` is built with no `db:` option, so boardgame.io falls back to in-memory match storage; the server auto-deploys on every push to `main`, so each deploy restarts the process and discards every in-progress match — clients then freeze on their last state. Fix: back match state with durable storage (the existing Postgres or an equivalent adapter), paired with the WP-116 disconnect / reconnect work. Carries an architecture-invariant reconciliation (the "`G` is never persisted" line) to settle when the WP is authored. Planned ~2 weeks out, after core-set hero coverage progresses.
+
+*2026-06-20 — re-landed **Future-WP-I** (durable boardgame.io match storage): the node was authored 2026-06-16 (commit `30040c49`) on a branch whose second commit never merged, so it was missing from the live roadmap; root cause of the 2026-06-16 play.legendary-arena.com freeze (in-memory bgio storage + auto-deploy restart wiping live matches). Forward-looking / not yet authored.*
 
 ---
 

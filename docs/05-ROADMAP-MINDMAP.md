@@ -355,6 +355,7 @@ mindmap
         ["📦 Live PvP matchmaking & reconnect — implement WP-116 architecture + match discovery UX"]
         ["📦 Score submission HTTP wiring — close the play-to-leaderboard loop"]
         ["📦 Agent triage pipeline — WP-230..235 wire simulation sweep data into agent lanes + scheduled triage sessions"]
+        ["📦 Durable match storage — back boardgame.io match state with Postgres so a deploy/restart no longer wipes in-progress matches (Future-WP-I; root cause of the 2026-06-16 play.legendary-arena.com freeze)"]
 
       Phase 10 — Debugging, Testing & Troubleshooting
         ["Future-WP-A 📝 Placeholder — replay diff tool"]
@@ -429,7 +430,7 @@ mindmap
 | Architecture & API Governance | 4/4 | — |
 | Complete-Game Testing | 1/1 | — |
 | Cross-App Infrastructure | 1/1 | — |
-| Next Horizons | 0/4 | 4 📦 queued |
+| Next Horizons | 0/5 | 5 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
 | **Total** | **263/264 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸ |
