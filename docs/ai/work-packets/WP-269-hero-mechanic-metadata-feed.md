@@ -1,6 +1,6 @@
 # WP-269 — Hero Mechanic Metadata Feed (Contract + Transform + CI Gate)
 
-**Status:** Draft (candidate — not yet reviewed, not ready to execute)
+**Status:** Reviewed — ready to execute (tightened 2026-06-20: slug normalization, engine-dist submodule import paths, `generatedAt` sentinel, deterministic JSON ordering, bidirectional join + schema refinements, visible-curation floor, transform self-validation, added schema test file). **Gates re-run 2026-06-20 post-tightening: pre-flight READY · copilot PASS · lint PASS** (the re-gate caught the dist-barrel contract defect — see Pre-Flight + Copilot Re-Gate below).
 **Primary Layer:** Shared tooling (`scripts/`) + Registry (`packages/registry` — contract schema) + Metadata staging (`data/metadata/`)
 **Dependencies:** WP-251-era hero mechanic ledger (`docs/ai/coverage/hero-mechanic-ledger.json` — the committed, CI-gated source of truth); WP-086 / WP-183 / WP-184 metadata-publish precedent (`data/metadata/*.json` staged in-repo, fetched from R2 by the viewer)
 
@@ -41,15 +41,23 @@ test -f data/metadata/card-types.json && test -f data/metadata/card-abilities.js
 
 # D. No card-mechanics feed exists yet (this WP introduces it)
 test -f data/metadata/card-mechanics.json && echo "EXISTS" || echo "ABSENT"
-# Expected: ABSENT
+# Expected: ABSENT on a first run. If EXISTS, inspect `git status` + provenance:
+#   continue ONLY if it is this WP-branch's own regenerated artifact (the transform
+#   will rewrite it). STOP if it came from another branch, another WP, or an
+#   unexplained abandoned attempt — do not silently overwrite it.
 
 # E. The registry package schema is the established viewer-safe export site
 test -f packages/registry/src/schema.ts && echo "E_OK"
 # Expected: E_OK
 
-# F. The game-engine dist exposes the keyword/marker sets for source classification
-test -d packages/game-engine/dist && echo "F_OK"
-# Expected: F_OK (run `pnpm -r build` first if absent — the transform reads dist)
+# F. The game-engine dist exposes the EXACT source-classification inputs on their
+#    real submodule paths — NOT the dist barrel. The barrel re-exports
+#    HERO_KEYWORDS but NOT MVP_KEYWORDS / HERO_COMPOSITION_MARKER_NAMES, so the
+#    transform must import each from the same submodule as scripts/hero-mechanic-ledger.mjs.
+node -e "Promise.all([import('./packages/game-engine/dist/rules/heroKeywords.js'),import('./packages/game-engine/dist/hero/heroEffects.execute.js'),import('./packages/game-engine/dist/rules/heroCompositions.js')]).then(([k,e,c])=>{ if(!Array.isArray(k.HERO_KEYWORDS)||!Array.isArray(e.MVP_KEYWORDS)||!Array.isArray(c.HERO_COMPOSITION_MARKER_NAMES)) process.exit(1); console.log('F_OK'); }).catch(()=>process.exit(1));"
+# Expected: F_OK (run `pnpm -r build` first if it fails on a missing dist). If it
+# still fails, STOP — do NOT duplicate the keyword/marker sets inside the transform;
+# reuse the engine dist exports exactly as the ledger generator does.
 
 # G. Governance docs exist
 test -f docs/ai/DECISIONS.md && test -f docs/ai/ARCHITECTURE.md && echo "G_OK"
@@ -62,7 +70,7 @@ If the ledger's `cardType` is not `"hero"` (precondition B fails), the ledger ha
 ## Context (Read First)
 
 - `docs/ai/coverage/hero-mechanic-ledger.json` — the derivation source. Read its shape: `rows[]` of `{ extId, heroName, set, mechanic, status, wp, decision, handler }`, plus `summary`. The transform groups these by `mechanic` and joins per-card.
-- `scripts/hero-mechanic-ledger.mjs` — the ledger generator. Read how it classifies mechanics (MVP_KEYWORDS / HERO_KEYWORDS / HERO_COMPOSITION_MARKER_NAMES imported from `@legendary-arena/game-engine`, then free-text). The transform reuses the same `source` classification; it is a build script and MAY import the engine dist (it is not the viewer).
+- `scripts/hero-mechanic-ledger.mjs` — the ledger generator. Read its exact imports: `HERO_KEYWORDS` from `packages/game-engine/dist/rules/heroKeywords.js`, `MVP_KEYWORDS` from `packages/game-engine/dist/hero/heroEffects.execute.js`, `HERO_COMPOSITION_MARKER_NAMES` from `packages/game-engine/dist/rules/heroCompositions.js` (the dist **barrel** does NOT re-export the latter two — import each from its own submodule). The transform reuses the same `source` classification by importing from these same submodule paths; it is a build script and MAY read the engine dist (it is not the viewer). Do not duplicate the vocabulary into the transform.
 - `scripts/coverage/mechanic-provenance.json` — the existing curated side-table precedent (mechanic → wp/decision). The new `scripts/coverage/mechanic-labels.json` mirrors this pattern for label + hidden curation.
 - `data/metadata/card-types.json` + `packages/registry/src/schema.ts` (`CardTypesIndexSchema`) — the closest contract precedent: an R2-staged taxonomy JSON validated by a registry-package Zod schema the viewer imports via the `/schema` subpath. Mirror its shape and export site.
 - `.github/workflows/ci.yml` (the `Hero-effect-coverage` job, `ledger:heroes:check`) — the freshness-gate precedent this WP mirrors with `mechanics:metadata:check`.
@@ -94,10 +102,11 @@ If the ledger's `cardType` is not `"hero"` (precondition B fails), the ledger ha
 
 ## Files Expected to Change
 
-- `scripts/build-card-mechanics-metadata.mjs` — **new** (deterministic transform + `--check`)
+- `scripts/build-card-mechanics-metadata.mjs` — **new** (deterministic transform + `--check`; self-validates its output against `CardMechanicsIndexSchema` before writing / comparing)
 - `scripts/coverage/mechanic-labels.json` — **new** (curated label + hidden side-table)
 - `data/metadata/card-mechanics.json` — **new** (generated artifact, committed)
 - `packages/registry/src/schema.ts` — **modified** (additive: `CardMechanicsIndexSchema` + types)
+- `packages/registry/src/schema.cardMechanicsIndex.test.ts` — **new** (`node:test` accept/reject coverage for `CardMechanicsIndexSchema`; mirrors the existing `schema.schemeDeckCounts.test.ts` / `schema.villainDeckComposition.test.ts` naming)
 - `package.json` — **modified** (`mechanics:metadata` + `mechanics:metadata:check` scripts)
 - `.github/workflows/ci.yml` — **modified** (freshness gate)
 - `docs/ai/DECISIONS.md` — **modified** (new D-24046)
@@ -105,7 +114,7 @@ If the ledger's `cardType` is not `"hero"` (precondition B fails), the ledger ha
 - `docs/ai/work-packets/WORK_INDEX.md` — **modified** (status flip)
 - `docs/ai/execution-checklists/EC_INDEX.md` — **modified** (status flip)
 
-10 files (6 producer + 4 governance incl. DECISIONS). The producer surface has no value in partial landing (the schema, the artifact, and the freshness gate are one contract), so the bundle is justified inline per the §1 ~8-file guidance.
+11 files (7 producer/test/CI + 4 governance incl. DECISIONS). The producer surface has no value in partial landing — the schema, the generated artifact, the schema tests, and the freshness gate form one contract — so the bundle is justified inline per the §1 file-count guidance.
 
 ---
 
@@ -117,7 +126,7 @@ The published `data/metadata/card-mechanics.json` shape:
 {
   "version": 1,
   "scope": "hero",
-  "generatedAt": "<ISO-8601 UTC, sourced from the ledger or a fixed build stamp>",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
   "mechanics": [
     {
       "slug": "berserk",
@@ -138,7 +147,84 @@ The published `data/metadata/card-mechanics.json` shape:
 - `version` integer; `scope` the literal `"hero"`; `mechanics[]` sorted by `slug`; `cardIds` sorted; `cards` keys are engine ext_ids.
 - `source` is a closed 3-value union (`keyword` | `composition-marker` | `free-text`).
 - `hidden` defaults `true` for any mechanic not present in `scripts/coverage/mechanic-labels.json` (fail-closed). Visible mechanics are an explicit curation decision.
-- `generatedAt` is deterministic (no `Date.now()` in the transform — derive from the ledger's stamp or a fixed input) so `--check` is byte-stable.
+- `generatedAt` is deterministic (no `Date.now()` in the transform) so `--check` is byte-stable — see Generated Timestamp below.
+
+### Slug Normalization
+
+`slug` is the normalized, UI-safe identifier derived from the ledger `mechanic` value. The ledger's `mechanic` field is already mostly slug-safe (e.g. `cyber-mod-wound`) except for the `(unmarked)` sentinel and any punctuation-bearing free-text tokens. Rules:
+
+- Lowercase; trim leading/trailing whitespace.
+- Strip wrapping sentinel punctuation, including surrounding parentheses.
+- Replace each run of non-alphanumeric characters with a single `-`.
+- Collapse repeated `-`; trim leading/trailing `-`.
+- If the normalized result is empty, use `unmarked`.
+
+Examples: `(unmarked)` → `unmarked`; `Cyber-Mod Wound` → `cyber-mod-wound`; `Cyber-Mod: 4 Wounds` → `cyber-mod-4-wounds`.
+
+The published feed carries ONLY the normalized slug — it does NOT carry the raw ledger `mechanic` string. Raw/diagnostic mechanics are represented by their normalized slug and hidden via `hidden: true`.
+
+### Generated Timestamp
+
+`generatedAt` MUST be input-derived and byte-stable. The committed hero ledger exposes **no** timestamp field (verified: no `generatedAt`, no `summary.generatedAt`), so the transform resolves it as:
+
+1. `ledger.generatedAt`, if present and a valid ISO-8601 UTC string.
+2. `ledger.summary.generatedAt`, if present and a valid ISO-8601 UTC string.
+3. Otherwise the fixed sentinel `"1970-01-01T00:00:00.000Z"` (the current outcome — the ledger has neither field).
+
+The transform MUST NOT call `Date.now()`, `new Date()`, or any wall-clock API. The sentinel is not a real generation time; it exists only to keep the published contract shape stable while `--check` stays byte-identical.
+
+### Deterministic Ordering
+
+The generated JSON MUST use deterministic property and array ordering:
+
+- Top-level property order: `version`, `scope`, `generatedAt`, `mechanics`, `cards`.
+- Mechanic entry property order: `slug`, `label`, `scope`, `source`, `cardCount`, `cardIds`, `hidden`.
+- Card entry property order: `mechanics`.
+- `mechanics[]` sorted ascending by `slug`; `cardIds[]` sorted ascending and de-duplicated; `cards{}` keys sorted ascending by ext_id; each `cards[extId].mechanics[]` sorted ascending and de-duplicated.
+- Written as pretty JSON with two-space indentation and a final trailing newline.
+
+### Source Classification Priority
+
+For each normalized mechanic, classify `source` by reusing the engine-dist sets the ledger generator imports (do not duplicate the vocabulary). Priority order:
+
+1. If the mechanic ∈ `HERO_COMPOSITION_MARKER_NAMES` → `composition-marker`.
+2. Else if the mechanic ∈ `HERO_KEYWORDS` (which contains `MVP_KEYWORDS`) → `keyword`.
+3. Else → `free-text`.
+
+Composition-marker is checked first because `HERO_KEYWORDS` is frozen at 17 and does not contain the composition markers (e.g. `berserk`), so a name-collision can only resolve one way.
+
+### Schema Refinements
+
+`CardMechanicsIndexSchema` MUST reject (via `.superRefine`, mirroring the existing WP-138 `HeroSchema` precedent in this file) at minimum:
+
+- missing `version`; `version` other than `1`.
+- top-level `scope` other than `"hero"`; any mechanic `scope` other than `"hero"`.
+- `source` outside the closed union.
+- duplicate mechanic slugs; duplicate `cardIds` within a mechanic.
+- `cardCount !== cardIds.length`.
+- a `mechanics[].cardIds[]` reference to a card whose `cards[cardId].mechanics` does not include that slug (mechanic→card join).
+- a `cards[extId].mechanics[]` slug absent from `mechanics[]` (card→mechanic join).
+
+These refinements validate the published contract the viewer depends on; they MUST NOT require importing game-engine data (pure structural checks over the parsed object).
+
+### Curated Labels Side-Table Contract
+
+`scripts/coverage/mechanic-labels.json` shape:
+
+```json
+{
+  "schemaVersion": 1,
+  "mechanics": {
+    "berserk": { "label": "Berserk", "hidden": false },
+    "cyber-mod-wound": { "label": "Cyber-Mod Wound", "hidden": true }
+  }
+}
+```
+
+- Keys are normalized mechanic slugs, sorted alphabetically.
+- `label` is the human-readable display label; `hidden: false` is an explicit decision to surface; `hidden: true` documents a known diagnostic/raw token.
+- Any generated mechanic slug absent from this file defaults to a derived Title-Case label and `hidden: true`.
+- The transform MUST fail on duplicate keys after normalization, and MUST fail if the labels file references a slug not present in the current ledger (stale curation masks drift — fail, do not warn).
 
 ---
 
@@ -158,6 +244,9 @@ The published `data/metadata/card-mechanics.json` shape:
 - `hidden` is fail-closed: a mechanic absent from the curated labels map is `hidden: true` (never surfaced as a default UI chip). This realizes AC-7.
 - The feed carries ONLY the contract fields above — do not pass through ledger `status`/`handler`/`wp`/`decision`.
 - `scope` is the literal `"hero"`; do not emit other scopes (those are WP-271).
+- The transform MUST validate its own output with `CardMechanicsIndexSchema` (imported from `../packages/registry/dist/schema.js`) before writing the file and before returning success in `--check` — so the artifact and the schema can never drift apart. Producer loop: read ledger → read labels → transform → validate against the registry schema → write or compare.
+- Reuse the engine-dist source-classification sets (`HERO_KEYWORDS`, `MVP_KEYWORDS`, `HERO_COMPOSITION_MARKER_NAMES`) by importing from the same submodule paths as `scripts/hero-mechanic-ledger.mjs`; do NOT copy those lists into the transform (a second source of truth would silently drift from the parser).
+- At least one mechanic MUST be curated visible (`hidden: false`) in `mechanic-labels.json` — a feed where every mechanic is hidden is valid but useless (realizes the new AC-10).
 
 **Session protocol:**
 - If the ledger shape differs from precondition B (no `rows[]`, or `cardType !== "hero"`): STOP and report — the derivation source changed.
@@ -169,7 +258,12 @@ The published `data/metadata/card-mechanics.json` shape:
 - Schema export: `CardMechanicsIndexSchema` from `@legendary-arena/registry/schema`
 - `source` closed union: `keyword` | `composition-marker` | `free-text`
 - `scope`: the literal `"hero"`
-- `hidden` default: `true` (fail-closed)
+- `hidden` default: `true` (fail-closed); ≥1 mechanic MUST be curated visible (`hidden: false`)
+- `generatedAt` sentinel: `"1970-01-01T00:00:00.000Z"` (the ledger exposes no timestamp)
+- Slug normalization: lowercase → strip wrapping punctuation → non-alphanumeric runs to single `-` → empty becomes `unmarked` (so `(unmarked)` → `unmarked`)
+- Source priority: composition-marker → keyword → free-text (reuse the engine-dist sets; do not duplicate)
+- Output ordering: locked property order + sorted/deduped arrays + 2-space indent + trailing newline (see Deterministic Ordering)
+- Transform self-validates output via `CardMechanicsIndexSchema` (registry dist) before write/compare
 - npm scripts: `mechanics:metadata`, `mechanics:metadata:check`
 - DECISIONS reservation: D-24046
 
@@ -177,16 +271,23 @@ The published `data/metadata/card-mechanics.json` shape:
 
 ## Acceptance Criteria
 
-1. `pnpm mechanics:metadata` produces `data/metadata/card-mechanics.json` containing top-level `version`, `scope: "hero"`, `generatedAt`, a `mechanics[]` collection, and a per-card `cards{}` mapping (realizes **AC-1**).
-2. Each `mechanics[]` entry carries `slug`, `label`, `scope`, `source` (∈ the closed union), `cardCount`, `cardIds[]`, `hidden`.
-3. `cardCount === cardIds.length` for every mechanic, and every `cardId` appears under `cards[cardId].mechanics` containing that mechanic (producer-side join integrity).
-4. Mechanics absent from `scripts/coverage/mechanic-labels.json` are emitted with `hidden: true`; the known raw artifacts (`(unmarked)`, `cyber-mod-wound`-style near-dupes, punctuation tokens) are `hidden: true` (realizes **AC-7** at the data layer).
-5. `CardMechanicsIndexSchema.safeParse()` accepts the generated file and is exported from `@legendary-arena/registry/schema` (realizes the producer half of **AC-3**).
-6. `CardMechanicsIndexSchema.safeParse()` rejects a malformed payload (missing `version`, bad `source`, `cardCount`/`cardIds` mismatch) — covered by a schema unit test (producer half of **AC-4**).
-7. `packages/registry/src/schema.ts` does NOT import `@legendary-arena/game-engine` (data-only schema).
-8. `pnpm mechanics:metadata:check` exits 0 against the committed file and non-zero after a deliberate edit (freshness gate works).
-9. The transform is deterministic — two consecutive `pnpm mechanics:metadata` runs produce byte-identical output (no `Date.now()`).
-10. `pnpm -r build` and `pnpm test` exit 0; no `apps/registry-viewer` or `apps/dashboard` file is modified.
+1. `pnpm mechanics:metadata` produces `data/metadata/card-mechanics.json` with top-level `version`, `scope: "hero"`, the deterministic `generatedAt` sentinel, a `mechanics[]` collection, and a per-card `cards{}` mapping (realizes **AC-1**).
+2. Each `mechanics[]` entry carries exactly `slug`, `label`, `scope`, `source` (∈ the closed union), `cardCount`, `cardIds[]`, `hidden` — in that property order.
+3. `slug` is normalized per the Slug Normalization rules; the `(unmarked)` sentinel appears as `unmarked` (never `(unmarked)`); the raw ledger `mechanic` string is not carried.
+4. `source` is always one of `keyword`, `composition-marker`, `free-text`, classified by the priority order over the reused engine-dist sets.
+5. `scope` is the literal `"hero"` at the top level and in every mechanic entry.
+6. Ordering is locked: `mechanics[]` sorted by `slug`; each `cardIds[]` sorted + de-duped; `cards{}` keys sorted; each `cards[extId].mechanics[]` sorted + de-duped; two-space indent + trailing newline.
+7. `cardCount === cardIds.length` for every mechanic.
+8. Bidirectional join integrity holds: every `mechanics[].cardIds[]` reference appears in `cards{}` with that slug in its `mechanics`, AND every `cards[extId].mechanics[]` slug exists in `mechanics[]` (producer-side join integrity).
+9. Mechanics absent from `scripts/coverage/mechanic-labels.json` are emitted with `hidden: true` and a deterministic derived label; the known raw artifacts (`unmarked`, `cyber-mod-wound`, `cyber-mod-4-wounds`) are `hidden: true` (realizes **AC-7** at the data layer).
+10. `scripts/coverage/mechanic-labels.json` curates at least one visible first-class hero mechanic (`hidden: false`); the generated feed contains ≥1 `mechanics[]` entry with `hidden: false`.
+11. `CardMechanicsIndexSchema.safeParse()` accepts the generated file and is exported from `@legendary-arena/registry/schema` (producer half of **AC-3**).
+12. `CardMechanicsIndexSchema.safeParse()` rejects malformed payloads — at minimum missing `version`, invalid `source`, `cardCount`/`cardIds` mismatch, duplicate slugs, mechanic→card join mismatch, and card→mechanic join mismatch — covered by `schema.cardMechanicsIndex.test.ts` (producer half of **AC-4**).
+13. `packages/registry/src/schema.ts` does NOT import `@legendary-arena/game-engine` or any engine module (data-only schema).
+14. The transform self-validates its output against `CardMechanicsIndexSchema` before writing / comparing.
+15. `pnpm mechanics:metadata:check` exits 0 against the committed file and non-zero after a deliberate edit (freshness gate works).
+16. The transform is deterministic — two consecutive `pnpm mechanics:metadata` runs produce byte-identical output (no `Date.now()`).
+17. `pnpm -r build` and `pnpm test` exit 0; no `apps/registry-viewer` or `apps/dashboard` file is modified.
 
 ---
 
@@ -198,63 +299,117 @@ pnpm mechanics:metadata
 node -e "const d=require('./data/metadata/card-mechanics.json'); console.log(d.version, d.scope, Array.isArray(d.mechanics), typeof d.cards==='object');"
 # Expected: 1 hero true true
 
-# 2. Per-mechanic shape + join integrity
-node -e "const d=require('./data/metadata/card-mechanics.json'); const bad=d.mechanics.find(m=>m.cardCount!==m.cardIds.length||!['keyword','composition-marker','free-text'].includes(m.source)); if(bad){console.error('BAD',bad.slug);process.exit(1)} console.log('OK', d.mechanics.length, 'mechanics');"
-# Expected: OK <n> mechanics
+# 2. Per-mechanic shape + source union + count integrity + slug normalization
+node -e "const d=require('./data/metadata/card-mechanics.json'); const allowed=new Set(['keyword','composition-marker','free-text']); const bad=d.mechanics.find(m=>m.scope!=='hero'||m.cardCount!==m.cardIds.length||!allowed.has(m.source)||/[^a-z0-9-]/.test(m.slug)); if(bad){console.error('BAD',bad.slug);process.exit(1)} console.log('OK', d.mechanics.length, 'mechanics');"
+# Expected: OK <n> mechanics   (slug has no '(' ')' or uppercase — '(unmarked)' must be 'unmarked')
 
-# 3. Hidden fail-closed — raw artifacts hidden
-node -e "const d=require('./data/metadata/card-mechanics.json'); const unmarked=d.mechanics.find(m=>m.slug==='(unmarked)'); console.log('unmarked hidden:', unmarked? unmarked.hidden : 'absent');"
-# Expected: unmarked hidden: true (or absent)
+# 3. Bidirectional join integrity (mechanic->card AND card->mechanic)
+node -e "const d=require('./data/metadata/card-mechanics.json'); const slugs=new Set(d.mechanics.map(m=>m.slug)); for(const m of d.mechanics){for(const id of m.cardIds){if(!d.cards[id]||!d.cards[id].mechanics.includes(m.slug)){console.error('mechanic->card miss',m.slug,id);process.exit(1)}}} for(const [id,c] of Object.entries(d.cards)){for(const s of c.mechanics){if(!slugs.has(s)){console.error('card->mechanic miss',id,s);process.exit(1)}}} console.log('join integrity OK');"
+# Expected: join integrity OK
 
-# 4. Schema validates the generated file + rejects malformed
+# 4. Hidden fail-closed — raw artifacts absent or hidden (NORMALIZED slugs)
+node -e "const d=require('./data/metadata/card-mechanics.json'); for(const slug of ['unmarked','cyber-mod-wound','cyber-mod-4-wounds']){const m=d.mechanics.find(x=>x.slug===slug); console.log(slug+' hidden:', m?m.hidden:'absent'); if(m&&m.hidden!==true)process.exit(1);}"
+# Expected: each listed slug is absent or hidden: true
+
+# 5. Visible curation exists (feed is not all-hidden)
+node -e "const d=require('./data/metadata/card-mechanics.json'); const v=d.mechanics.filter(m=>m.hidden===false); if(v.length===0){console.error('No visible mechanics curated.');process.exit(1)} console.log('visible mechanics:', v.length);"
+# Expected: visible mechanics: <n>  (n > 0)
+
+# 6. Schema validates the generated file + rejects malformed
 pnpm --filter @legendary-arena/registry test 2>&1 | tail -3
-# Expected: exit 0; the new CardMechanicsIndexSchema tests pass
+# Expected: exit 0; the CardMechanicsIndexSchema accept/reject tests pass
 
-# 5. Schema is data-only (no engine import)
+# 7. Schema is data-only (no engine import)
 grep -n 'game-engine' packages/registry/src/schema.ts
 # Expected: NO MATCH
 
-# 6. Freshness gate
+# 8. Freshness gate
 pnpm mechanics:metadata:check; echo "clean exit=$?"   # Expected: exit 0
 # (and after a manual edit, expect non-zero)
 
-# 7. Determinism
+# 9. Determinism
 pnpm mechanics:metadata && cp data/metadata/card-mechanics.json /tmp/a.json && pnpm mechanics:metadata && diff -q /tmp/a.json data/metadata/card-mechanics.json
 # Expected: files identical (no diff)
 
-# 8. No viewer/dashboard files touched
+# 10. No viewer/dashboard files touched
 git diff --name-only | grep -E '^apps/(registry-viewer|dashboard)/' ; echo "viewer/dash hits above (expect none)"
+
+# 11. Full build/test
+pnpm -r build && pnpm test
+# Expected: both exit 0
 ```
 
 ---
 
 ## Definition of Done (Binary Gate — ALL must pass)
 
-- [ ] All preconditions (A–G) passed before the edit
-- [ ] All 10 Acceptance Criteria pass
-- [ ] All 8 Verification Steps produce the expected output
-- [ ] `data/metadata/card-mechanics.json` carries the locked contract shape; `mechanics[]` + per-card `cards{}` present
-- [ ] `hidden` fail-closed; raw/diagnostic tokens hidden
-- [ ] `CardMechanicsIndexSchema` exported from `@legendary-arena/registry/schema`; data-only (no engine import)
-- [ ] `mechanics:metadata:check` gate green on the committed file; CI step added
+- [ ] All preconditions (A–G) passed before the edit, including the exact engine-dist submodule export check (F)
+- [ ] All 17 Acceptance Criteria pass
+- [ ] All 11 Verification Steps produce the expected output
+- [ ] `data/metadata/card-mechanics.json` carries the locked contract shape + property/array ordering; `mechanics[]` + per-card `cards{}` present
+- [ ] Slugs normalized (`(unmarked)` → `unmarked`); the raw ledger `mechanic` string is not carried
+- [ ] Bidirectional mechanic/card join integrity passes
+- [ ] `hidden` fail-closed; raw/diagnostic tokens hidden; ≥1 curated mechanic visible (`hidden: false`)
+- [ ] `CardMechanicsIndexSchema` exported from `@legendary-arena/registry/schema`; data-only (no engine import); rejects the AC-12 malformed payloads
+- [ ] Transform self-validates output against the schema before write/compare
+- [ ] `mechanics:metadata:check` gate green on the committed file; CI step added (after `pnpm -r build`)
 - [ ] Transform deterministic (byte-stable across runs)
 - [ ] No `apps/registry-viewer` / `apps/dashboard` file modified
 - [ ] `docs/ai/STATUS.md` Done entry names WP-269 + the feed
-- [ ] `docs/ai/DECISIONS.md` D-24046 landed (contract + normalization + hidden-by-default lock)
+- [ ] `docs/ai/DECISIONS.md` D-24046 landed (contract + normalization + deterministic generation + hidden-by-default lock)
 - [ ] WORK_INDEX + EC_INDEX rows flipped to Done
-- [ ] Commit prefix `EC-300:` for code, `SPEC:` for governance close
+- [ ] Commit prefix `EC-300:` for code/test/CI, `SPEC:` for governance close
 
 ---
 
+## Pre-Flight + Copilot Re-Gate (2026-06-20, post-tightening)
+
+The original draft's pre-flight/copilot verdicts predate the 2026-06-20
+tightening (slug normalization, engine-dist submodule paths, `generatedAt`
+sentinel, deterministic ordering, bidirectional join + schema refinements,
+visible-curation floor, transform self-validation, added schema test). Both
+gates were re-run against the tightened WP-269 + EC-300 per `01.0a` Step 5's
+re-run rule.
+
+**Pre-flight (`01.4`): READY TO EXECUTE.** Dependencies verified empirically
+this session, not asserted: the hero ledger exists and is hero-scoped with no
+timestamp field (drives the `generatedAt` sentinel); `data/metadata/card-types.json`
++ the `@legendary-arena/registry/schema` subpath export site are present; and
+the three classification sets resolve from their real dist submodules
+(`rules/heroKeywords.js` → `HERO_KEYWORDS`, `hero/heroEffects.execute.js` →
+`MVP_KEYWORDS`, `rules/heroCompositions.js` → `HERO_COMPOSITION_MARKER_NAMES`).
+The re-gate **caught a contract-fidelity defect** the original carried: the
+dist *barrel* (`index.js`) re-exports only `HERO_KEYWORDS`, so the prior
+`dist/index.js` precondition would have failed at execution — precondition F
+now imports each set from its submodule. Scope is locked (11-file allowlist);
+the tightening resolved the open ambiguities (slug, timestamp, ordering, join,
+visible-curation). Architectural boundary holds (schema data-only; engine read
+isolated to the build script). **Empirical Scaffold N/A** — WP-269 adds a
+brand-new input path (new feed + new schema + its own new test), it does not
+tighten validation on an existing path with pre-existing fixtures.
+**Mutation Boundary N/A** — no `G`/move mutation (build script + data schema).
+
+**Copilot (`01.7`): PASS.** No RISK/BLOCK across the 30-mode lens. Separation
+of concerns (engine read isolated to the transform; schema `zod`-only),
+determinism (sentinel + locked ordering + no `Date.now()` + self-validation),
+type-safety/contract (closed `source` union + `superRefine` join/dedup rejects),
+persistence (no `G`/runtime state — N/A), testing (new `schema.cardMechanicsIndex.test.ts`
+accept/reject), scope/governance (11-file allowlist, two-commit topology),
+extensibility (`scope:"hero"` with the WP-271 all-types extension path),
+documentation (`// why:` on the fail-closed default, the engine-dist read, the
+sentinel, and the slug normalization), and error handling (full-sentence
+errors; fail-on-stale-label) are all explicitly prevented. The tightening
+strengthened the artifact rather than introducing new risk.
+
 ## Lint Gate Self-Review (00.3 — 21 sections)
 
-Run 2026-06-20 against this WP + EC-300. Result: **PASS** (all sections PASS or justified N/A).
+Run 2026-06-20; **re-run 2026-06-20 post-tightening** against this WP + EC-300. Result: **PASS** (all sections PASS or justified N/A).
 
 - **§1 Structure** — PASS (all required sections present; Out of Scope lists 6 exclusions).
 - **§2 Non-Negotiable Constraints** — PASS (Engine-wide + Packet-specific + Session protocol + Locked values; full-file-contents required; references 00.6).
 - **§3 Assumes** — PASS (preconditions A–G with exact expected output).
 - **§4 Context** — PASS (ledger, ledger generator, provenance precedent, card-types contract precedent, CI gate precedent, ARCHITECTURE layer boundary, 00.6 — all specific). 00.2 N/A — mechanic slugs are coverage-ledger tokens, not 00.2 card-data/setup-payload fields.
-- **§5 Files Expected to Change** — PASS (10 files, each marked new/modified + described; bundling justified inline).
+- **§5 Files Expected to Change** — PASS (11 files incl. the `schema.cardMechanicsIndex.test.ts` unit-test file, each marked new/modified + described; bundling justified inline).
 - **§6 Naming** — PASS (full-word names; `card-mechanics.json` mirrors `card-types.json`; `source`/`scope`/`hidden` are descriptive).
 - **§7 Dependencies** — PASS (no new npm deps).
 - **§8 Architectural Boundaries** — PASS (schema data-only, no engine import in registry; engine-dist read isolated to the repo-root build script; explicit grep gate AC-7/Verification-5 enforces it).
@@ -263,7 +418,7 @@ Run 2026-06-20 against this WP + EC-300. Result: **PASS** (all sections PASS or 
 - **§11 Auth** — N/A.
 - **§12 Test Quality** — PASS (schema unit tests via `node:test`; no boardgame.io/testing; no network/DB; deterministic-output assertion is invariant-focused).
 - **§13 Verification Commands** — PASS (all `pnpm`/`node`; exact with expected output).
-- **§14 Acceptance Criteria** — PASS (10 binary, observable, file-specific; mapped to Jeff's AC-1/AC-3/AC-4/AC-7 producer halves).
+- **§14 Acceptance Criteria** — PASS (17 binary, observable, file-specific; mapped to Jeff's AC-1/AC-3/AC-4/AC-7 producer halves; adds slug-normalization, bidirectional join, visible-curation, ordering, and schema-reject criteria).
 - **§15 Definition of Done** — PASS (STATUS + DECISIONS D-24046 + WORK_INDEX + EC_INDEX + scope-boundary check).
 - **§16 Code Style** — PASS (`for...of` grouping, no reduce-with-branching, `// why:` on hidden-default + engine-dist read, full-sentence errors).
 - **§17 Vision Alignment** — N/A declared with §17.3 build-infra justification (see below).
