@@ -164,6 +164,16 @@ jobs:
       - name: Hero mechanic ledger freshness
         run: pnpm ledger:heroes:check
 
+      # why (WP-269 / D-24046): the published hero-mechanic feed
+      # (data/metadata/card-mechanics.json) is regenerated from the same committed
+      # ledger + engine dist by a deterministic transform; this freshness gate fails
+      # if the committed feed drifts, so the registry-viewer (WP-270) never fetches a
+      # taxonomy that diverged from the ledger. Runs after `pnpm -r build` because the
+      # transform imports the registry dist (self-validation) and the engine dist
+      # (source classification).
+      - name: Card mechanic metadata freshness
+        run: pnpm mechanics:metadata:check
+
       # why (WP-259 / D-24035): the committed runtime-observed-hollows artifact is
       # regenerated from the same engine dist via a fixed-seed deterministic sweep;
       # this freshness gate fails if it drifts. The committed per-PR artifact is a

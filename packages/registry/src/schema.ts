@@ -581,3 +581,144 @@ export type ViewerConfig = z.infer<typeof ViewerConfigSchema>;
 export const ThemeIndexSchema = z.array(z.string().regex(/\.json$/, "theme index entries must end in .json"));
 
 export type ThemeIndex = z.infer<typeof ThemeIndexSchema>;
+
+// ── Hero mechanic metadata feed (card-mechanics.json — WP-269 / D-24046) ──────
+// why: WP-269 — the published, viewer-safe hero-mechanic index. It is generated
+// from the committed hero ledger (docs/ai/coverage/hero-mechanic-ledger.json) by
+// scripts/build-card-mechanics-metadata.mjs and fetched from R2 by the
+// registry-viewer (the consumer half is WP-270). This schema stays data-only
+// (zod + the parsed object); the engine-dependent source classification lives in
+// the repo-root transform script, never here — so packages/registry never imports
+// the engine package and the Layer Boundary holds. D-24046 locks the published
+// contract shape, the closed source union, the hidden-by-default policy, and the
+// bidirectional mechanic/card join the viewer depends on.
+//
+// The slug regex matches the transform's normalized output: lowercase
+// alphanumeric segments separated by single hyphens, with no leading, trailing,
+// or doubled hyphen. The `(unmarked)` sentinel from the ledger is normalized to
+// the bare slug `unmarked`, so the feed never carries the raw parenthesized form.
+export const CARD_MECHANIC_SOURCES = [
+  "keyword",
+  "composition-marker",
+  "free-text",
+] as const;
+
+export const CardMechanicSourceSchema = z.enum(CARD_MECHANIC_SOURCES);
+
+export const CardMechanicEntrySchema = z
+  .object({
+    slug:      z.string().min(1).regex(
+                 /^[a-z0-9]+(-[a-z0-9]+)*$/,
+                 "A mechanic slug must be lowercase alphanumeric segments joined by single hyphens (no leading, trailing, or doubled hyphen); check the transform's slug normalization.",
+               ),
+    label:     z.string().min(1),
+    scope:     z.literal("hero"),
+    source:    CardMechanicSourceSchema,
+    cardCount: z.number().int().nonnegative(),
+    cardIds:   z.array(z.string().min(1)),
+    hidden:    z.boolean(),
+  })
+  .strict();
+
+export const CardMechanicsCardEntrySchema = z
+  .object({
+    mechanics: z.array(z.string().min(1)),
+  })
+  .strict();
+
+// superRefine enforces the cross-field invariants the field-level types cannot
+// express, mirroring the WP-138 HeroSchema precedent above:
+//   - mechanic slugs are unique across mechanics[]
+//   - no duplicate cardIds within a single mechanic
+//   - cardCount equals the number of cardIds
+//   - mechanic -> card join: every mechanics[].cardIds[] entry resolves to a
+//     cards{} entry whose mechanics include that slug
+//   - card -> mechanic join: every cards[extId].mechanics[] slug is declared in
+//     mechanics[]
+// These are pure structural checks over the parsed object; they require no
+// engine data, so the schema stays data-only.
+export const CardMechanicsIndexSchema = z
+  .object({
+    version:     z.literal(1),
+    scope:       z.literal("hero"),
+    generatedAt: z.string().min(1),
+    mechanics:   z.array(CardMechanicEntrySchema),
+    cards:       z.record(z.string().min(1), CardMechanicsCardEntrySchema),
+  })
+  .strict()
+  .superRefine((index, ctx) => {
+    const declaredSlugs = new Set<string>();
+    for (const mechanic of index.mechanics) {
+      if (declaredSlugs.has(mechanic.slug)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["mechanics"],
+          message:
+            `Mechanic slug "${mechanic.slug}" appears more than once in mechanics[]. ` +
+            `Each mechanic slug must be unique; merge the duplicate entries in the transform.`,
+        });
+      } else {
+        declaredSlugs.add(mechanic.slug);
+      }
+    }
+
+    for (const mechanic of index.mechanics) {
+      const uniqueCardIds = new Set<string>();
+      for (const cardId of mechanic.cardIds) {
+        if (uniqueCardIds.has(cardId)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["mechanics"],
+            message:
+              `Mechanic "${mechanic.slug}" lists the card id "${cardId}" more than once. ` +
+              `Each mechanic's cardIds[] must be de-duplicated in the transform.`,
+          });
+        } else {
+          uniqueCardIds.add(cardId);
+        }
+      }
+      if (mechanic.cardCount !== mechanic.cardIds.length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["mechanics"],
+          message:
+            `Mechanic "${mechanic.slug}" has cardCount ${mechanic.cardCount} but ${mechanic.cardIds.length} ` +
+            `cardIds. cardCount must equal cardIds.length; recompute it from the de-duplicated card set.`,
+        });
+      }
+    }
+
+    for (const mechanic of index.mechanics) {
+      for (const cardId of mechanic.cardIds) {
+        const cardEntry = index.cards[cardId];
+        if (!cardEntry || !cardEntry.mechanics.includes(mechanic.slug)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["mechanics"],
+            message:
+              `Mechanic "${mechanic.slug}" references card "${cardId}" but cards["${cardId}"] does not list ` +
+              `that slug. Every mechanics[].cardIds[] entry must appear in cards{} with the mechanic's slug.`,
+          });
+        }
+      }
+    }
+
+    for (const [extId, cardEntry] of Object.entries(index.cards)) {
+      for (const slug of cardEntry.mechanics) {
+        if (!declaredSlugs.has(slug)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["cards"],
+            message:
+              `Card "${extId}" lists mechanic "${slug}" but no mechanics[] entry declares that slug. ` +
+              `Every cards[extId].mechanics[] slug must exist in mechanics[].`,
+          });
+        }
+      }
+    }
+  });
+
+export type CardMechanicSource     = z.infer<typeof CardMechanicSourceSchema>;
+export type CardMechanicEntry      = z.infer<typeof CardMechanicEntrySchema>;
+export type CardMechanicsCardEntry = z.infer<typeof CardMechanicsCardEntrySchema>;
+export type CardMechanicsIndex     = z.infer<typeof CardMechanicsIndexSchema>;

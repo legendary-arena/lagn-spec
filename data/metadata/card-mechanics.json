@@ -1,0 +1,3831 @@
+{
+  "version": 1,
+  "scope": "hero",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "mechanics": [
+    {
+      "slug": "abomination",
+      "label": "Abomination",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "rlmk/gorgon"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "ambush",
+      "label": "Ambush",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 5,
+      "cardIds": [
+        "bkpt/general-okoye",
+        "bkpt/king-black-panther",
+        "bkpt/princess-shuri",
+        "bkpt/queen-storm-of-wakanda",
+        "bkpt/white-wolf"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "antics",
+      "label": "Antics",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "amwp/ant-army",
+        "amwp/ant-man"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "artifact",
+      "label": "Artifact",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 9,
+      "cardIds": [
+        "dstr/doctor-strange",
+        "dstr/doctor-voodoo",
+        "fear/greithoth-breaker-of-wills",
+        "gotg/drax-the-destroyer",
+        "gotg/gamora",
+        "gotg/rocket-raccoon",
+        "gotg/star-lord",
+        "mgtg/gamora",
+        "mgtg/star-lord"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "artifacts",
+      "label": "Artifacts",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "fear/greithoth-breaker-of-wills"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "astral-plane",
+      "label": "Astral Plane",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "dstr/ancient-one-the"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "attack-per-count-victory-bystanders",
+      "label": "Attack Per Count Victory Bystanders",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "core/black-widow"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "berserk",
+      "label": "Berserk",
+      "scope": "hero",
+      "source": "composition-marker",
+      "cardCount": 11,
+      "cardIds": [
+        "wpnx/marrow",
+        "wpnx/weapon-h",
+        "wpnx/weapon-x-wolverine",
+        "xmen/aurora-northstar",
+        "xmen/beast",
+        "xmen/colossus-wolverine",
+        "xmen/havok",
+        "xmen/legion",
+        "xmen/longshot",
+        "xmen/phoenix",
+        "xmen/x-23"
+      ],
+      "hidden": false
+    },
+    {
+      "slug": "blood-frenzy",
+      "label": "Blood Frenzy",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 4,
+      "cardIds": [
+        "mdns/blade-daywalker",
+        "mdns/elsa-bloodstone",
+        "mdns/morbius",
+        "mdns/werewolf-by-night"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "bridge",
+      "label": "Bridge",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 3,
+      "cardIds": [
+        "anni/super-skrull",
+        "asrd/valkyrie",
+        "asrd/warriors-three-the"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "bridge-conqueror",
+      "label": "Bridge Conqueror",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "amwp/jentorra",
+        "anni/heralds-of-galactus"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "burn-2-shards",
+      "label": "Burn 2 Shards",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 3,
+      "cardIds": [
+        "cosm/adam-warlock",
+        "cosm/quasar",
+        "cosm/ronan-the-accuser"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "burn-4-shards",
+      "label": "Burn 4 Shards",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "cosm/adam-warlock",
+        "cosm/quasar"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "burn-8-shards",
+      "label": "Burn 8 Shards",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "cosm/adam-warlock"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "burn-a-shards",
+      "label": "Burn A Shards",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "cosm/quasar"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "burn-any-number-of-shards",
+      "label": "Burn Any Number Of Shards",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "cosm/yondu"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "cheering-crowds",
+      "label": "Cheering Crowds",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 5,
+      "cardIds": [
+        "chmp/gwenpool",
+        "chmp/ms-marvel",
+        "chmp/nova",
+        "chmp/totally-awesome-hulk",
+        "chmp/viv-vision"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "clone",
+      "label": "Clone",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 4,
+      "cardIds": [
+        "msmc/m",
+        "msmc/multiple-man",
+        "msmc/shatterstar",
+        "msmc/stepford-cuckoos"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "conqueror",
+      "label": "Conqueror",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 4,
+      "cardIds": [
+        "anni/heralds-of-galactus",
+        "anni/super-skrull",
+        "asrd/valkyrie",
+        "asrd/warriors-three-the"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "contest-of-champions",
+      "label": "Contest Of Champions",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "cosm/ronan-the-accuser"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "coordinate",
+      "label": "Coordinate",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 5,
+      "cardIds": [
+        "smhc/happy-hogan",
+        "smhc/high-tech-spider-man",
+        "smhc/peter-parker-homecoming",
+        "smhc/peters-allies",
+        "smhc/tony-stark"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "cosmic-threat",
+      "label": "Cosmic Threat",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "cosm/nova"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "cross-dimensional-colossus-rampage",
+      "label": "Cross Dimensional Colossus Rampage",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "ssw2/soulsword-colossus"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "cross-dimensional-hulk-rampage",
+      "label": "Cross Dimensional Hulk Rampage",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "wwhk/gladiator-hulk"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "cross-dimensional-party-rampage",
+      "label": "Cross Dimensional Party Rampage",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "wtif/party-thor"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "cross-dimensional-wolverine-rampage",
+      "label": "Cross Dimensional Wolverine Rampage",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "ssw1/old-man-logan"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "cyber-mod",
+      "label": "Cyber-Mod",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 3,
+      "cardIds": [
+        "2099/doctor-doom-2099",
+        "2099/ghost-rider-2099",
+        "2099/spider-man-2099"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "cyber-mod-4-wounds",
+      "label": "Cyber-Mod: 4 Wounds",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "2099/hulk-2099"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "cyber-mod-wound",
+      "label": "Cyber-Mod Wound",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "2099/hulk-2099"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "danger-sense",
+      "label": "Danger Sense",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 7,
+      "cardIds": [
+        "cosm/captain-mar-vell",
+        "cosm/moondragon",
+        "cosm/yondu",
+        "smhc/happy-hogan",
+        "smhc/high-tech-spider-man",
+        "smhc/peter-parker-homecoming",
+        "smhc/tony-stark"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "dark-memories",
+      "label": "Dark Memories",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 5,
+      "cardIds": [
+        "bkwd/black-widow",
+        "bkwd/falcon-winter-soldier",
+        "bkwd/white-tiger",
+        "rvlt/ronin",
+        "rvlt/scarlet-witch"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "demolish",
+      "label": "Demolish",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "chmp/gwenpool",
+        "fear/nul-breaker-of-worlds"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "demonic-bargain",
+      "label": "Demonic Bargain",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "dstr/clea",
+        "dstr/vishanti-the"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "digest",
+      "label": "Digest",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 5,
+      "cardIds": [
+        "vnom/carnage",
+        "vnom/venom",
+        "vnom/venom-rocket",
+        "vnom/venomized-dr-strange",
+        "vnom/venompool"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "dodge",
+      "label": "Dodge",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 12,
+      "cardIds": [
+        "bkwd/black-widow",
+        "bkwd/falcon-winter-soldier",
+        "bkwd/white-tiger",
+        "bkwd/yelena-belova",
+        "vill/bullseye",
+        "vill/electro",
+        "vill/green-goblin",
+        "vill/kraven",
+        "vill/magneto",
+        "vill/mysterio",
+        "vill/mystique",
+        "vill/ultron"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "don-t-speak",
+      "label": "Don T Speak",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "rlmk/black-bolt"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "double-striker",
+      "label": "Double Striker",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "smhc/happy-hogan"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "draw",
+      "label": "Draw",
+      "scope": "hero",
+      "source": "keyword",
+      "cardCount": 80,
+      "cardIds": [
+        "3dtc/black-widow",
+        "amwp/freedom-fighters",
+        "amwp/janet-van-dyne",
+        "anni/fantastic-four-united",
+        "antm/ant-man",
+        "antm/jocasta",
+        "antm/wasp",
+        "asrd/warriors-three-the",
+        "bkpt/princess-shuri",
+        "bkwd/falcon-winter-soldier",
+        "bkwd/red-guardian",
+        "ca75/captain-america-1941",
+        "ca75/winter-soldier",
+        "chmp/gwenpool",
+        "chmp/ms-marvel",
+        "chmp/totally-awesome-hulk",
+        "core/black-widow",
+        "core/emma-frost",
+        "core/hawkeye",
+        "core/iron-man",
+        "core/storm",
+        "core/wolverine",
+        "cosm/nova",
+        "cosm/phyla-vell",
+        "cvwr/goliath",
+        "cvwr/hercules",
+        "cvwr/speedball",
+        "cvwr/stature",
+        "cvwr/storm-black-panther",
+        "cvwr/tigra",
+        "cvwr/wiccan",
+        "dead/stingray",
+        "dkcy/bishop",
+        "dkcy/domino",
+        "dkcy/elektra",
+        "dkcy/ghost-rider",
+        "dkcy/iceman",
+        "dkcy/iron-fist",
+        "dkcy/punisher",
+        "dkcy/wolverine",
+        "dstr/ancient-one-the",
+        "ff04/mr-fantastic",
+        "mgtg/gamora",
+        "mgtg/mantis",
+        "msis/black-panther",
+        "msis/captain-marvel",
+        "msmc/m",
+        "msmc/shatterstar",
+        "msp1/black-widow",
+        "msp1/hawkeye",
+        "msp1/iron-man",
+        "pttr/scarlet-spider",
+        "rlmk/crystal",
+        "rvlt/darkhawk",
+        "rvlt/ronin",
+        "shld/deathlok",
+        "shld/mockingbird",
+        "smhc/high-tech-spider-man",
+        "ssw1/black-panther",
+        "ssw1/captain-marvel",
+        "ssw1/superior-iron-man",
+        "vill/bullseye",
+        "vill/dr-octopus",
+        "vill/enchantress",
+        "wtif/apocalyptic-black-widow",
+        "wtif/doctor-strange-supreme",
+        "wtif/gamora-destroyer-of-thanos",
+        "wwhk/amadeus-cho",
+        "wwhk/gladiator-hulk",
+        "wwhk/hiroim",
+        "wwhk/hulkbuster-iron-man",
+        "wwhk/korg",
+        "wwhk/namora",
+        "wwhk/no-name-brood-queen",
+        "xmen/banshee",
+        "xmen/jubilee",
+        "xmen/legion",
+        "xmen/phoenix",
+        "xmen/polaris",
+        "xmen/psylocke"
+      ],
+      "hidden": false
+    },
+    {
+      "slug": "empowered",
+      "label": "Empowered",
+      "scope": "hero",
+      "source": "composition-marker",
+      "cardCount": 7,
+      "cardIds": [
+        "antm/black-knight",
+        "antm/jocasta",
+        "antm/wonder-man",
+        "bkpt/princess-shuri",
+        "bkpt/queen-storm-of-wakanda",
+        "wtif/star-lord-tchalla",
+        "wtif/uatu-the-watcher"
+      ],
+      "hidden": false
+    },
+    {
+      "slug": "endgame",
+      "label": "Endgame",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "msis/captain-marvel"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "excessive-kindness",
+      "label": "Excessive Kindness",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "mgtg/mantis",
+        "mgtg/rocket-groot"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "excessive-violence",
+      "label": "Excessive Violence",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 11,
+      "cardIds": [
+        "dead/bob-agent-of-hydra",
+        "dead/deadpool",
+        "dead/slapstick",
+        "dead/solo",
+        "dead/stingray",
+        "mgtg/drax",
+        "mgtg/rocket-groot",
+        "vnom/carnage",
+        "vnom/venom",
+        "vnom/venom-rocket",
+        "vnom/venompool"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "explore",
+      "label": "Explore",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "amwp/jentorra"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "fated-future",
+      "label": "Fated Future",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 5,
+      "cardIds": [
+        "2099/doctor-doom-2099",
+        "2099/ghost-rider-2099",
+        "2099/hulk-2099",
+        "2099/ravage-2099",
+        "2099/spider-man-2099"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "feast",
+      "label": "Feast",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 3,
+      "cardIds": [
+        "wwhk/miek-the-unhived",
+        "wwhk/no-name-brood-queen",
+        "wwhk/sentry"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "focus",
+      "label": "Focus",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 9,
+      "cardIds": [
+        "anni/fantastic-four-united",
+        "anni/heralds-of-galactus",
+        "anni/psi-lord",
+        "anni/super-skrull",
+        "ff04/human-torch",
+        "ff04/invisible-woman",
+        "ff04/mr-fantastic",
+        "ff04/silver-surfer",
+        "ff04/thing"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "fortify",
+      "label": "Fortify",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "cvwr/luke-cage"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "heist",
+      "label": "Heist",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "amwp/ant-army",
+        "amwp/ant-man"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "highest-abomination",
+      "label": "Highest Abomination",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "rlmk/gorgon"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "hunt-for-victims",
+      "label": "Hunt For Victims",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "mdns/elsa-bloodstone"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "hyperspeed",
+      "label": "Hyperspeed",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 6,
+      "cardIds": [
+        "rvlt/darkhawk",
+        "rvlt/photon",
+        "rvlt/quicksilver",
+        "rvlt/ronin",
+        "rvlt/speed",
+        "rvlt/war-machine"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "indigestion",
+      "label": "Indigestion",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 3,
+      "cardIds": [
+        "vnom/carnage",
+        "vnom/venom",
+        "vnom/venompool"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "investigate",
+      "label": "Investigate",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 15,
+      "cardIds": [
+        "dims/jessica-jones",
+        "dims/ms-america",
+        "dims/squirrel-girl",
+        "msmc/m",
+        "msmc/multiple-man",
+        "msmc/rictor",
+        "msmc/siryn",
+        "msmc/stepford-cuckoos",
+        "msmc/strong-guy",
+        "msmc/warpath",
+        "noir/angel-noir",
+        "noir/daredevil-noir",
+        "noir/iron-man-noir",
+        "noir/luke-cage-noir",
+        "noir/spider-man-noir"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "last-stand",
+      "label": "Last Stand",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "rvlt/captain-marvel-agent-of-shield",
+        "rvlt/photon"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "liberate",
+      "label": "Liberate",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 3,
+      "cardIds": [
+        "wtif/apocalyptic-black-widow",
+        "wtif/captain-carter",
+        "wtif/killmonger-spec-ops"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "lightshow",
+      "label": "Lightshow",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 5,
+      "cardIds": [
+        "xmen/aurora-northstar",
+        "xmen/dazzler",
+        "xmen/havok",
+        "xmen/jubilee",
+        "xmen/legion"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "man-out-of-time",
+      "label": "Man Out Of Time",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 3,
+      "cardIds": [
+        "ca75/captain-america-1941",
+        "ca75/steve-rogers-director-of-shield",
+        "ca75/winter-soldier"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "man-woman-out-of-time",
+      "label": "Man Woman Out Of Time",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "anni/psi-lord"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "microscopic-size-changing",
+      "label": "Microscopic Size Changing",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 5,
+      "cardIds": [
+        "amwp/ant-army",
+        "amwp/ant-man",
+        "amwp/cassie-lang",
+        "antm/ant-man",
+        "antm/wasp"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "moonlight",
+      "label": "Moonlight",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 7,
+      "cardIds": [
+        "mdns/blade-daywalker",
+        "mdns/morbius",
+        "mdns/werewolf-by-night",
+        "nmut/mirage",
+        "nmut/sunspot",
+        "nmut/warlock",
+        "nmut/wolfsbane"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "optional-ko-reward-rescue",
+      "label": "Optional Ko Reward Rescue",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "core/black-widow"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "outwit",
+      "label": "Outwit",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 6,
+      "cardIds": [
+        "wwhk/amadeus-cho",
+        "wwhk/bruce-banner",
+        "wwhk/caiera",
+        "wwhk/hulkbuster-iron-man",
+        "wwhk/korg",
+        "wwhk/she-hulk"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "patrol-any-city-space",
+      "label": "Patrol Any City Space",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 3,
+      "cardIds": [
+        "mdns/elsa-bloodstone",
+        "ssw2/beast",
+        "ssw2/time-traveling-jean-grey"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "patrol-every-city-space",
+      "label": "Patrol Every City Space",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "ssw2/dr-punisher-soldier-supreme"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "patrol-the-bank",
+      "label": "Patrol The Bank",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "ssw2/agent-venom",
+        "ssw2/spider-gwen"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "patrol-the-bridge",
+      "label": "Patrol The Bridge",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 3,
+      "cardIds": [
+        "mdns/wong-master-of-the-mystic-arts",
+        "ssw2/spider-gwen",
+        "ssw2/time-traveling-jean-grey"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "patrol-the-escape-pile",
+      "label": "Patrol The Escape Pile",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "ssw2/corvus-glaive"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "patrol-the-rooftops",
+      "label": "Patrol The Rooftops",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 5,
+      "cardIds": [
+        "mdns/blade-daywalker",
+        "ssw2/arkon-the-magnificent",
+        "ssw2/captain-britain",
+        "ssw2/shang-chi",
+        "ssw2/spider-gwen"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "patrol-the-sewers",
+      "label": "Patrol The Sewers",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 4,
+      "cardIds": [
+        "mdns/blade-daywalker",
+        "ssw2/agent-venom",
+        "ssw2/arkon-the-magnificent",
+        "ssw2/elsa-bloodstone"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "patrol-the-streets",
+      "label": "Patrol The Streets",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 3,
+      "cardIds": [
+        "mdns/elsa-bloodstone",
+        "ssw2/captain-and-the-devil-the",
+        "ssw2/dr-punisher-soldier-supreme"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "patrol-two-adjacent-city-spaces",
+      "label": "Patrol Two Adjacent City Spaces",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "ssw2/arkon-the-magnificent"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "patrol-your-discard-pile",
+      "label": "Patrol Your Discard Pile",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "ssw2/shang-chi"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "patrol-your-victory-pile",
+      "label": "Patrol Your Victory Pile",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "ssw2/spider-gwen"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "phasing",
+      "label": "Phasing",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 4,
+      "cardIds": [
+        "cvwr/cloak-dagger",
+        "cvwr/vision",
+        "cvwr/wiccan",
+        "msis/doctor-strange"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "piercing-energy",
+      "label": "Piercing Energy",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 6,
+      "cardIds": [
+        "xmen/banshee",
+        "xmen/dazzler",
+        "xmen/legion",
+        "xmen/phoenix",
+        "xmen/polaris",
+        "xmen/psylocke"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "rescue",
+      "label": "Rescue",
+      "scope": "hero",
+      "source": "keyword",
+      "cardCount": 12,
+      "cardIds": [
+        "3dtc/black-widow",
+        "ca75/captain-america-1941",
+        "ca75/captain-america-falcon",
+        "ca75/steve-rogers-director-of-shield",
+        "chmp/ms-marvel",
+        "chmp/nova",
+        "core/black-widow",
+        "core/spider-man",
+        "cosm/ronan-the-accuser",
+        "cvwr/peter-parker",
+        "dkcy/jean-grey",
+        "msp1/black-widow"
+      ],
+      "hidden": false
+    },
+    {
+      "slug": "reveal",
+      "label": "Reveal",
+      "scope": "hero",
+      "source": "keyword",
+      "cardCount": 5,
+      "cardIds": [
+        "core/spider-man",
+        "cvwr/peter-parker",
+        "smhc/high-tech-spider-man",
+        "smhc/peter-parker-homecoming",
+        "ssw1/ultimate-spider-man"
+      ],
+      "hidden": false
+    },
+    {
+      "slug": "reveal-attack-choose",
+      "label": "Reveal: Attack or Choose",
+      "scope": "hero",
+      "source": "keyword",
+      "cardCount": 1,
+      "cardIds": [
+        "2099/ravage-2099"
+      ],
+      "hidden": false
+    },
+    {
+      "slug": "reveal-cost-attack",
+      "label": "Reveal: Cost-to-Attack",
+      "scope": "hero",
+      "source": "keyword",
+      "cardCount": 1,
+      "cardIds": [
+        "core/gambit"
+      ],
+      "hidden": false
+    },
+    {
+      "slug": "reveal-cost-lte-2-draw",
+      "label": "Reveal Cost Lte 2 Draw",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "core/spider-man"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "reveal-count",
+      "label": "Reveal Count",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "core/spider-man"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "reveal-ko",
+      "label": "Reveal: KO",
+      "scope": "hero",
+      "source": "keyword",
+      "cardCount": 4,
+      "cardIds": [
+        "cvwr/cloak-dagger",
+        "cvwr/hercules",
+        "dkcy/punisher",
+        "wwhk/bruce-banner"
+      ],
+      "hidden": false
+    },
+    {
+      "slug": "reveal-ko-attack",
+      "label": "Reveal: KO for Attack",
+      "scope": "hero",
+      "source": "keyword",
+      "cardCount": 1,
+      "cardIds": [
+        "ssw2/dr-punisher-soldier-supreme"
+      ],
+      "hidden": false
+    },
+    {
+      "slug": "reveal-ko-or-draw",
+      "label": "Reveal: KO or Draw",
+      "scope": "hero",
+      "source": "keyword",
+      "cardCount": 1,
+      "cardIds": [
+        "ssw2/silk"
+      ],
+      "hidden": false
+    },
+    {
+      "slug": "reveal-min",
+      "label": "Reveal: Minimum",
+      "scope": "hero",
+      "source": "keyword",
+      "cardCount": 2,
+      "cardIds": [
+        "cvwr/cloak-dagger",
+        "wwhk/rick-jones"
+      ],
+      "hidden": false
+    },
+    {
+      "slug": "reveal-odd-draw",
+      "label": "Reveal: Odd Draw",
+      "scope": "hero",
+      "source": "keyword",
+      "cardCount": 1,
+      "cardIds": [
+        "msis/wanda-vision"
+      ],
+      "hidden": false
+    },
+    {
+      "slug": "ritual-artifact",
+      "label": "Ritual Artifact",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 5,
+      "cardIds": [
+        "dstr/ancient-one-the",
+        "dstr/clea",
+        "dstr/doctor-strange",
+        "dstr/doctor-voodoo",
+        "dstr/vishanti-the"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "rooftops",
+      "label": "Rooftops",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "anni/super-skrull"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "rooftops-abomination",
+      "label": "Rooftops Abomination",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "rlmk/gorgon"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "s-h-i-e-l-d-level",
+      "label": "S H I E L D Level",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 4,
+      "cardIds": [
+        "shld/agent-phil-coulson",
+        "shld/deathlok",
+        "shld/mockingbird",
+        "shld/quake"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "s-h-i-e-l-d-levels",
+      "label": "S H I E L D Levels",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "shld/agent-phil-coulson",
+        "shld/mockingbird"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "sacrifice",
+      "label": "Sacrifice",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 4,
+      "cardIds": [
+        "msis/black-panther",
+        "msis/bruce-banner",
+        "msis/doctor-strange",
+        "msis/wanda-vision"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "savior",
+      "label": "Savior",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 4,
+      "cardIds": [
+        "ca75/agent-x-13",
+        "ca75/captain-america-1941",
+        "ca75/captain-america-falcon",
+        "ca75/steve-rogers-director-of-shield"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "sewers-conqueror",
+      "label": "Sewers Conqueror",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "amwp/jentorra",
+        "asrd/valkyrie"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "shatter",
+      "label": "Shatter",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 3,
+      "cardIds": [
+        "msmc/rictor",
+        "msmc/shatterstar",
+        "msmc/siryn"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "size-changing",
+      "label": "Size Changing",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 16,
+      "cardIds": [
+        "amwp/ant-army",
+        "amwp/ant-man",
+        "amwp/cassie-lang",
+        "antm/ant-man",
+        "antm/jocasta",
+        "antm/wasp",
+        "antm/wonder-man",
+        "chmp/gwenpool",
+        "chmp/ms-marvel",
+        "chmp/nova",
+        "chmp/totally-awesome-hulk",
+        "chmp/viv-vision",
+        "cvwr/goliath",
+        "cvwr/hulkling",
+        "cvwr/stature",
+        "cvwr/vision"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "smash",
+      "label": "Smash",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 11,
+      "cardIds": [
+        "wwhk/bruce-banner",
+        "wwhk/caiera",
+        "wwhk/gladiator-hulk",
+        "wwhk/hulkbuster-iron-man",
+        "wwhk/joe-fixit-grey-hulk",
+        "wwhk/korg",
+        "wwhk/miek-the-unhived",
+        "wwhk/namora",
+        "wwhk/rick-jones",
+        "wwhk/she-hulk",
+        "wwhk/skaar-son-of-hulk"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "soaring-flight",
+      "label": "Soaring Flight",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 8,
+      "cardIds": [
+        "xmen/aurora-northstar",
+        "xmen/banshee",
+        "xmen/cannonball",
+        "xmen/colossus-wolverine",
+        "xmen/kitty-pryde",
+        "xmen/legion",
+        "xmen/phoenix",
+        "xmen/polaris"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "soulbind",
+      "label": "Soulbind",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 3,
+      "cardIds": [
+        "wtif/doctor-strange-supreme",
+        "wtif/gamora-destroyer-of-thanos",
+        "wtif/uatu-the-watcher"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "soulbind-a-bystander-or-villain",
+      "label": "Soulbind A Bystander Or Villain",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "wtif/doctor-strange-supreme"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "soulbind-six-villains",
+      "label": "Soulbind Six Villains",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "wtif/gamora-destroyer-of-thanos"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "speak",
+      "label": "Speak",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "rlmk/black-bolt"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "spectrum",
+      "label": "Spectrum",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 5,
+      "cardIds": [
+        "ssw2/agent-venom",
+        "ssw2/arkon-the-magnificent",
+        "ssw2/captain-and-the-devil-the",
+        "ssw2/elsa-bloodstone",
+        "ssw2/silk"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "streets",
+      "label": "Streets",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "anni/super-skrull",
+        "asrd/valkyrie"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "streets-abomination",
+      "label": "Streets Abomination",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "rlmk/gorgon"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "streets-conqueror",
+      "label": "Streets Conqueror",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "asrd/warriors-three-the"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "striker",
+      "label": "Striker",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "smhc/happy-hogan"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "sunlight",
+      "label": "Sunlight",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 7,
+      "cardIds": [
+        "mdns/blade-daywalker",
+        "mdns/morbius",
+        "mdns/werewolf-by-night",
+        "mdns/wong-master-of-the-mystic-arts",
+        "nmut/sunspot",
+        "nmut/warlock",
+        "nmut/wolfsbane"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "switcheroo",
+      "label": "Switcheroo",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "dims/jessica-jones",
+        "dims/squirrel-girl"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "tactical-formation",
+      "label": "Tactical Formation",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 7,
+      "cardIds": [
+        "msmc/m",
+        "msmc/multiple-man",
+        "msmc/shatterstar",
+        "msmc/siryn",
+        "msmc/stepford-cuckoos",
+        "msmc/strong-guy",
+        "msmc/warpath"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "teleport",
+      "label": "Teleport",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 9,
+      "cardIds": [
+        "dims/man-thing",
+        "dims/ms-america",
+        "dkcy/cable",
+        "dkcy/nightcrawler",
+        "rlmk/gorgon",
+        "ssw1/dr-strange",
+        "ssw1/magik",
+        "ssw1/thanos",
+        "ssw2/ruby-summers"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "thrones-favor",
+      "label": "Thrones Favor",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 5,
+      "cardIds": [
+        "bkpt/king-black-panther",
+        "bkpt/queen-storm-of-wakanda",
+        "rlmk/black-bolt",
+        "rlmk/crystal",
+        "rlmk/medusa"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "thrown-artifact",
+      "label": "Thrown Artifact",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 10,
+      "cardIds": [
+        "asrd/beta-ray-bill",
+        "asrd/lady-sif",
+        "asrd/thor",
+        "asrd/valkyrie",
+        "fear/greithoth-breaker-of-wills",
+        "fear/kuurth-breaker-of-stone",
+        "fear/nerkkod-breaker-of-oceans",
+        "fear/nul-breaker-of-worlds",
+        "fear/skadi",
+        "fear/skirn-breaker-of-men"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "transform",
+      "label": "Transform",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 15,
+      "cardIds": [
+        "wwhk/amadeus-cho",
+        "wwhk/bruce-banner",
+        "wwhk/caiera",
+        "wwhk/gladiator-hulk",
+        "wwhk/hiroim",
+        "wwhk/hulkbuster-iron-man",
+        "wwhk/joe-fixit-grey-hulk",
+        "wwhk/korg",
+        "wwhk/miek-the-unhived",
+        "wwhk/namora",
+        "wwhk/no-name-brood-queen",
+        "wwhk/rick-jones",
+        "wwhk/sentry",
+        "wwhk/she-hulk",
+        "wwhk/skaar-son-of-hulk"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "transformed",
+      "label": "Transformed",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "wwhk/sentry"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "triggered-artifact",
+      "label": "Triggered Artifact",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 4,
+      "cardIds": [
+        "mgtg/drax",
+        "mgtg/gamora",
+        "mgtg/rocket-groot",
+        "mgtg/star-lord"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "undercover",
+      "label": "Undercover",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 16,
+      "cardIds": [
+        "2099/doctor-doom-2099",
+        "2099/ghost-rider-2099",
+        "2099/hulk-2099",
+        "2099/spider-man-2099",
+        "bkwd/black-widow",
+        "bkwd/red-guardian",
+        "bkwd/yelena-belova",
+        "shld/agent-phil-coulson",
+        "shld/deathlok",
+        "shld/dum-dum-dugan",
+        "shld/grant-ward",
+        "shld/mockingbird",
+        "shld/quake",
+        "shld/sharon-carter",
+        "shld/victoria-hand",
+        "shld/yo-yo-rodriguez"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "unleash",
+      "label": "Unleash",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "bkwd/red-guardian",
+        "bkwd/yelena-belova"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "unmarked",
+      "label": "Unmarked",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 47,
+      "cardIds": [
+        "3dtc/deadpool",
+        "3dtc/howard-the-duck",
+        "3dtc/hulk",
+        "3dtc/man-thing",
+        "amwp/scott-lang-cat-burglar",
+        "amwp/wasp",
+        "core/captain-america",
+        "core/cyclops",
+        "core/deadpool",
+        "core/hulk",
+        "core/nick-fury",
+        "core/rogue",
+        "core/thor",
+        "cosm/nebula",
+        "cvwr/captain-america-secret-avenger",
+        "cvwr/daredevil",
+        "cvwr/falcon",
+        "cvwr/patriot",
+        "dims/howard-the-duck",
+        "dkcy/angel",
+        "dkcy/blade",
+        "dkcy/colossus",
+        "dkcy/daredevil",
+        "dkcy/professor-x",
+        "gotg/groot",
+        "msp1/captain-america",
+        "msp1/hulk",
+        "msp1/nick-fury",
+        "msp1/thor",
+        "nmut/karma",
+        "rvlt/hellcat",
+        "shld/gw-bridge",
+        "shld/leo-fitz-and-jemma-simmons",
+        "shld/melinda-may",
+        "ssw1/apocalyptic-kitty-pryde",
+        "ssw1/black-bolt",
+        "ssw1/lady-thor",
+        "ssw1/maximus",
+        "ssw1/namor-the-sub-mariner",
+        "ssw1/proxima-midnight",
+        "ssw2/black-swan",
+        "ssw2/phoenix-force-cyclops",
+        "vill/juggernaut",
+        "vill/kingpin",
+        "vill/loki",
+        "vill/sabretooth",
+        "vill/venom"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "versatile",
+      "label": "Versatile",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 7,
+      "cardIds": [
+        "chmp/gwenpool",
+        "chmp/ms-marvel",
+        "chmp/nova",
+        "chmp/viv-vision",
+        "dkcy/domino",
+        "dkcy/forge",
+        "dkcy/iron-fist"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "villain-or-mastermind-has-any-wounds",
+      "label": "Villain Or Mastermind Has Any Wounds",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "bkpt/white-wolf"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "waking-nightmare",
+      "label": "Waking Nightmare",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "nmut/mirage"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "wall-crawl",
+      "label": "Wall Crawl",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 14,
+      "cardIds": [
+        "pttr/black-cat",
+        "pttr/moon-knight",
+        "pttr/scarlet-spider",
+        "pttr/spider-woman",
+        "pttr/symbiote-spider-man",
+        "smhc/high-tech-spider-man",
+        "smhc/peter-parker-homecoming",
+        "ssw2/agent-venom",
+        "ssw2/arkon-the-magnificent",
+        "ssw2/beast",
+        "ssw2/elsa-bloodstone",
+        "ssw2/shang-chi",
+        "ssw2/silk",
+        "ssw2/spider-gwen"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "weapon-x-sequence",
+      "label": "Weapon X Sequence",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 4,
+      "cardIds": [
+        "wpnx/fantomex",
+        "wpnx/marrow",
+        "wpnx/weapon-h",
+        "wpnx/weapon-x-wolverine"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "what-if",
+      "label": "What If",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 8,
+      "cardIds": [
+        "wtif/apocalyptic-black-widow",
+        "wtif/captain-carter",
+        "wtif/doctor-strange-supreme",
+        "wtif/gamora-destroyer-of-thanos",
+        "wtif/killmonger-spec-ops",
+        "wtif/party-thor",
+        "wtif/star-lord-tchalla",
+        "wtif/uatu-the-watcher"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "when-recruited",
+      "label": "When Recruited",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 4,
+      "cardIds": [
+        "bkwd/red-guardian",
+        "msmc/m",
+        "msmc/shatterstar",
+        "msmc/stepford-cuckoos"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "when-recruited-abilities",
+      "label": "When Recruited Abilities",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 5,
+      "cardIds": [
+        "rlmk/black-bolt",
+        "rlmk/crystal",
+        "rlmk/gorgon",
+        "rlmk/karnak",
+        "rlmk/medusa"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "woman-out-of-time",
+      "label": "Woman Out Of Time",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "anni/brainstorm",
+        "ca75/agent-x-13"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "worthy",
+      "label": "Worthy",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "asrd/beta-ray-bill",
+        "asrd/thor"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "wound-a-villain",
+      "label": "Wound A Villain",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "bkpt/general-okoye",
+        "bkpt/white-wolf"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "wound-each-villain-and-the-mastermind",
+      "label": "Wound Each Villain And The Mastermind",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 1,
+      "cardIds": [
+        "bkpt/white-wolf"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "wound-the-mastermind",
+      "label": "Wound The Mastermind",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "bkpt/queen-storm-of-wakanda",
+        "bkpt/white-wolf"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "wounded-fury",
+      "label": "Wounded Fury",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 2,
+      "cardIds": [
+        "wwhk/gladiator-hulk",
+        "wwhk/skaar-son-of-hulk"
+      ],
+      "hidden": true
+    },
+    {
+      "slug": "x-gene",
+      "label": "X Gene",
+      "scope": "hero",
+      "source": "free-text",
+      "cardCount": 8,
+      "cardIds": [
+        "xmen/banshee",
+        "xmen/beast",
+        "xmen/colossus-wolverine",
+        "xmen/havok",
+        "xmen/kitty-pryde",
+        "xmen/polaris",
+        "xmen/psylocke",
+        "xmen/x-23"
+      ],
+      "hidden": true
+    }
+  ],
+  "cards": {
+    "2099/doctor-doom-2099": {
+      "mechanics": [
+        "cyber-mod",
+        "fated-future",
+        "undercover"
+      ]
+    },
+    "2099/ghost-rider-2099": {
+      "mechanics": [
+        "cyber-mod",
+        "fated-future",
+        "undercover"
+      ]
+    },
+    "2099/hulk-2099": {
+      "mechanics": [
+        "cyber-mod-4-wounds",
+        "cyber-mod-wound",
+        "fated-future",
+        "undercover"
+      ]
+    },
+    "2099/ravage-2099": {
+      "mechanics": [
+        "fated-future",
+        "reveal-attack-choose"
+      ]
+    },
+    "2099/spider-man-2099": {
+      "mechanics": [
+        "cyber-mod",
+        "fated-future",
+        "undercover"
+      ]
+    },
+    "3dtc/black-widow": {
+      "mechanics": [
+        "draw",
+        "rescue"
+      ]
+    },
+    "3dtc/deadpool": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "3dtc/howard-the-duck": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "3dtc/hulk": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "3dtc/man-thing": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "amwp/ant-army": {
+      "mechanics": [
+        "antics",
+        "heist",
+        "microscopic-size-changing",
+        "size-changing"
+      ]
+    },
+    "amwp/ant-man": {
+      "mechanics": [
+        "antics",
+        "heist",
+        "microscopic-size-changing",
+        "size-changing"
+      ]
+    },
+    "amwp/cassie-lang": {
+      "mechanics": [
+        "microscopic-size-changing",
+        "size-changing"
+      ]
+    },
+    "amwp/freedom-fighters": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "amwp/janet-van-dyne": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "amwp/jentorra": {
+      "mechanics": [
+        "bridge-conqueror",
+        "explore",
+        "sewers-conqueror"
+      ]
+    },
+    "amwp/scott-lang-cat-burglar": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "amwp/wasp": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "anni/brainstorm": {
+      "mechanics": [
+        "woman-out-of-time"
+      ]
+    },
+    "anni/fantastic-four-united": {
+      "mechanics": [
+        "draw",
+        "focus"
+      ]
+    },
+    "anni/heralds-of-galactus": {
+      "mechanics": [
+        "bridge-conqueror",
+        "conqueror",
+        "focus"
+      ]
+    },
+    "anni/psi-lord": {
+      "mechanics": [
+        "focus",
+        "man-woman-out-of-time"
+      ]
+    },
+    "anni/super-skrull": {
+      "mechanics": [
+        "bridge",
+        "conqueror",
+        "focus",
+        "rooftops",
+        "streets"
+      ]
+    },
+    "antm/ant-man": {
+      "mechanics": [
+        "draw",
+        "microscopic-size-changing",
+        "size-changing"
+      ]
+    },
+    "antm/black-knight": {
+      "mechanics": [
+        "empowered"
+      ]
+    },
+    "antm/jocasta": {
+      "mechanics": [
+        "draw",
+        "empowered",
+        "size-changing"
+      ]
+    },
+    "antm/wasp": {
+      "mechanics": [
+        "draw",
+        "microscopic-size-changing",
+        "size-changing"
+      ]
+    },
+    "antm/wonder-man": {
+      "mechanics": [
+        "empowered",
+        "size-changing"
+      ]
+    },
+    "asrd/beta-ray-bill": {
+      "mechanics": [
+        "thrown-artifact",
+        "worthy"
+      ]
+    },
+    "asrd/lady-sif": {
+      "mechanics": [
+        "thrown-artifact"
+      ]
+    },
+    "asrd/thor": {
+      "mechanics": [
+        "thrown-artifact",
+        "worthy"
+      ]
+    },
+    "asrd/valkyrie": {
+      "mechanics": [
+        "bridge",
+        "conqueror",
+        "sewers-conqueror",
+        "streets",
+        "thrown-artifact"
+      ]
+    },
+    "asrd/warriors-three-the": {
+      "mechanics": [
+        "bridge",
+        "conqueror",
+        "draw",
+        "streets-conqueror"
+      ]
+    },
+    "bkpt/general-okoye": {
+      "mechanics": [
+        "ambush",
+        "wound-a-villain"
+      ]
+    },
+    "bkpt/king-black-panther": {
+      "mechanics": [
+        "ambush",
+        "thrones-favor"
+      ]
+    },
+    "bkpt/princess-shuri": {
+      "mechanics": [
+        "ambush",
+        "draw",
+        "empowered"
+      ]
+    },
+    "bkpt/queen-storm-of-wakanda": {
+      "mechanics": [
+        "ambush",
+        "empowered",
+        "thrones-favor",
+        "wound-the-mastermind"
+      ]
+    },
+    "bkpt/white-wolf": {
+      "mechanics": [
+        "ambush",
+        "villain-or-mastermind-has-any-wounds",
+        "wound-a-villain",
+        "wound-each-villain-and-the-mastermind",
+        "wound-the-mastermind"
+      ]
+    },
+    "bkwd/black-widow": {
+      "mechanics": [
+        "dark-memories",
+        "dodge",
+        "undercover"
+      ]
+    },
+    "bkwd/falcon-winter-soldier": {
+      "mechanics": [
+        "dark-memories",
+        "dodge",
+        "draw"
+      ]
+    },
+    "bkwd/red-guardian": {
+      "mechanics": [
+        "draw",
+        "undercover",
+        "unleash",
+        "when-recruited"
+      ]
+    },
+    "bkwd/white-tiger": {
+      "mechanics": [
+        "dark-memories",
+        "dodge"
+      ]
+    },
+    "bkwd/yelena-belova": {
+      "mechanics": [
+        "dodge",
+        "undercover",
+        "unleash"
+      ]
+    },
+    "ca75/agent-x-13": {
+      "mechanics": [
+        "savior",
+        "woman-out-of-time"
+      ]
+    },
+    "ca75/captain-america-1941": {
+      "mechanics": [
+        "draw",
+        "man-out-of-time",
+        "rescue",
+        "savior"
+      ]
+    },
+    "ca75/captain-america-falcon": {
+      "mechanics": [
+        "rescue",
+        "savior"
+      ]
+    },
+    "ca75/steve-rogers-director-of-shield": {
+      "mechanics": [
+        "man-out-of-time",
+        "rescue",
+        "savior"
+      ]
+    },
+    "ca75/winter-soldier": {
+      "mechanics": [
+        "draw",
+        "man-out-of-time"
+      ]
+    },
+    "chmp/gwenpool": {
+      "mechanics": [
+        "cheering-crowds",
+        "demolish",
+        "draw",
+        "size-changing",
+        "versatile"
+      ]
+    },
+    "chmp/ms-marvel": {
+      "mechanics": [
+        "cheering-crowds",
+        "draw",
+        "rescue",
+        "size-changing",
+        "versatile"
+      ]
+    },
+    "chmp/nova": {
+      "mechanics": [
+        "cheering-crowds",
+        "rescue",
+        "size-changing",
+        "versatile"
+      ]
+    },
+    "chmp/totally-awesome-hulk": {
+      "mechanics": [
+        "cheering-crowds",
+        "draw",
+        "size-changing"
+      ]
+    },
+    "chmp/viv-vision": {
+      "mechanics": [
+        "cheering-crowds",
+        "size-changing",
+        "versatile"
+      ]
+    },
+    "core/black-widow": {
+      "mechanics": [
+        "attack-per-count-victory-bystanders",
+        "draw",
+        "optional-ko-reward-rescue",
+        "rescue"
+      ]
+    },
+    "core/captain-america": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "core/cyclops": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "core/deadpool": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "core/emma-frost": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "core/gambit": {
+      "mechanics": [
+        "reveal-cost-attack"
+      ]
+    },
+    "core/hawkeye": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "core/hulk": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "core/iron-man": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "core/nick-fury": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "core/rogue": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "core/spider-man": {
+      "mechanics": [
+        "rescue",
+        "reveal",
+        "reveal-cost-lte-2-draw",
+        "reveal-count"
+      ]
+    },
+    "core/storm": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "core/thor": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "core/wolverine": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "cosm/adam-warlock": {
+      "mechanics": [
+        "burn-2-shards",
+        "burn-4-shards",
+        "burn-8-shards"
+      ]
+    },
+    "cosm/captain-mar-vell": {
+      "mechanics": [
+        "danger-sense"
+      ]
+    },
+    "cosm/moondragon": {
+      "mechanics": [
+        "danger-sense"
+      ]
+    },
+    "cosm/nebula": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "cosm/nova": {
+      "mechanics": [
+        "cosmic-threat",
+        "draw"
+      ]
+    },
+    "cosm/phyla-vell": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "cosm/quasar": {
+      "mechanics": [
+        "burn-2-shards",
+        "burn-4-shards",
+        "burn-a-shards"
+      ]
+    },
+    "cosm/ronan-the-accuser": {
+      "mechanics": [
+        "burn-2-shards",
+        "contest-of-champions",
+        "rescue"
+      ]
+    },
+    "cosm/yondu": {
+      "mechanics": [
+        "burn-any-number-of-shards",
+        "danger-sense"
+      ]
+    },
+    "cvwr/captain-america-secret-avenger": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "cvwr/cloak-dagger": {
+      "mechanics": [
+        "phasing",
+        "reveal-ko",
+        "reveal-min"
+      ]
+    },
+    "cvwr/daredevil": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "cvwr/falcon": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "cvwr/goliath": {
+      "mechanics": [
+        "draw",
+        "size-changing"
+      ]
+    },
+    "cvwr/hercules": {
+      "mechanics": [
+        "draw",
+        "reveal-ko"
+      ]
+    },
+    "cvwr/hulkling": {
+      "mechanics": [
+        "size-changing"
+      ]
+    },
+    "cvwr/luke-cage": {
+      "mechanics": [
+        "fortify"
+      ]
+    },
+    "cvwr/patriot": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "cvwr/peter-parker": {
+      "mechanics": [
+        "rescue",
+        "reveal"
+      ]
+    },
+    "cvwr/speedball": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "cvwr/stature": {
+      "mechanics": [
+        "draw",
+        "size-changing"
+      ]
+    },
+    "cvwr/storm-black-panther": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "cvwr/tigra": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "cvwr/vision": {
+      "mechanics": [
+        "phasing",
+        "size-changing"
+      ]
+    },
+    "cvwr/wiccan": {
+      "mechanics": [
+        "draw",
+        "phasing"
+      ]
+    },
+    "dead/bob-agent-of-hydra": {
+      "mechanics": [
+        "excessive-violence"
+      ]
+    },
+    "dead/deadpool": {
+      "mechanics": [
+        "excessive-violence"
+      ]
+    },
+    "dead/slapstick": {
+      "mechanics": [
+        "excessive-violence"
+      ]
+    },
+    "dead/solo": {
+      "mechanics": [
+        "excessive-violence"
+      ]
+    },
+    "dead/stingray": {
+      "mechanics": [
+        "draw",
+        "excessive-violence"
+      ]
+    },
+    "dims/howard-the-duck": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "dims/jessica-jones": {
+      "mechanics": [
+        "investigate",
+        "switcheroo"
+      ]
+    },
+    "dims/man-thing": {
+      "mechanics": [
+        "teleport"
+      ]
+    },
+    "dims/ms-america": {
+      "mechanics": [
+        "investigate",
+        "teleport"
+      ]
+    },
+    "dims/squirrel-girl": {
+      "mechanics": [
+        "investigate",
+        "switcheroo"
+      ]
+    },
+    "dkcy/angel": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "dkcy/bishop": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "dkcy/blade": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "dkcy/cable": {
+      "mechanics": [
+        "teleport"
+      ]
+    },
+    "dkcy/colossus": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "dkcy/daredevil": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "dkcy/domino": {
+      "mechanics": [
+        "draw",
+        "versatile"
+      ]
+    },
+    "dkcy/elektra": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "dkcy/forge": {
+      "mechanics": [
+        "versatile"
+      ]
+    },
+    "dkcy/ghost-rider": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "dkcy/iceman": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "dkcy/iron-fist": {
+      "mechanics": [
+        "draw",
+        "versatile"
+      ]
+    },
+    "dkcy/jean-grey": {
+      "mechanics": [
+        "rescue"
+      ]
+    },
+    "dkcy/nightcrawler": {
+      "mechanics": [
+        "teleport"
+      ]
+    },
+    "dkcy/professor-x": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "dkcy/punisher": {
+      "mechanics": [
+        "draw",
+        "reveal-ko"
+      ]
+    },
+    "dkcy/wolverine": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "dstr/ancient-one-the": {
+      "mechanics": [
+        "astral-plane",
+        "draw",
+        "ritual-artifact"
+      ]
+    },
+    "dstr/clea": {
+      "mechanics": [
+        "demonic-bargain",
+        "ritual-artifact"
+      ]
+    },
+    "dstr/doctor-strange": {
+      "mechanics": [
+        "artifact",
+        "ritual-artifact"
+      ]
+    },
+    "dstr/doctor-voodoo": {
+      "mechanics": [
+        "artifact",
+        "ritual-artifact"
+      ]
+    },
+    "dstr/vishanti-the": {
+      "mechanics": [
+        "demonic-bargain",
+        "ritual-artifact"
+      ]
+    },
+    "fear/greithoth-breaker-of-wills": {
+      "mechanics": [
+        "artifact",
+        "artifacts",
+        "thrown-artifact"
+      ]
+    },
+    "fear/kuurth-breaker-of-stone": {
+      "mechanics": [
+        "thrown-artifact"
+      ]
+    },
+    "fear/nerkkod-breaker-of-oceans": {
+      "mechanics": [
+        "thrown-artifact"
+      ]
+    },
+    "fear/nul-breaker-of-worlds": {
+      "mechanics": [
+        "demolish",
+        "thrown-artifact"
+      ]
+    },
+    "fear/skadi": {
+      "mechanics": [
+        "thrown-artifact"
+      ]
+    },
+    "fear/skirn-breaker-of-men": {
+      "mechanics": [
+        "thrown-artifact"
+      ]
+    },
+    "ff04/human-torch": {
+      "mechanics": [
+        "focus"
+      ]
+    },
+    "ff04/invisible-woman": {
+      "mechanics": [
+        "focus"
+      ]
+    },
+    "ff04/mr-fantastic": {
+      "mechanics": [
+        "draw",
+        "focus"
+      ]
+    },
+    "ff04/silver-surfer": {
+      "mechanics": [
+        "focus"
+      ]
+    },
+    "ff04/thing": {
+      "mechanics": [
+        "focus"
+      ]
+    },
+    "gotg/drax-the-destroyer": {
+      "mechanics": [
+        "artifact"
+      ]
+    },
+    "gotg/gamora": {
+      "mechanics": [
+        "artifact"
+      ]
+    },
+    "gotg/groot": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "gotg/rocket-raccoon": {
+      "mechanics": [
+        "artifact"
+      ]
+    },
+    "gotg/star-lord": {
+      "mechanics": [
+        "artifact"
+      ]
+    },
+    "mdns/blade-daywalker": {
+      "mechanics": [
+        "blood-frenzy",
+        "moonlight",
+        "patrol-the-rooftops",
+        "patrol-the-sewers",
+        "sunlight"
+      ]
+    },
+    "mdns/elsa-bloodstone": {
+      "mechanics": [
+        "blood-frenzy",
+        "hunt-for-victims",
+        "patrol-any-city-space",
+        "patrol-the-streets"
+      ]
+    },
+    "mdns/morbius": {
+      "mechanics": [
+        "blood-frenzy",
+        "moonlight",
+        "sunlight"
+      ]
+    },
+    "mdns/werewolf-by-night": {
+      "mechanics": [
+        "blood-frenzy",
+        "moonlight",
+        "sunlight"
+      ]
+    },
+    "mdns/wong-master-of-the-mystic-arts": {
+      "mechanics": [
+        "patrol-the-bridge",
+        "sunlight"
+      ]
+    },
+    "mgtg/drax": {
+      "mechanics": [
+        "excessive-violence",
+        "triggered-artifact"
+      ]
+    },
+    "mgtg/gamora": {
+      "mechanics": [
+        "artifact",
+        "draw",
+        "triggered-artifact"
+      ]
+    },
+    "mgtg/mantis": {
+      "mechanics": [
+        "draw",
+        "excessive-kindness"
+      ]
+    },
+    "mgtg/rocket-groot": {
+      "mechanics": [
+        "excessive-kindness",
+        "excessive-violence",
+        "triggered-artifact"
+      ]
+    },
+    "mgtg/star-lord": {
+      "mechanics": [
+        "artifact",
+        "triggered-artifact"
+      ]
+    },
+    "msis/black-panther": {
+      "mechanics": [
+        "draw",
+        "sacrifice"
+      ]
+    },
+    "msis/bruce-banner": {
+      "mechanics": [
+        "sacrifice"
+      ]
+    },
+    "msis/captain-marvel": {
+      "mechanics": [
+        "draw",
+        "endgame"
+      ]
+    },
+    "msis/doctor-strange": {
+      "mechanics": [
+        "phasing",
+        "sacrifice"
+      ]
+    },
+    "msis/wanda-vision": {
+      "mechanics": [
+        "reveal-odd-draw",
+        "sacrifice"
+      ]
+    },
+    "msmc/m": {
+      "mechanics": [
+        "clone",
+        "draw",
+        "investigate",
+        "tactical-formation",
+        "when-recruited"
+      ]
+    },
+    "msmc/multiple-man": {
+      "mechanics": [
+        "clone",
+        "investigate",
+        "tactical-formation"
+      ]
+    },
+    "msmc/rictor": {
+      "mechanics": [
+        "investigate",
+        "shatter"
+      ]
+    },
+    "msmc/shatterstar": {
+      "mechanics": [
+        "clone",
+        "draw",
+        "shatter",
+        "tactical-formation",
+        "when-recruited"
+      ]
+    },
+    "msmc/siryn": {
+      "mechanics": [
+        "investigate",
+        "shatter",
+        "tactical-formation"
+      ]
+    },
+    "msmc/stepford-cuckoos": {
+      "mechanics": [
+        "clone",
+        "investigate",
+        "tactical-formation",
+        "when-recruited"
+      ]
+    },
+    "msmc/strong-guy": {
+      "mechanics": [
+        "investigate",
+        "tactical-formation"
+      ]
+    },
+    "msmc/warpath": {
+      "mechanics": [
+        "investigate",
+        "tactical-formation"
+      ]
+    },
+    "msp1/black-widow": {
+      "mechanics": [
+        "draw",
+        "rescue"
+      ]
+    },
+    "msp1/captain-america": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "msp1/hawkeye": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "msp1/hulk": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "msp1/iron-man": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "msp1/nick-fury": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "msp1/thor": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "nmut/karma": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "nmut/mirage": {
+      "mechanics": [
+        "moonlight",
+        "waking-nightmare"
+      ]
+    },
+    "nmut/sunspot": {
+      "mechanics": [
+        "moonlight",
+        "sunlight"
+      ]
+    },
+    "nmut/warlock": {
+      "mechanics": [
+        "moonlight",
+        "sunlight"
+      ]
+    },
+    "nmut/wolfsbane": {
+      "mechanics": [
+        "moonlight",
+        "sunlight"
+      ]
+    },
+    "noir/angel-noir": {
+      "mechanics": [
+        "investigate"
+      ]
+    },
+    "noir/daredevil-noir": {
+      "mechanics": [
+        "investigate"
+      ]
+    },
+    "noir/iron-man-noir": {
+      "mechanics": [
+        "investigate"
+      ]
+    },
+    "noir/luke-cage-noir": {
+      "mechanics": [
+        "investigate"
+      ]
+    },
+    "noir/spider-man-noir": {
+      "mechanics": [
+        "investigate"
+      ]
+    },
+    "pttr/black-cat": {
+      "mechanics": [
+        "wall-crawl"
+      ]
+    },
+    "pttr/moon-knight": {
+      "mechanics": [
+        "wall-crawl"
+      ]
+    },
+    "pttr/scarlet-spider": {
+      "mechanics": [
+        "draw",
+        "wall-crawl"
+      ]
+    },
+    "pttr/spider-woman": {
+      "mechanics": [
+        "wall-crawl"
+      ]
+    },
+    "pttr/symbiote-spider-man": {
+      "mechanics": [
+        "wall-crawl"
+      ]
+    },
+    "rlmk/black-bolt": {
+      "mechanics": [
+        "don-t-speak",
+        "speak",
+        "thrones-favor",
+        "when-recruited-abilities"
+      ]
+    },
+    "rlmk/crystal": {
+      "mechanics": [
+        "draw",
+        "thrones-favor",
+        "when-recruited-abilities"
+      ]
+    },
+    "rlmk/gorgon": {
+      "mechanics": [
+        "abomination",
+        "highest-abomination",
+        "rooftops-abomination",
+        "streets-abomination",
+        "teleport",
+        "when-recruited-abilities"
+      ]
+    },
+    "rlmk/karnak": {
+      "mechanics": [
+        "when-recruited-abilities"
+      ]
+    },
+    "rlmk/medusa": {
+      "mechanics": [
+        "thrones-favor",
+        "when-recruited-abilities"
+      ]
+    },
+    "rvlt/captain-marvel-agent-of-shield": {
+      "mechanics": [
+        "last-stand"
+      ]
+    },
+    "rvlt/darkhawk": {
+      "mechanics": [
+        "draw",
+        "hyperspeed"
+      ]
+    },
+    "rvlt/hellcat": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "rvlt/photon": {
+      "mechanics": [
+        "hyperspeed",
+        "last-stand"
+      ]
+    },
+    "rvlt/quicksilver": {
+      "mechanics": [
+        "hyperspeed"
+      ]
+    },
+    "rvlt/ronin": {
+      "mechanics": [
+        "dark-memories",
+        "draw",
+        "hyperspeed"
+      ]
+    },
+    "rvlt/scarlet-witch": {
+      "mechanics": [
+        "dark-memories"
+      ]
+    },
+    "rvlt/speed": {
+      "mechanics": [
+        "hyperspeed"
+      ]
+    },
+    "rvlt/war-machine": {
+      "mechanics": [
+        "hyperspeed"
+      ]
+    },
+    "shld/agent-phil-coulson": {
+      "mechanics": [
+        "s-h-i-e-l-d-level",
+        "s-h-i-e-l-d-levels",
+        "undercover"
+      ]
+    },
+    "shld/deathlok": {
+      "mechanics": [
+        "draw",
+        "s-h-i-e-l-d-level",
+        "undercover"
+      ]
+    },
+    "shld/dum-dum-dugan": {
+      "mechanics": [
+        "undercover"
+      ]
+    },
+    "shld/grant-ward": {
+      "mechanics": [
+        "undercover"
+      ]
+    },
+    "shld/gw-bridge": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "shld/leo-fitz-and-jemma-simmons": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "shld/melinda-may": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "shld/mockingbird": {
+      "mechanics": [
+        "draw",
+        "s-h-i-e-l-d-level",
+        "s-h-i-e-l-d-levels",
+        "undercover"
+      ]
+    },
+    "shld/quake": {
+      "mechanics": [
+        "s-h-i-e-l-d-level",
+        "undercover"
+      ]
+    },
+    "shld/sharon-carter": {
+      "mechanics": [
+        "undercover"
+      ]
+    },
+    "shld/victoria-hand": {
+      "mechanics": [
+        "undercover"
+      ]
+    },
+    "shld/yo-yo-rodriguez": {
+      "mechanics": [
+        "undercover"
+      ]
+    },
+    "smhc/happy-hogan": {
+      "mechanics": [
+        "coordinate",
+        "danger-sense",
+        "double-striker",
+        "striker"
+      ]
+    },
+    "smhc/high-tech-spider-man": {
+      "mechanics": [
+        "coordinate",
+        "danger-sense",
+        "draw",
+        "reveal",
+        "wall-crawl"
+      ]
+    },
+    "smhc/peter-parker-homecoming": {
+      "mechanics": [
+        "coordinate",
+        "danger-sense",
+        "reveal",
+        "wall-crawl"
+      ]
+    },
+    "smhc/peters-allies": {
+      "mechanics": [
+        "coordinate"
+      ]
+    },
+    "smhc/tony-stark": {
+      "mechanics": [
+        "coordinate",
+        "danger-sense"
+      ]
+    },
+    "ssw1/apocalyptic-kitty-pryde": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "ssw1/black-bolt": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "ssw1/black-panther": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "ssw1/captain-marvel": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "ssw1/dr-strange": {
+      "mechanics": [
+        "teleport"
+      ]
+    },
+    "ssw1/lady-thor": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "ssw1/magik": {
+      "mechanics": [
+        "teleport"
+      ]
+    },
+    "ssw1/maximus": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "ssw1/namor-the-sub-mariner": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "ssw1/old-man-logan": {
+      "mechanics": [
+        "cross-dimensional-wolverine-rampage"
+      ]
+    },
+    "ssw1/proxima-midnight": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "ssw1/superior-iron-man": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "ssw1/thanos": {
+      "mechanics": [
+        "teleport"
+      ]
+    },
+    "ssw1/ultimate-spider-man": {
+      "mechanics": [
+        "reveal"
+      ]
+    },
+    "ssw2/agent-venom": {
+      "mechanics": [
+        "patrol-the-bank",
+        "patrol-the-sewers",
+        "spectrum",
+        "wall-crawl"
+      ]
+    },
+    "ssw2/arkon-the-magnificent": {
+      "mechanics": [
+        "patrol-the-rooftops",
+        "patrol-the-sewers",
+        "patrol-two-adjacent-city-spaces",
+        "spectrum",
+        "wall-crawl"
+      ]
+    },
+    "ssw2/beast": {
+      "mechanics": [
+        "patrol-any-city-space",
+        "wall-crawl"
+      ]
+    },
+    "ssw2/black-swan": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "ssw2/captain-and-the-devil-the": {
+      "mechanics": [
+        "patrol-the-streets",
+        "spectrum"
+      ]
+    },
+    "ssw2/captain-britain": {
+      "mechanics": [
+        "patrol-the-rooftops"
+      ]
+    },
+    "ssw2/corvus-glaive": {
+      "mechanics": [
+        "patrol-the-escape-pile"
+      ]
+    },
+    "ssw2/dr-punisher-soldier-supreme": {
+      "mechanics": [
+        "patrol-every-city-space",
+        "patrol-the-streets",
+        "reveal-ko-attack"
+      ]
+    },
+    "ssw2/elsa-bloodstone": {
+      "mechanics": [
+        "patrol-the-sewers",
+        "spectrum",
+        "wall-crawl"
+      ]
+    },
+    "ssw2/phoenix-force-cyclops": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "ssw2/ruby-summers": {
+      "mechanics": [
+        "teleport"
+      ]
+    },
+    "ssw2/shang-chi": {
+      "mechanics": [
+        "patrol-the-rooftops",
+        "patrol-your-discard-pile",
+        "wall-crawl"
+      ]
+    },
+    "ssw2/silk": {
+      "mechanics": [
+        "reveal-ko-or-draw",
+        "spectrum",
+        "wall-crawl"
+      ]
+    },
+    "ssw2/soulsword-colossus": {
+      "mechanics": [
+        "cross-dimensional-colossus-rampage"
+      ]
+    },
+    "ssw2/spider-gwen": {
+      "mechanics": [
+        "patrol-the-bank",
+        "patrol-the-bridge",
+        "patrol-the-rooftops",
+        "patrol-your-victory-pile",
+        "wall-crawl"
+      ]
+    },
+    "ssw2/time-traveling-jean-grey": {
+      "mechanics": [
+        "patrol-any-city-space",
+        "patrol-the-bridge"
+      ]
+    },
+    "vill/bullseye": {
+      "mechanics": [
+        "dodge",
+        "draw"
+      ]
+    },
+    "vill/dr-octopus": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "vill/electro": {
+      "mechanics": [
+        "dodge"
+      ]
+    },
+    "vill/enchantress": {
+      "mechanics": [
+        "draw"
+      ]
+    },
+    "vill/green-goblin": {
+      "mechanics": [
+        "dodge"
+      ]
+    },
+    "vill/juggernaut": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "vill/kingpin": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "vill/kraven": {
+      "mechanics": [
+        "dodge"
+      ]
+    },
+    "vill/loki": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "vill/magneto": {
+      "mechanics": [
+        "dodge"
+      ]
+    },
+    "vill/mysterio": {
+      "mechanics": [
+        "dodge"
+      ]
+    },
+    "vill/mystique": {
+      "mechanics": [
+        "dodge"
+      ]
+    },
+    "vill/sabretooth": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "vill/ultron": {
+      "mechanics": [
+        "dodge"
+      ]
+    },
+    "vill/venom": {
+      "mechanics": [
+        "unmarked"
+      ]
+    },
+    "vnom/carnage": {
+      "mechanics": [
+        "digest",
+        "excessive-violence",
+        "indigestion"
+      ]
+    },
+    "vnom/venom": {
+      "mechanics": [
+        "digest",
+        "excessive-violence",
+        "indigestion"
+      ]
+    },
+    "vnom/venom-rocket": {
+      "mechanics": [
+        "digest",
+        "excessive-violence"
+      ]
+    },
+    "vnom/venomized-dr-strange": {
+      "mechanics": [
+        "digest"
+      ]
+    },
+    "vnom/venompool": {
+      "mechanics": [
+        "digest",
+        "excessive-violence",
+        "indigestion"
+      ]
+    },
+    "wpnx/fantomex": {
+      "mechanics": [
+        "weapon-x-sequence"
+      ]
+    },
+    "wpnx/marrow": {
+      "mechanics": [
+        "berserk",
+        "weapon-x-sequence"
+      ]
+    },
+    "wpnx/weapon-h": {
+      "mechanics": [
+        "berserk",
+        "weapon-x-sequence"
+      ]
+    },
+    "wpnx/weapon-x-wolverine": {
+      "mechanics": [
+        "berserk",
+        "weapon-x-sequence"
+      ]
+    },
+    "wtif/apocalyptic-black-widow": {
+      "mechanics": [
+        "draw",
+        "liberate",
+        "what-if"
+      ]
+    },
+    "wtif/captain-carter": {
+      "mechanics": [
+        "liberate",
+        "what-if"
+      ]
+    },
+    "wtif/doctor-strange-supreme": {
+      "mechanics": [
+        "draw",
+        "soulbind",
+        "soulbind-a-bystander-or-villain",
+        "what-if"
+      ]
+    },
+    "wtif/gamora-destroyer-of-thanos": {
+      "mechanics": [
+        "draw",
+        "soulbind",
+        "soulbind-six-villains",
+        "what-if"
+      ]
+    },
+    "wtif/killmonger-spec-ops": {
+      "mechanics": [
+        "liberate",
+        "what-if"
+      ]
+    },
+    "wtif/party-thor": {
+      "mechanics": [
+        "cross-dimensional-party-rampage",
+        "what-if"
+      ]
+    },
+    "wtif/star-lord-tchalla": {
+      "mechanics": [
+        "empowered",
+        "what-if"
+      ]
+    },
+    "wtif/uatu-the-watcher": {
+      "mechanics": [
+        "empowered",
+        "soulbind",
+        "what-if"
+      ]
+    },
+    "wwhk/amadeus-cho": {
+      "mechanics": [
+        "draw",
+        "outwit",
+        "transform"
+      ]
+    },
+    "wwhk/bruce-banner": {
+      "mechanics": [
+        "outwit",
+        "reveal-ko",
+        "smash",
+        "transform"
+      ]
+    },
+    "wwhk/caiera": {
+      "mechanics": [
+        "outwit",
+        "smash",
+        "transform"
+      ]
+    },
+    "wwhk/gladiator-hulk": {
+      "mechanics": [
+        "cross-dimensional-hulk-rampage",
+        "draw",
+        "smash",
+        "transform",
+        "wounded-fury"
+      ]
+    },
+    "wwhk/hiroim": {
+      "mechanics": [
+        "draw",
+        "transform"
+      ]
+    },
+    "wwhk/hulkbuster-iron-man": {
+      "mechanics": [
+        "draw",
+        "outwit",
+        "smash",
+        "transform"
+      ]
+    },
+    "wwhk/joe-fixit-grey-hulk": {
+      "mechanics": [
+        "smash",
+        "transform"
+      ]
+    },
+    "wwhk/korg": {
+      "mechanics": [
+        "draw",
+        "outwit",
+        "smash",
+        "transform"
+      ]
+    },
+    "wwhk/miek-the-unhived": {
+      "mechanics": [
+        "feast",
+        "smash",
+        "transform"
+      ]
+    },
+    "wwhk/namora": {
+      "mechanics": [
+        "draw",
+        "smash",
+        "transform"
+      ]
+    },
+    "wwhk/no-name-brood-queen": {
+      "mechanics": [
+        "draw",
+        "feast",
+        "transform"
+      ]
+    },
+    "wwhk/rick-jones": {
+      "mechanics": [
+        "reveal-min",
+        "smash",
+        "transform"
+      ]
+    },
+    "wwhk/sentry": {
+      "mechanics": [
+        "feast",
+        "transform",
+        "transformed"
+      ]
+    },
+    "wwhk/she-hulk": {
+      "mechanics": [
+        "outwit",
+        "smash",
+        "transform"
+      ]
+    },
+    "wwhk/skaar-son-of-hulk": {
+      "mechanics": [
+        "smash",
+        "transform",
+        "wounded-fury"
+      ]
+    },
+    "xmen/aurora-northstar": {
+      "mechanics": [
+        "berserk",
+        "lightshow",
+        "soaring-flight"
+      ]
+    },
+    "xmen/banshee": {
+      "mechanics": [
+        "draw",
+        "piercing-energy",
+        "soaring-flight",
+        "x-gene"
+      ]
+    },
+    "xmen/beast": {
+      "mechanics": [
+        "berserk",
+        "x-gene"
+      ]
+    },
+    "xmen/cannonball": {
+      "mechanics": [
+        "soaring-flight"
+      ]
+    },
+    "xmen/colossus-wolverine": {
+      "mechanics": [
+        "berserk",
+        "soaring-flight",
+        "x-gene"
+      ]
+    },
+    "xmen/dazzler": {
+      "mechanics": [
+        "lightshow",
+        "piercing-energy"
+      ]
+    },
+    "xmen/havok": {
+      "mechanics": [
+        "berserk",
+        "lightshow",
+        "x-gene"
+      ]
+    },
+    "xmen/jubilee": {
+      "mechanics": [
+        "draw",
+        "lightshow"
+      ]
+    },
+    "xmen/kitty-pryde": {
+      "mechanics": [
+        "soaring-flight",
+        "x-gene"
+      ]
+    },
+    "xmen/legion": {
+      "mechanics": [
+        "berserk",
+        "draw",
+        "lightshow",
+        "piercing-energy",
+        "soaring-flight"
+      ]
+    },
+    "xmen/longshot": {
+      "mechanics": [
+        "berserk"
+      ]
+    },
+    "xmen/phoenix": {
+      "mechanics": [
+        "berserk",
+        "draw",
+        "piercing-energy",
+        "soaring-flight"
+      ]
+    },
+    "xmen/polaris": {
+      "mechanics": [
+        "draw",
+        "piercing-energy",
+        "soaring-flight",
+        "x-gene"
+      ]
+    },
+    "xmen/psylocke": {
+      "mechanics": [
+        "draw",
+        "piercing-energy",
+        "x-gene"
+      ]
+    },
+    "xmen/x-23": {
+      "mechanics": [
+        "berserk",
+        "x-gene"
+      ]
+    }
+  }
+}
