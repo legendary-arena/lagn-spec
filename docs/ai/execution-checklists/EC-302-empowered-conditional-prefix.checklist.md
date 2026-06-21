@@ -12,6 +12,7 @@ Authoritative execution contract for WP-272. Compliance is binary.
 ## Before Starting
 - [ ] On `main`, clean, ff-synced to `a54726b7` (or later). `pnpm -r build` + `pnpm --filter @legendary-arena/game-engine test` exit 0; `pnpm sim:coverage --check`, `pnpm ledger:heroes:check`, `pnpm sim:runtime-observed:check` OK on the base.
 - [ ] Read WP-267's parser branch in `setup/heroAbility.setup.ts`: `isParameterizedCompositionMarker`, `EMPOWERED_PARAM_TAIL_PATTERN`, `tryResolveEmpoweredCore` (sole-condition core; clears `conditions` on resolve), and the caller's `resolvedMarkers`/`unresolvedMarkers` push sites + `conditions.splice` suppression. Read `buildEmpoweredComposition` (`rules/heroCompositions.ts`).
+- [ ] **Capture the baseline parser outcome** on `a54726b7` BEFORE editing for the two choose-one fixtures: `one-hit-wonder` (`Chose one: Draw a card, or you get [keyword:Empowered] by [hc:strength]`) **resolves** via the core path (single marker + single condition); `fight-or-flight` (two markers) is **unresolved**. The close check compares after-output to these baselines — WP-272 must change neither.
 - [ ] Confirm the executor runs `hook.primitiveEffects` INSIDE the conditions-passed gate (`hero/heroEffects.execute.ts`) — retaining the prefix `heroClassMatch` IS the conditional behavior; do NOT edit the executor.
 - [ ] Record the sentinel replay `finalStateHash` — it MUST be unchanged at close (`EMPTY_REGISTRY` → hero hooks `[]` → Empowered never fires in a fixture).
 - [ ] Note the committed `runtime-observed-hollows.json` BEFORE values (`summary.distinctMechanics`, `summary.totalObservations`, `byMechanic.empowered`) — the regen delta is a measured output, not a pre-locked number.
@@ -32,10 +33,11 @@ Authoritative execution contract for WP-272. Compliance is binary.
 
 ## Guardrails
 - **Honest-Partial Invariant (HIGHEST RISK):** resolving the conditional-prefix form MUST NOT silence the still-deferred variants. Color-of-choice, multi-class, choose-one (two-marker), team-gated, Double/Triple, and hero-name/multicolored/team-target Empowered MUST still reach `unresolvedMarkers`. Test each explicitly.
-- **Structural gate, NOT condition-counting:** a residual-conditions-are-all-`heroClassMatch` check is UNSAFE — `wtif/star-lord-tchalla/fight-or-flight` (`Choose one: Empowered by [hc:strength], or by [hc:covert]`) would mis-resolve, treating the second choose-one branch's `[hc:covert]` as a gate. The single-marker guard (gate #2) is what rejects it. Do NOT drop it.
-- **Suppress only the consumed param; retain the gate.** Remove exactly ONE `heroClassMatch(normalizeTraitSlug(Y))`; keep `heroClassMatch(normalizeTraitSlug(X))`. Use `normalizeTraitSlug` for both (the same value the tail/prefix regexes produce). Never `conditions.splice(0, …)` on this path.
+- **Structural gate, NOT condition-counting:** a residual-conditions-are-all-`heroClassMatch` check is UNSAFE — `wtif/star-lord-tchalla/fight-or-flight` (two `[keyword:Empowered]` markers, `by [hc:strength]` / `by [hc:covert]`) would mis-resolve, treating the second choose-one branch's `[hc:covert]` as a gate. The single-marker guard (gate #2) is what rejects it. Do NOT drop it. Bind the counted class `Y` ONLY from `textAfterMarker` via the anchored tail; never scan forward through the full ability text to find a later `[hc:…]`.
+- **The conditional-prefix helper is detection-only.** It reads `abilityText` / `textAfterMarker` / `conditions` and returns a match-or-undefined; it does NOT mutate `conditions`, `primitiveEffects`, `resolvedMarkers`, or `unresolvedMarkers`. The CALLER pushes + suppresses after a canonical match.
+- **Suppress only the consumed param; retain the gate.** Normalize `X` and `Y` with `normalizeTraitSlug` exactly ONCE after the regex captures, then compare normalized-to-normalized (Step 1a already stored `heroClassConditions` normalized — never match a raw capture against them). Remove exactly ONE `heroClassMatch(normalizeTraitSlug(Y))`; keep `heroClassMatch(normalizeTraitSlug(X))`. Never `conditions.splice(0, …)` on this path. If no matching `heroClassMatch(Y)` exists (cannot happen on the canonical shape — the anchored tail guarantees Step 1a extracted it), leave conditions unchanged and fall through; never throw.
 - **No executor / interpreter / builder / contract edit.** Only `setup/heroAbility.setup.ts` (production) changes. If `tsc` wants `heroEffects.execute.ts`/`effectPrimitive.*`/`heroCompositions.ts` touched, the design leaked — re-confine; never `as any`.
-- **No WP-267 behavior change.** `one-hit-wonder` (single marker, no leading `[hc:X]:` prefix) and `fight-or-flight` (two markers) MUST stay on the unchanged core path / unresolved exactly as before. Add a regression test asserting the core-form `[keyword:Empowered] by [hc:strength]` still resolves.
+- **No WP-267 behavior change (baseline-verified, opposite directions).** `one-hit-wonder` (single marker + single `[hc:strength]` condition, no leading `[hc:X]:` prefix) **resolves** via the core path today and MUST keep resolving (ineligible for the new path). `fight-or-flight` (two markers + two conditions) is **already unresolved** on `main` and MUST stay unresolved (single-marker guard, gate #2). Neither is "corrected" here. Add a regression test asserting the core-form `[keyword:Empowered] by [hc:strength]` still resolves.
 - **`data/cards/**` — zero diff.** The markers exist; the parser translates.
 - **No coverage-SCRIPT edit** — `hero-effect-coverage.mjs` / `hero-mechanic-ledger.mjs` already classify executable + by-hook composition markers. Only their generated artifacts regenerate.
 - **No `boardgame.io`/registry import**; no `.reduce()`; explicit guards; the parser never throws on malformed text (record unresolved + continue).
@@ -67,11 +69,12 @@ Authoritative execution contract for WP-272. Compliance is binary.
 ## Required parser test cases (`rules/heroAbility.setup.test.ts`)
 - `[hc:ranged]: You get [keyword:Empowered] by [hc:ranged]` → `primitiveEffects = [buildEmpoweredComposition('ranged')]`, exactly one retained `heroClassMatch('ranged')` gate, `empowered` ∈ `resolvedMarkers`, `empowered` ∉ `keywords`.
 - Different-class `[hc:strength]: … [keyword:Empowered] by [hc:tech]` → built `count-by-class('tech', hq)`, retained `heroClassMatch('strength')`, only `heroClassMatch('tech')` suppressed.
-- `Choose one: … [keyword:Empowered] by [hc:strength], or … [keyword:Empowered] by [hc:covert]` (two markers) → unresolved (single-marker guard).
+- Two-marker choose-one `Choose one: … [keyword:Empowered] by [hc:strength], or … [keyword:Empowered] by [hc:covert]` → unresolved (single-marker guard, gate #2). **Baseline-verified unresolved on `main`** — asserts preservation, not a new outcome.
 - Multi-class `… [keyword:Empowered] by [hc:ranged] and [hc:strength]` → unresolved.
 - Color-of-choice `You get [keyword:Empowered] by the color of your choice` → unresolved (anchored tail miss).
-- Team-gated `[team:…]: … [keyword:Empowered] by [hc:covert]` → unresolved (team-token guard).
-- Regression: `[keyword:Empowered] by [hc:strength]` (sole condition, no prefix) still resolves via the unchanged core path.
+- Team-gated `[team:x-men]: You get [keyword:Empowered] by [hc:ranged]` → unresolved (team-token guard, gate #6). Doubles as the **non-class-leading-gate** case: a single-marker Empowered whose leading gate is not `[hc:X]:` does not enter the new path. (Contrast the next line — the bare core has NO leading gate and DOES resolve.)
+- Regression (core path unchanged): `[keyword:Empowered] by [hc:strength]` (sole condition, no prefix) still resolves via the unchanged core path.
+- Regression (WP-267 over-resolution held invariant): `Chose one: Draw a card, or you get [keyword:Empowered] by [hc:strength]` (one-hit-wonder — single marker + single condition) still **resolves** via the core path; the new path does not capture it (no leading `[hc:X]:` prefix).
 
 ---
 
@@ -91,13 +94,15 @@ Authoritative execution contract for WP-272. Compliance is binary.
 ## Close Notes Required in PR / Commit Body
 - Base + final `runtime-observed-hollows.json`: `summary.distinctMechanics`, `summary.totalObservations`, `byMechanic.empowered`; the measured `empowered` obs delta; `hollowEffectsDropped` remains `0`.
 - The exact conditional-prefix card/hook flip set (executable-by-hook) from the regenerated ledger.
+- Baseline-preservation result for the choose-one fixtures: confirm `one-hit-wonder` still resolves via the core path and `fight-or-flight` is still unresolved — both unchanged from the `a54726b7` baseline captured in §Before Starting.
 - Confirmation `data/cards/**`, the interpreter/builder/contract/executor, coverage scripts, `mechanic-provenance.json`, barrel, arena client, and tracked dashboard source are unchanged.
 
 ---
 
 ## Common Failure Smells
 - A deferred-variant Empowered stopped surfacing as a hollow → the Honest-Partial Invariant was violated; resolve ONLY on the structural shape, else `unresolvedMarkers`.
-- `fight-or-flight` (choose-one) became executable → the single-marker guard (gate #2) was dropped, or a condition-counting gate was used; restore the structural gate.
+- `fight-or-flight` (two-marker choose-one) became executable → the single-marker guard (gate #2) was dropped, or a condition-counting gate was used; restore the structural gate (it is already-unresolved on `main` — keep it so).
+- `one-hit-wonder` stopped resolving → the new path or a guard wrongly captured a single-marker, no-prefix card; it MUST stay on the unchanged WP-267 core path, resolving exactly as on `main`.
 - The suppression cleared all conditions → the prefix gate was lost (the card fires unconditionally); remove exactly ONE `heroClassMatch(normalizeTraitSlug(Y))` and retain the gate.
 - A different-class prefix left the wrong gate → suppression used the raw color or removed the prefix instead of the tail param; suppress the count color `Y`, retain the prefix `X`.
 - `heroEffects.execute.ts` / interpreter / builder / contract in the diff → no edit is needed (the conditions-gate executor + WP-267 composition already do the work); re-confine.
