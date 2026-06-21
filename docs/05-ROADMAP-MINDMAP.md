@@ -289,6 +289,7 @@ mindmap
         ["WP-266 ✅ Simulation onBegin parity (WP-265 unblocker; the three observation-only per-turn loops runPerTurnLoop/par.aggregator simulateOneGame/runFixture rotateToNextTurn mirror the play-phase onBegin via ONE shared pure helper applyOnBeginParity = reset villainRevealedThisTurn+hasDrawnThisTurn + auto-draw to HAND_SIZE, rule hooks deferred D-0205, extracted at the third use since runFixture already had it inline WP-212+WP-236 but runner+aggregator did not → empty hand forever, playCard never legal; plus a one-shot reveal gate in getLegalMoves stage==='start' && !villainRevealedThisTurn ending the competent policy's turn-1 infinite re-reveal; game-determinism preserved, replay byte-behavior-identical, finalStateHash unchanged; scaffold-confirmed 1454/1454 + competent sweep surfaces ≥1 hero hollow in ~17ms; regenerates WP-259's runtime-observed-hollows.json off the zero-state; D-24043)"]
         ["WP-268 ✅ By-hook composition ledger (parser resolvedMarkers — the positive counterpart of WP-257's unresolvedMarkers — so the mechanic ledger marks a parameterized composition marker executable only when that card's hook resolved it, resolving the WP-267 by-name over-claim on /coverage By-card; parse-time provenance only, finalStateHash unchanged; D-24045)"]
         ["WP-267 ✅ Empowered via a class-count value primitive (first effect-authoring grind mechanic off /coverage; first PARAMETERIZED composition over the WP-256 substrate — new count-cards-by-class-in-zone value expr + its own shared-zone EffectCountZoneKind=['hq'] separate from per-player EFFECT_ZONE_KINDS, reads G.cardTraits[id].heroClass over G.hq no self-exclusion; buildEmpoweredComposition(color) + PARAMETERIZED_COMPOSITION_MARKER_NAMES deduped into HERO_COMPOSITION_MARKER_NAMES; parser parameterized-marker branch resolves the core ONLY on an anchored by-[hc:COLOR] tail whose color is the line's sole condition + suppresses it from heroClassConditions; Honest-Partial — deferred variants color-of-choice/Double-Triple/conditional-prefix/multi-class stay parse-unrecognized runtime hollows; no executor edit, no coverage-script edit, no HeroKeyword/node-type/EFFECT_ZONE_KINDS change, data/cards byte-unchanged; engine test 1462→1473/0, runtime-observed empowered cleared 16→15/176→163 dropped 0 byte-stable, coverage +5 core-form hooks, ledger 119→126 by-name over-claims ~4 deferred cards follow-up; finalStateHash unchanged EMPTY_REGISTRY; D-24044 Active, D-24026 ✅ live-verified 2026-06-20)"]
+        ["WP-272 ✅ Empowered conditional-prefix class-gated core form (second Empowered form; parser-only — lifts WP-267/D-24044's conditional-prefix deferral for the class-gated case so [hc:X]: You get [keyword:Empowered] by [hc:Y] resolves to buildEmpoweredComposition(Y) RETAINED behind the [hc:X]: heroClassMatch gate, the WP-256 conditions-gate executor firing it only when the gate passes — no executor/interpreter/builder/contract edit; new anchored EMPOWERED_PREFIX_GATE_PATTERN + detection-only tryResolveEmpoweredConditionalPrefix structural gate (single [keyword:Empowered] marker + leading [hc:X]: + anchored fixed-color tail + no and-[hc:Z] + no [team:…]) — condition-counting forbidden, it mis-resolves fight-or-flight's choose-one; suppress-one-retain-gate removes exactly one heroClassMatch(Y) and keeps heroClassMatch(X); Honest-Partial — color-of-choice/multi-class/choose-one/team-gated/Double-Triple stay parse-unrecognized hollows, one-hit-wonder still resolves via core + fight-or-flight still unresolved; engine test 1477→1488/0, coverage executable 2614→2639 +25 hooks antm+10/bkpt+15, ledger 120→123 exactly 3 hero rows unsupported→executable by-hook antm/jocasta+bkpt/princess-shuri+bkpt/queen-storm-of-wakanda, wonder-man already executable via one-hit-wonder, torrential-downpour line-1 ambush-prefix stays hollow; runtime-observed-hollows.json byte-identical 15/163/dropped 0 empowered obs-delta 0 — competent sweep doesn't sample the 5 plays; data/cards byte-unchanged, finalStateHash unchanged EMPTY_REGISTRY; D-24047 Active, D-24026 ⏳ pending post-deploy /coverage)"]
 
       Notable Events & Overlays
         ["WP-200 ✅ Notable game event log (engine)"]
@@ -424,7 +425,7 @@ mindmap
 | Legends Public Scoreboard | 2/2 | — |
 | Villain Deck Pipeline | 5/5 | — |
 | Villain & Henchman Effects | 11/11 | — |
-| Hero Ability Coverage & Markup Pipeline | 29/29 | — |
+| Hero Ability Coverage & Markup Pipeline | 30/30 | — |
 | Notable Events & Overlays | 4/4 | — |
 | Simulation Sweep & Analytics Pipeline | 7/7 | — |
 | Dashboard & Operator Analytics | 14/14 | — |
@@ -437,7 +438,7 @@ mindmap
 | Next Horizons | 0/5 | 5 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **266/268 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸, 1 open |
+| **Total** | **267/269 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸, 1 open |
 
 **Open / blocked WPs (derived from WORK_INDEX, 2):** WP-042.1 ⏸ blocked; WP-271 open.
 <!-- ROADMAP-COUNTS:END -->

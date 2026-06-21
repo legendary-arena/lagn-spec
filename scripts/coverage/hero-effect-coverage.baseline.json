@@ -1,9 +1,9 @@
 {
   "corpus": {
-    "executable": 2614,
+    "executable": 2639,
     "heroes": 309,
     "hooks": 5949,
-    "noEffect": 3330,
+    "noEffect": 3305,
     "parsedNotExecuted": 5
   },
   "perSet": {
@@ -28,9 +28,9 @@
       "noEffect": 54
     },
     "antm": {
-      "executable": 42,
+      "executable": 52,
       "hooks": 109,
-      "noEffect": 67
+      "noEffect": 57
     },
     "asrd": {
       "executable": 38,
@@ -38,9 +38,9 @@
       "noEffect": 64
     },
     "bkpt": {
-      "executable": 44,
+      "executable": 59,
       "hooks": 135,
-      "noEffect": 91
+      "noEffect": 76
     },
     "bkwd": {
       "executable": 22,

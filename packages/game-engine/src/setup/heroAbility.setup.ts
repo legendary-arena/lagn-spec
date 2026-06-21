@@ -126,6 +126,27 @@ const KEYWORD_PATTERN = /\[keyword:([a-zA-Z][a-zA-Z-]*)(?::(\d+))?\]/g;
 /** Regex for the anchored `by [hc:COLOR]` tail immediately after `[keyword:Empowered]`. */
 const EMPOWERED_PARAM_TAIL_PATTERN = /^\s*by\s*\[hc:([a-z0-9-]+)\]/i;
 
+// why: D-24047 — the ANCHORED leading `[hc:X]:` class-condition prefix gate of the
+// conditional-prefix Empowered form. The `^` anchors to the line start so only a leading
+// class condition (not a later, unrelated `[hc:...]`) is read as the gate; mirrors
+// EMPOWERED_PARAM_TAIL_PATTERN's anchored, non-global, stateless `.exec` discipline.
+/** Regex for the anchored leading `[hc:X]:` class-condition prefix gate. */
+const EMPOWERED_PREFIX_GATE_PATTERN = /^\s*\[hc:([a-z0-9-]+)\]\s*:/i;
+
+// why: D-24047 — gate #2 of the structural resolve gate counts `[keyword:Empowered]`
+// markers (case-insensitive); the conditional-prefix form resolves ONLY a single marker.
+// This is what rejects the two-marker choose-one (fight-or-flight); a condition-counting
+// gate would mis-resolve it (the Honest-Partial Invariant). Global so String.match returns
+// every occurrence (String.match ignores lastIndex, so the shared const stays stateless).
+/** Regex for counting `[keyword:Empowered]` marker occurrences (case-insensitive). */
+const EMPOWERED_MARKER_COUNT_PATTERN = /\[keyword:empowered\]/gi;
+
+// why: D-24047 — gate #5 of the structural resolve gate rejects a multi-class continuation
+// `... by [hc:Y] and [hc:Z]`. Applied ONLY to the slice after the consumed count tail
+// (never a broad scan of the whole text); anchored, non-global, stateless `.exec`/`.test`.
+/** Regex for an `and [hc:...]` multi-class continuation immediately after the count tail. */
+const EMPOWERED_MULTICLASS_TAIL_PATTERN = /^\s*and\s*\[hc:/i;
+
 // why: D-24016 — the count-scaled attack token has three segments
 // ([keyword:attack-per-count:<source>:<perUnit>]); KEYWORD_PATTERN only captures
 // keyword(:N)?, so the count source and per-unit rate need a dedicated pattern.
@@ -325,6 +346,11 @@ function parseAbilityText(abilityText: string): {
       // flags it — the Honest-Partial Invariant. Checked BEFORE isHeroCompositionMarker since
       // `empowered` is in HERO_COMPOSITION_MARKER_NAMES (the deduped union) too.
       const textAfterMarker = abilityText.slice(keywordMatch.index + keywordMatch[0]!.length);
+      // why: D-24047 — resolve-order: try the unchanged sole-condition core FIRST, then the
+      // conditional-prefix class-gated form, then the unresolved fallback. This keeps the
+      // WP-267 core path and its two baseline-verified cases untouched: `one-hit-wonder`
+      // (single marker + single condition, no leading prefix) still resolves via the core
+      // path, and `fight-or-flight` (two markers) stays unresolved (the single-marker guard).
       const empoweredComposition = tryResolveEmpoweredCore(textAfterMarker, conditions);
       if (empoweredComposition !== undefined) {
         primitiveEffects.push(empoweredComposition);
@@ -338,7 +364,32 @@ function parseAbilityText(abilityText: string): {
         // prevents the 'conditional' keyword being added downstream.
         conditions.splice(0, conditions.length);
       } else {
-        unresolvedMarkers.push(normalizedKeyword);
+        const conditionalPrefixMatch = tryResolveEmpoweredConditionalPrefix(
+          abilityText,
+          textAfterMarker,
+          conditions,
+        );
+        if (conditionalPrefixMatch !== undefined) {
+          primitiveEffects.push(conditionalPrefixMatch.composition);
+          // why: D-24045 — same by-hook provenance gate as the core path.
+          resolvedMarkers.push(normalizedKeyword);
+          // why: D-24047 — suppress ONLY the consumed count param heroClassMatch(Y) and
+          // RETAIN the leading prefix gate heroClassMatch(X). The retained gate IS the
+          // conditional behavior the WP-256 executor honors (it runs primitiveEffects only
+          // when the hook's conditions pass), so this lifts D-24044's conditional-prefix
+          // deferral for the class-gated case WITHOUT an executor edit. NEVER clear all
+          // conditions on this path (that is the sole-condition core-path shortcut). The
+          // helper confirmed a matching count param exists, so the index is always found.
+          const consumedParamIndex = findFirstHeroClassMatchIndex(
+            conditions,
+            conditionalPrefixMatch.countColor,
+          );
+          if (consumedParamIndex !== -1) {
+            conditions.splice(consumedParamIndex, 1);
+          }
+        } else {
+          unresolvedMarkers.push(normalizedKeyword);
+        }
       }
     } else if (isHeroCompositionMarker(normalizedKeyword)) {
       // why: D-24031 — a composition marker (berserk) attaches a DEEP COPY of its AST to
@@ -681,6 +732,91 @@ function tryResolveEmpoweredCore(
     return undefined;
   }
   return buildEmpoweredComposition(heroClass);
+}
+
+/**
+ * Detection-only resolver for the conditional-prefix class-gated Empowered form
+ * (`[hc:X]: ... [keyword:Empowered] by [hc:Y]`). Returns the built composition plus the
+ * NORMALIZED count color `Y` when `abilityText` matches the canonical structural shape, or
+ * undefined for any non-canonical / still-deferred form. Reads `conditions` only to confirm
+ * the consumed count param `heroClassMatch(Y)` is present; mutates NOTHING — the caller
+ * performs the push + suppression after a canonical match. The caller guarantees the marker
+ * is `empowered` (gate #1) and that the unconditional core path already returned undefined.
+ *
+ * @param abilityText - The full ability text line.
+ * @param textAfterMarker - The text immediately following the `[keyword:Empowered]` token.
+ * @param conditions - The line's conditions (heroClassMatch + requiresTeam), in hook order.
+ * @returns The built composition + normalized count color, or undefined for any non-canonical shape.
+ */
+function tryResolveEmpoweredConditionalPrefix(
+  abilityText: string,
+  textAfterMarker: string,
+  conditions: HeroCondition[],
+): { composition: EffectNode; countColor: string } | undefined {
+  // why: D-24047 gate #2 — resolve ONLY a single [keyword:Empowered] marker. The two-marker
+  // choose-one (fight-or-flight) is rejected here; a condition-counting gate would mis-resolve
+  // it (treating the second branch's count param as a gate) — the Honest-Partial Invariant.
+  const markerMatches = abilityText.match(EMPOWERED_MARKER_COUNT_PATTERN);
+  if (markerMatches === null || markerMatches.length !== 1) {
+    return undefined;
+  }
+  // why: D-24047 gate #3 — require a leading `[hc:X]:` class-condition prefix (the retained gate).
+  const prefixMatch = EMPOWERED_PREFIX_GATE_PATTERN.exec(abilityText);
+  if (prefixMatch === null) {
+    return undefined;
+  }
+  // why: D-24047 gate #4 — require the anchored fixed-color count tail `by [hc:Y]` immediately
+  // after the marker (never a broad forward scan that could bind an unrelated later [hc:...]).
+  const tailMatch = EMPOWERED_PARAM_TAIL_PATTERN.exec(textAfterMarker);
+  if (tailMatch === null) {
+    return undefined;
+  }
+  // why: D-24047 gate #5 — reject a `... by [hc:Y] and [hc:Z]` multi-class continuation,
+  // inspecting ONLY the slice after the consumed tail.
+  const textAfterTail = textAfterMarker.slice(tailMatch[0]!.length);
+  if (EMPOWERED_MULTICLASS_TAIL_PATTERN.test(textAfterTail)) {
+    return undefined;
+  }
+  // why: D-24047 gate #6 — reject team-gated forms. A fresh non-global test off the canonical
+  // TEAM_PATTERN source (the global const carries lastIndex state; a fresh RegExp is stateless).
+  if (new RegExp(TEAM_PATTERN.source).test(abilityText)) {
+    return undefined;
+  }
+  // why: D-24047 — normalize the count color ONCE; Step 1a stored heroClassConditions
+  // normalized, so the existence check below compares normalized-to-normalized. The prefix
+  // class X stays the retained gate (the caller keeps it); only the count color Y is consumed.
+  const countColor = normalizeTraitSlug(tailMatch[1]!);
+  // why: D-24047 — confirm the consumed count param is present before declaring a canonical
+  // match. It always is on the canonical shape (the anchored tail guarantees Step 1a extracted
+  // `[hc:Y]`); if it were somehow absent, return undefined so the caller leaves conditions
+  // unchanged and records the marker unresolved — never throw, never mutate here.
+  if (findFirstHeroClassMatchIndex(conditions, countColor) === -1) {
+    return undefined;
+  }
+  return { composition: buildEmpoweredComposition(countColor), countColor };
+}
+
+/**
+ * Finds the index of the first `heroClassMatch` condition whose value equals the given
+ * NORMALIZED slug, or -1 when none matches. Used both to confirm the consumed Empowered
+ * count param exists (detection) and to suppress exactly one occurrence of it (the caller),
+ * so suppression removes a single param and retains the leading prefix gate.
+ *
+ * @param conditions - The line's conditions, in hook order.
+ * @param normalizedValue - The normalized hero-class slug to find.
+ * @returns The index of the first matching heroClassMatch condition, or -1.
+ */
+function findFirstHeroClassMatchIndex(
+  conditions: HeroCondition[],
+  normalizedValue: string,
+): number {
+  for (let index = 0; index < conditions.length; index += 1) {
+    const condition = conditions[index]!;
+    if (condition.type === 'heroClassMatch' && condition.value === normalizedValue) {
+      return index;
+    }
+  }
+  return -1;
 }
 
 // ---------------------------------------------------------------------------

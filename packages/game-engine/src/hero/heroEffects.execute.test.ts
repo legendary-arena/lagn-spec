@@ -2662,6 +2662,67 @@ describe('executeHeroEffects primitiveEffects path (WP-256 / D-24031)', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Conditional-prefix Empowered (WP-272 / D-24047)
+//
+// A conditional-prefix Empowered hook carries the retained prefix gate
+// (heroClassMatch X) as a CONDITION and the count composition (color Y) as a
+// primitiveEffect. The WP-256 executor runs primitiveEffects only INSIDE the
+// conditions-passed gate, so retaining the gate IS the conditional behavior —
+// no executor edit. X (strength) ≠ Y (tech) keeps the gate and the count distinct.
+// ---------------------------------------------------------------------------
+
+describe('executeHeroEffects conditional-prefix Empowered (WP-272 / D-24047)', () => {
+  const mockCtx = makeMockCtx();
+
+  /** Builds state for a conditional-prefix hook: gate heroClassMatch('strength') + count tech. */
+  function conditionalPrefixState(otherInPlay: string[]) {
+    const gameState = makeTestState({
+      inPlay: ['hero-x', ...otherInPlay],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['conditional'],
+          conditions: [{ type: 'heroClassMatch', value: 'strength' }],
+          primitiveEffects: [buildEmpoweredComposition('tech')],
+        },
+      ],
+    });
+    // Three tech HQ cards (the count color Y) + one strength to prove the count is class-scoped.
+    gameState.hq = ['t1', 't2', 's1', null, 't3'] as unknown as LegendaryGameState['hq'];
+    gameState.cardTraits = {
+      t1: { heroClass: 'tech', team: null },
+      t2: { heroClass: 'tech', team: null },
+      s1: { heroClass: 'strength', team: null },
+      t3: { heroClass: 'tech', team: null },
+      // why: 'gate-hero' is a separate in-play strength card that satisfies the
+      // heroClassMatch('strength') gate (self-exclusion excludes the triggering hero-x).
+      'gate-hero': { heroClass: 'strength', team: null },
+    };
+    return gameState;
+  }
+
+  it('gate passes (a strength card in play) → +Attack equals the HQ tech count', () => {
+    const gameState = conditionalPrefixState(['gate-hero']);
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+    assert.equal(gameState.turnEconomy.attack, 3, '+Attack equals the 3 tech HQ cards when the strength gate passes');
+  });
+
+  it('gate fails (no strength card in play) → nothing granted, no hollow', () => {
+    const gameState = conditionalPrefixState([]);
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+    assert.equal(gameState.turnEconomy.attack, 0, 'no attack granted when the strength gate fails');
+    // why: a gated effect that legitimately did not trigger is NOT a hollow — it resolved at
+    // parse time (primitiveEffects, not unresolvedMarkers) and was skipped by the conditions gate.
+    assert.equal(
+      (gameState.diagnostics?.hollowEffects ?? []).length,
+      0,
+      'a gate-failed conditional effect records no hollow',
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
 // WP-257 — hollow-effect detection (D-24033 + D-24034)
 //
 // The detector classifies on handler REACHABILITY, never by diffing G. These

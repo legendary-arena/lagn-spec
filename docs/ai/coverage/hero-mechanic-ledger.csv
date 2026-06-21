@@ -55,7 +55,7 @@ antm/ant-man,Ant-Man,antm,microscopic-size-changing,unsupported,,,
 antm/ant-man,Ant-Man,antm,size-changing,unsupported,,,
 antm/black-knight,Black Knight,antm,empowered,unsupported,WP-267,D-24044,
 antm/jocasta,Jocasta,antm,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
-antm/jocasta,Jocasta,antm,empowered,unsupported,WP-267,D-24044,
+antm/jocasta,Jocasta,antm,empowered,executable,WP-267,D-24044,packages/game-engine/src/hero/effectPrimitive.interpret.ts
 antm/jocasta,Jocasta,antm,size-changing,unsupported,,,
 antm/wasp,Wasp,antm,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
 antm/wasp,Wasp,antm,microscopic-size-changing,unsupported,,,
@@ -82,9 +82,9 @@ bkpt/king-black-panther,King Black Panther,bkpt,ambush,unsupported,,,
 bkpt/king-black-panther,King Black Panther,bkpt,thrones-favor,unsupported,,,
 bkpt/princess-shuri,Princess Shuri,bkpt,ambush,unsupported,,,
 bkpt/princess-shuri,Princess Shuri,bkpt,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
-bkpt/princess-shuri,Princess Shuri,bkpt,empowered,unsupported,WP-267,D-24044,
+bkpt/princess-shuri,Princess Shuri,bkpt,empowered,executable,WP-267,D-24044,packages/game-engine/src/hero/effectPrimitive.interpret.ts
 bkpt/queen-storm-of-wakanda,Queen Storm of Wakanda,bkpt,ambush,unsupported,,,
-bkpt/queen-storm-of-wakanda,Queen Storm of Wakanda,bkpt,empowered,unsupported,WP-267,D-24044,
+bkpt/queen-storm-of-wakanda,Queen Storm of Wakanda,bkpt,empowered,executable,WP-267,D-24044,packages/game-engine/src/hero/effectPrimitive.interpret.ts
 bkpt/queen-storm-of-wakanda,Queen Storm of Wakanda,bkpt,thrones-favor,unsupported,,,
 bkpt/queen-storm-of-wakanda,Queen Storm of Wakanda,bkpt,wound-the-mastermind,unsupported,,,
 bkpt/white-wolf,White Wolf,bkpt,ambush,unsupported,,,

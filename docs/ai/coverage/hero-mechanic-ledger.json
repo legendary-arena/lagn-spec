@@ -4,9 +4,9 @@
   "summary": {
     "totalRows": 623,
     "byStatus": {
-      "executable": 120,
+      "executable": 123,
       "deferred": 0,
-      "unsupported": 456,
+      "unsupported": 453,
       "unmarked": 47
     },
     "distinctMechanics": 134
@@ -577,10 +577,10 @@
       "heroName": "Jocasta",
       "set": "antm",
       "mechanic": "empowered",
-      "status": "unsupported",
+      "status": "executable",
       "wp": "WP-267",
       "decision": "D-24044",
-      "handler": ""
+      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
     },
     {
       "extId": "antm/jocasta",
@@ -847,10 +847,10 @@
       "heroName": "Princess Shuri",
       "set": "bkpt",
       "mechanic": "empowered",
-      "status": "unsupported",
+      "status": "executable",
       "wp": "WP-267",
       "decision": "D-24044",
-      "handler": ""
+      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
     },
     {
       "extId": "bkpt/queen-storm-of-wakanda",
@@ -867,10 +867,10 @@
       "heroName": "Queen Storm of Wakanda",
       "set": "bkpt",
       "mechanic": "empowered",
-      "status": "unsupported",
+      "status": "executable",
       "wp": "WP-267",
       "decision": "D-24044",
-      "handler": ""
+      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
     },
     {
       "extId": "bkpt/queen-storm-of-wakanda",

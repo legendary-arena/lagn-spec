@@ -773,13 +773,27 @@ describe('buildHeroAbilityHooks Empowered parameterized composition (WP-267 / D-
     );
   });
 
-  it('conditional-prefix ("[hc:strength]: ...Empowered by [hc:tech]") → deferred (residual gate)', () => {
+  it('conditional-prefix ("[hc:strength]: ...Empowered by [hc:tech]") → resolves, prefix gate retained (WP-272 / D-24047 lifted the deferral)', () => {
+    // why: WP-272 / D-24047 lifted D-24044's conditional-prefix deferral for the class-gated
+    // case. The leading [hc:strength]: gate is RETAINED; only the consumed count param [hc:tech]
+    // is suppressed. Full structural-gate coverage is in the WP-272 describe block below.
     const hook = empoweredHookFor('[hc:strength]: You get [keyword:Empowered] by [hc:tech].');
-    assert.equal(hook.primitiveEffects, undefined, 'no composition — a residual prefix-gate condition defers');
-    assert.ok(
-      (hook.unresolvedMarkers ?? []).includes('empowered'),
-      'a deferred conditional-prefix Empowered records an unresolved marker',
+    assert.ok(hook.primitiveEffects !== undefined, 'the conditional-prefix form now resolves');
+    assert.deepStrictEqual(
+      hook.primitiveEffects![0],
+      {
+        type: 'gain-resource',
+        resource: 'attack',
+        amount: { type: 'count-cards-by-class-in-zone', heroClass: 'tech', zone: 'hq' },
+      },
+      'the built composition counts tech HQ cards (the count color Y)',
     );
+    assert.deepStrictEqual(
+      hook.conditions,
+      [{ type: 'heroClassMatch', value: 'strength' }],
+      'the [hc:strength] prefix gate is retained; only the [hc:tech] count param is suppressed',
+    );
+    assert.equal(hook.unresolvedMarkers, undefined, 'a resolved conditional-prefix records no unresolved marker');
   });
 
   it('[keyword:Double Empowered] is not the bare empowered marker → no composition', () => {
@@ -794,6 +808,133 @@ describe('buildHeroAbilityHooks Empowered parameterized composition (WP-267 / D-
       (hook.unresolvedMarkers ?? []).includes('empowered'),
       'a deferred multi-class Empowered records an unresolved marker',
     );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-272 — Empowered conditional-prefix class-gated core form (D-24047)
+//
+// The parser resolves `[hc:X]: ... [keyword:Empowered] by [hc:Y]` as the WP-267
+// gain-resource composition, RETAINED behind the leading [hc:X]: class gate: the
+// consumed count param [hc:Y] is suppressed, the prefix gate is kept so the
+// WP-256 executor fires the effect only when that gate passes. The structural
+// resolve gate (single marker + leading [hc:X]: + anchored fixed-color tail + no
+// `and [hc:Z]` continuation + no [team:...]) keeps every still-deferred Empowered
+// variant a parse-unrecognized hollow — the Honest-Partial Invariant.
+// ---------------------------------------------------------------------------
+
+describe('buildHeroAbilityHooks Empowered conditional-prefix class-gated form (WP-272 / D-24047)', () => {
+  /** Builds a single-ability hook from one Empowered-bearing ability line. */
+  function empoweredHookFor(abilityText: string) {
+    const registry = makeHeroRegistry('core', 'empowered-prefix-hero', [
+      { slug: 'empowered-prefix-card', rarityLabel: 'Common 1', abilities: [abilityText] },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/empowered-prefix-hero'] };
+    const hooks = buildHeroAbilityHooks(registry, config);
+    return hooks[0]!;
+  }
+
+  it('same-class "[hc:ranged]: ...Empowered by [hc:ranged]" → resolves; exactly one ranged gate retained', () => {
+    const hook = empoweredHookFor('[hc:ranged]: You get [keyword:Empowered] by [hc:ranged].');
+    assert.ok(hook.primitiveEffects !== undefined, 'the conditional-prefix form resolves');
+    assert.equal(hook.primitiveEffects!.length, 1, 'exactly one built composition');
+    assert.deepStrictEqual(
+      hook.primitiveEffects![0],
+      {
+        type: 'gain-resource',
+        resource: 'attack',
+        amount: { type: 'count-cards-by-class-in-zone', heroClass: 'ranged', zone: 'hq' },
+      },
+      'the built composition counts ranged HQ cards into +Attack',
+    );
+    // why: same-class case — Step 1a extracted two heroClassMatch('ranged') (prefix + tail);
+    // suppressing exactly one leaves exactly one as the retained gate.
+    assert.deepStrictEqual(
+      hook.conditions,
+      [{ type: 'heroClassMatch', value: 'ranged' }],
+      'exactly one heroClassMatch(ranged) gate is retained',
+    );
+    assert.deepStrictEqual(hook.resolvedMarkers, ['empowered'], 'empowered is recorded resolved by-hook');
+    assert.ok(!(hook.keywords as string[]).includes('empowered'), 'empowered is never a hook keyword');
+    assert.equal(hook.unresolvedMarkers, undefined, 'a resolved conditional-prefix records no unresolved marker');
+  });
+
+  it('different-class "[hc:strength]: ...Empowered by [hc:tech]" → builds tech count; only the tech param suppressed', () => {
+    const hook = empoweredHookFor('[hc:strength]: You get [keyword:Empowered] by [hc:tech].');
+    assert.deepStrictEqual(
+      hook.primitiveEffects![0],
+      {
+        type: 'gain-resource',
+        resource: 'attack',
+        amount: { type: 'count-cards-by-class-in-zone', heroClass: 'tech', zone: 'hq' },
+      },
+      'the built composition counts the count color Y (tech) HQ cards',
+    );
+    // why: the prefix gate X (strength) is retained; only the consumed count param Y (tech) is removed.
+    assert.deepStrictEqual(
+      hook.conditions,
+      [{ type: 'heroClassMatch', value: 'strength' }],
+      'the strength prefix gate is retained; the tech count param is suppressed',
+    );
+    assert.deepStrictEqual(hook.resolvedMarkers, ['empowered'], 'empowered recorded resolved by-hook');
+  });
+
+  it('two-marker choose-one (fight-or-flight shape) → unresolved (single-marker guard; preserved from main)', () => {
+    const hook = empoweredHookFor(
+      'Choose one: You get [keyword:Empowered] by [hc:strength], or you get [keyword:Empowered] by [hc:covert].',
+    );
+    assert.equal(hook.primitiveEffects, undefined, 'two [keyword:Empowered] markers → no conditional-prefix composition');
+    assert.ok(
+      (hook.unresolvedMarkers ?? []).includes('empowered'),
+      'the two-marker choose-one stays a parse-unrecognized hollow (Honest-Partial)',
+    );
+  });
+
+  it('prefixed multi-class "[hc:tech]: ...Empowered by [hc:ranged] and [hc:strength]" → unresolved (and-continuation guard)', () => {
+    const hook = empoweredHookFor('[hc:tech]: You get [keyword:Empowered] by [hc:ranged] and [hc:strength].');
+    assert.equal(hook.primitiveEffects, undefined, 'an `and [hc:...]` continuation after the tail defers (gate #5)');
+    assert.ok(
+      (hook.unresolvedMarkers ?? []).includes('empowered'),
+      'a multi-class Empowered stays a hollow even behind a valid class prefix',
+    );
+  });
+
+  it('prefixed color-of-choice "[hc:strength]: ...Empowered by the color of your choice" → unresolved (anchored-tail miss)', () => {
+    const hook = empoweredHookFor('[hc:strength]: You get [keyword:Empowered] by the color of your choice.');
+    assert.equal(hook.primitiveEffects, undefined, 'no anchored `by [hc:Y]` tail → defer (gate #4)');
+    assert.ok(
+      (hook.unresolvedMarkers ?? []).includes('empowered'),
+      'a color-of-choice Empowered stays a hollow',
+    );
+  });
+
+  it('team-gated / non-class-leading-gate "[team:x-men]: ...Empowered by [hc:ranged]" → unresolved', () => {
+    // why: the leading gate is [team:x-men]:, not [hc:X]: (gate #3 miss), and the line carries a
+    // [team:...] token (gate #6) — either guard defers it. Doubles as the non-class-leading-gate case.
+    const hook = empoweredHookFor('[team:x-men]: You get [keyword:Empowered] by [hc:ranged].');
+    assert.equal(hook.primitiveEffects, undefined, 'a [team:...]-gated / non-[hc:X]:-leading Empowered defers');
+    assert.ok(
+      (hook.unresolvedMarkers ?? []).includes('empowered'),
+      'a team-gated Empowered stays a hollow',
+    );
+  });
+
+  it('regression: bare core "Empowered by [hc:strength]" (no prefix) still resolves via the unchanged core path', () => {
+    const hook = empoweredHookFor('You get [keyword:Empowered] by [hc:strength].');
+    assert.ok(hook.primitiveEffects !== undefined, 'the unconditional core form still resolves');
+    // why: the bare core has NO leading [hc:X]: prefix, so the count param is its SOLE condition
+    // and the core path clears all conditions — it is NOT the conditional-prefix path (no gate retained).
+    assert.equal(hook.conditions, undefined, 'the sole-condition core path clears all conditions (unchanged)');
+  });
+
+  it('regression: one-hit-wonder "Chose one: Draw a card, or ...Empowered by [hc:strength]" still resolves via core', () => {
+    // why: one-hit-wonder is a single marker + single [hc:strength] condition with no leading
+    // [hc:X]: prefix, so the WP-267 core path resolves it (a pre-existing over-resolution — the
+    // parser cannot see the "choose one" prose). WP-272 must not change it: no leading prefix ⇒
+    // ineligible for the conditional-prefix path, so it stays on the unchanged core path.
+    const hook = empoweredHookFor('Chose one: Draw a card, or you get [keyword:Empowered] by [hc:strength].');
+    assert.ok(hook.primitiveEffects !== undefined, 'one-hit-wonder still resolves via the core path');
+    assert.equal(hook.conditions, undefined, 'the core path clears the single condition (unchanged from main)');
   });
 });
 
@@ -832,8 +973,22 @@ describe('buildHeroAbilityHooks — resolved composition markers (WP-268 / D-240
     assert.equal(hook.unresolvedMarkers, undefined, 'the resolved core records no unresolved marker');
   });
 
-  it('a deferred Empowered variant excludes empowered from resolvedMarkers AND flags it unresolved', () => {
+  it('a resolved conditional-prefix Empowered records empowered on resolvedMarkers, not unresolved (WP-272 / D-24047)', () => {
+    // why: WP-272 / D-24047 — the conditional-prefix class-gated form now resolves by-hook, so
+    // it carries empowered on resolvedMarkers (the executable-by-hook signal) and NOT on
+    // unresolvedMarkers — the Honest-Partial symmetry, updated for the lifted deferral.
     const hook = resolvedMarkersHookFor('[hc:strength]: You get [keyword:Empowered] by [hc:tech].');
+    assert.ok(
+      (hook.resolvedMarkers ?? []).includes('empowered'),
+      'a resolved conditional-prefix records empowered as resolved (executable by-hook)',
+    );
+    assert.equal(hook.unresolvedMarkers, undefined, 'a resolved conditional-prefix records no unresolved marker');
+  });
+
+  it('a still-deferred Empowered variant (multi-class) excludes empowered from resolvedMarkers AND flags it unresolved', () => {
+    // why: D-24045 — a still-deferred variant (multi-class — no class-set count primitive) keeps
+    // the symmetric Honest-Partial signal: never resolved, always flagged unresolved.
+    const hook = resolvedMarkersHookFor('You get [keyword:Empowered] by [hc:ranged] and [hc:strength].');
     assert.ok(
       !(hook.resolvedMarkers ?? []).includes('empowered'),
       'a deferred variant does not record empowered as resolved',
