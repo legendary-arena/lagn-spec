@@ -614,6 +614,10 @@ It's site-wide config, so commit it `WP-NNN:`:
   development](#local-development)) — the `youtube` shortcode renders
   under `hugo server` too. What you see in preview is what ships.
 
+**Hugo docs:** the [`youtube` shortcode reference](https://gohugo.io/shortcodes/youtube/)
+(full parameter list) and [Configure privacy](https://gohugo.io/configuration/privacy/)
+(`[privacy.youtube] privacyEnhanced`).
+
 ### Content structure
 
 ```
@@ -768,6 +772,8 @@ Full details: `C:\www\legendary-arena-com\docs\ai\REFERENCE\01.3-commit-hygiene.
 - `C:\www\legendary-arena-com\static\brand-tokens.css` — cross-site brand token contract
 - `C:\www\legendary-arena-com\docs\ai\REFERENCE\01.3-commit-hygiene.md` — commit prefix conventions
 - `C:\www\legendary-arena-com\docs\03-ROADMAP.md` — analytics platform deferral, WP-021
+- [Hugo — `youtube` shortcode](https://gohugo.io/shortcodes/youtube/) — built-in shortcode reference (params: `id`, `title`, `start`, `autoplay`, `loading`, `class`)
+- [Hugo — Configure privacy](https://gohugo.io/configuration/privacy/) — `[privacy.youtube] privacyEnhanced` (no-cookie embeds)
 - WP-004 — home page override
 - WP-005 — Pagefind search integration, `#la-search` id lock
 - WP-008 — Schema.org / SEO baseline
