@@ -3,7 +3,7 @@ import '../testing/jsdom-setup';
 import { describe, test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { setActivePinia, createPinia } from 'pinia';
-import { mount, flushPromises } from '@vue/test-utils';
+import { mount, flushPromises, enableAutoUnmount } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import type { UIState } from '@legendary-arena/game-engine';
 import PlayDesktop from './PlayDesktop.vue';
@@ -12,6 +12,12 @@ import type { SubmitMove } from '../components/play/uiMoveName.types';
 import type { NotableGameEvent } from '../composables/useNotableEventStream';
 
 const noopSubmitMove: SubmitMove = () => undefined;
+
+// why: an autoplay-match mount renders AutoplayControls, which arms the WP-262
+// stall-detection setInterval on mount. Without auto-unmount, that interval
+// outlives each test and keeps the node:test event loop alive (hang). Unmount
+// after every test so the bar's onBeforeUnmount clears the interval.
+enableAutoUnmount(afterEach);
 
 function snapshot(): UIState {
   return {
@@ -143,6 +149,41 @@ describe('PlayDesktop (WP-129)', () => {
     assert.equal(wrapper.find('[data-testid="play-your-deck-discard"]').exists(), true);
     assert.equal(wrapper.find('[data-testid="play-your-victory-pile"]').exists(), true);
     assert.equal(wrapper.find('[data-testid="play-turn-action-bar"]').exists(), true);
+  });
+
+  test('WP-243: with both pending choices for the viewer, the KO prompt renders ABOVE the hero prompt, both ABOVE TurnActionBar', () => {
+    setActivePinia(createPinia());
+    const frame = snapshot();
+    frame.game.currentStage = 'cleanup';
+    frame.pendingHeroChoice = {
+      choiceType: 'discard-or-return',
+      cardId: 'iron-man-tech',
+      playerID: 'alice',
+      display: { extId: 'iron-man-tech', name: 'Iron Man Tech', imageUrl: '', cost: 4 },
+    };
+    frame.pendingKoHeroChoice = {
+      choiceType: 'ko-hero',
+      playerID: 'alice',
+      remaining: 1,
+      eligible: [
+        { zone: 'hand', cardId: 'shield-officer', display: { extId: 'shield-officer', name: 'S.H.I.E.L.D. Officer', imageUrl: '', cost: 1 } },
+        { zone: 'discard', cardId: 'iron-man-tech', display: { extId: 'iron-man-tech', name: 'Iron Man Tech', imageUrl: '', cost: 4 } },
+      ],
+    };
+    const store = useUiStateStore();
+    store.setSnapshot(frame);
+    const wrapper = mount(PlayDesktop, { props: { submitMove: noopSubmitMove } });
+
+    const html = wrapper.html();
+    const koIndex = html.indexOf('pending-ko-hero-choice-prompt');
+    const heroIndex = html.indexOf('pending-hero-choice-prompt');
+    const barIndex = html.indexOf('play-turn-action-bar');
+
+    assert.ok(koIndex >= 0, 'KO prompt renders for the chooser');
+    assert.ok(heroIndex >= 0, 'hero prompt renders for the chooser');
+    assert.ok(barIndex >= 0, 'turn-action bar renders');
+    assert.ok(koIndex < heroIndex, 'KO prompt is above the hero prompt in DOM order');
+    assert.ok(heroIndex < barIndex, 'both prompts are above the TurnActionBar in DOM order');
   });
 
   test('renders one OpponentPanel per opponent (not the viewer)', () => {

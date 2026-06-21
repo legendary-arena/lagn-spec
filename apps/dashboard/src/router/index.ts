@@ -31,6 +31,16 @@ export const router = createRouter({
           component: () => import('../pages/dashboard/OverviewPage.vue'),
         },
         {
+          path: 'vision',
+          name: 'vision',
+          component: () => import('../pages/vision/VisionRoadmapPage.vue'),
+        },
+        {
+          path: 'coverage',
+          name: 'coverage',
+          component: () => import('../pages/coverage/CoveragePage.vue'),
+        },
+        {
           path: 'players',
           name: 'players',
           component: () => import('../pages/players/PlayerAnalyticsPage.vue'),

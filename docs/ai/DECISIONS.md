@@ -19830,6 +19830,8 @@ part of the same action.
 
 ### D-18901 — `koHeroEachPlayer` Appended at Position 6; Incremental Each-Player Vocabulary Expansion Clause
 
+**Status:** Superseded by D-24023 (WP-252, 2026-06-15). The incremental keyword-by-keyword each-player vocabulary expansion is retired — variants are now parameterized `VillainEffectDescriptor` fields (`target`/`magnitude`/`selector`), not appended keywords. `VillainEffectKeyword` stays frozen at 10 as the parser's translation input (never appended again). The historical reasoning below is retained for the record.
+
 **Decision:** `'koHeroEachPlayer'` is appended at position 6 of
 `VILLAIN_EFFECT_KEYWORDS` and added as the sixth member of the
 `VillainEffectKeyword` union. The first five entries and their order are
@@ -21648,6 +21650,8 @@ presence) are styling concerns by design and do not derive new meaning
 ---
 
 ### D-20201 — Magnitude-N Each-Player Hero KO Uses Closed-Union-Per-Magnitude Keywords; Parameterized Markers Rejected for v1
+
+**Status:** Superseded by D-24023 (WP-252, 2026-06-15). The `koHeroEachPlayerMag2` literal-2 loop is now a `descriptor.magnitude ?? 1` loop, and `[effect:ko-hero:each:N]` parameterized markers ARE accepted — a future magnitude is data-only, no keyword/switch/drift-test change. The original cost/benefit ("parser regex + dispatch contract + overlay validator + drift tests would all change for only N=2 empirically") is reversed by the WP-250 coverage gate (auto-catches regressions) + the 122 unmodeled mechanics the probe found. The historical reasoning below is retained for the record.
 
 **Decision:**
 Each magnitude variant of an each-player-KO effect is its own
@@ -24707,6 +24711,46 @@ Protect this file.
 
 ---
 
+**D-24006: koHeroCurrentPlayer Becomes Interactive (Park → Resolve); Each-Player Variants Stay Auto**
+
+The `koHeroCurrentPlayer` villain Fight effect no longer auto-picks the KO target. It computes eligible targets across the current player's discard + hand + inPlay (carrying the D-20603 zone union into the interactive set), then: 0 eligible → silent no-op; exactly 1 → auto-KO that card (no decision to make); ≥2 → park a player choice. This supersedes the WP-185 §Out-of-Scope auto-resolution deferral for the current-player case only. `koHeroEachPlayer` / `koHeroEachPlayerMag2` remain auto-resolved (non-active players choosing off-turn is a deferred turn-flow change).
+
+**Packet:** WP-242 (EC-273).
+**Drafted:** 2026-06-12 (reserved in the WP-242 body). **Landed:** 2026-06-12 (WP-242 real implementation; the earlier same-day docs-only governance close did NOT land these engine entries — see WORK_INDEX correction note).
+**Status:** Active
+
+---
+
+**D-24007: G.pendingKoHeroChoices FIFO Queue + PendingKoHeroChoice Type; No Eligible Snapshot**
+
+KO-a-Hero choices are tracked in `G.pendingKoHeroChoices?: PendingKoHeroChoice[]` (`{ choiceType: 'ko-hero'; playerID: string }`), a FIFO queue appended by the parker and front-popped by the resolver. `undefined` / `[]` both mean "no pending choice"; never `null`. The entry stores NO eligible-card snapshot — eligibility is recomputed fresh from current G at every use (parker count, move validation, projection), eliminating stale-target bugs across multi-KO queues. Auto-resolve at exactly 1 eligible (parker only); append at ≥2; no-op at 0.
+
+**Packet:** WP-242 (EC-273).
+**Drafted:** 2026-06-12. **Landed:** 2026-06-12 (WP-242 real implementation).
+**Status:** Active
+
+---
+
+**D-24008: resolveKoHeroChoice Move (Front-Only, Front-Pop) + Block-All / Dual Turn-End Guards + Dual-Pending Coexistence**
+
+A new `resolveKoHeroChoice({ zone, cardId })` move (registered `client: false`; move count 9→10) validates the submitted target against current G, KOs the first matching occurrence, and front-pops the queue on success only (invalid/stale target = no-op, queue intact). It always operates on the front entry (no entry index in the payload) and never auto-resolves (a later entry whose eligible set collapses to 1 still needs an explicit resolve). While the queue is non-empty, both turn-end callsites (`endTurn`, `advanceStage` at cleanup) AND all action moves (drawCards, playCard, recruitHero, fightVillain, fightMastermind, revealVillainCard, advanceStage) are silent no-ops — board-freeze (decision B). The block-all guard runs immediately after the stage gate, before any G/zone access. It exempts BOTH `resolveKoHeroChoice` and `resolveHeroChoice`: `pendingHeroChoice` (WP-220) and `pendingKoHeroChoices` may co-exist, each resolver acts only on its own state, either may be resolved first, and turn-end is blocked until both clear.
+
+**Packet:** WP-242 (EC-273).
+**Drafted:** 2026-06-12. **Landed:** 2026-06-12 (WP-242 real implementation).
+**Status:** Active
+
+---
+
+**D-24009: Bot/Sim Auto-Resolve Preserves the Prior Auto-Pick (Byte-Identical Target)**
+
+While a KO choice is pending, `getLegalMoves` returns exactly one move — `resolveKoHeroChoice` with the target chosen by `selectDefaultKoTarget`, which reuses the unchanged `selectKoHeroTarget` priority (discard → hand → inPlay; starter-S.H.I.E.L.D. first; ext_id lexical tie-break). The bot's KO target is therefore byte-identical to the prior auto-resolution; only the move stream changes (the KO lands one move later). A parity test pins legacy-`koOneHeroForPlayer` vs new-flow KO'd cardId equality. The sentinel/`PRE_WP080_HASH` replay is re-pinned only if it diverges (WP-236 coherent-game-gate discipline); at implementation time it did NOT diverge, so no fixture was touched.
+
+**Packet:** WP-242 (EC-273).
+**Drafted:** 2026-06-12. **Landed:** 2026-06-12 (WP-242 real implementation).
+**Status:** Active
+
+---
+
 **D-24010: UIPendingKoHeroChoice Projection (Front-of-Queue, Fresh Eligible Computation)**
 
 The engine UIState projection builds `UIPendingKoHeroChoice` from `G.pendingKoHeroChoices[0]` (front of queue), computing eligible targets fresh from current G on every projection call. No snapshot of eligibility is stored; the front entry's zone+playerID are the only cached fields. This ensures the eligible list always reflects current zone contents and handles multi-KO scenarios where zones change between queue pops.
@@ -24734,5 +24778,721 @@ While `pendingKoHeroChoice` is present, `canEndTurn` and `canPassPriority` retur
 **Packet:** WP-243 (EC-274).
 **Drafted:** 2026-06-12. **Landed:** 2026-06-12.
 **Status:** Active
+
+---
+
+**D-24013: Mastermind Bystander Rescue Fires on EVERY Tactic Defeat (Not Vanquish-Only)**
+
+`moves/fightMastermind.ts` rescues all bystanders the Mastermind is currently holding (`G.mastermind.attachedBystanders`) into the fighting player's victory pile on **each** successful tactic defeat. The award + `attachedBystanders` clear + `G.attachedBystanders[baseCardId]` Path-A mirror-drop moved OUT of the `if (areAllTacticsDefeated)` branch so they run on every fight, then the store is cleared so a later Master Strike re-capture is rescued by the next fight. Per Universal Rules v23 §"When you fight a Mastermind/Commander" step 1 ("Also rescue any Bystanders the Mastermind was holding, putting them all into your Victory Pile"), the rescue is per-fight; "not truly defeated until all four Tactics are defeated" gates only the WIN condition (`MASTERMIND_DEFEATED` counter), not the rescue. Prior code awarded captures only on the vanquishing blow — root cause of the 2026-06-09 field report (bystanders shown on the tile but not moved to victory after a non-final fight; that investigation exercised only the vanquish path and could not reproduce). The `mastermindDefeated` notable event (D-20008) is unchanged — still emitted once on vanquish — and its `bystandersRescued` now denotes the count rescued on the vanquishing fight specifically (often 0 when a prior fight already cleared the store). This refines the award-timing assumption in D-20008's rationale; it does not alter the event's shape, firing condition, or the closed `NOTABLE_EVENT_TYPES` union. Replay hashes are unchanged (no fixture runs `fightMastermind`).
+
+**Packet:** None — operator-directed bug fix, no standalone WP/EC (same disposition as D-20008's `INFRA:` follow-up to squash commit `618327f`). Code landed under `INFRA:`; this entry under `SPEC:`.
+**Drafted:** 2026-06-13. **Landed:** 2026-06-13.
+**Status:** Active
+
+---
+
+**D-24014: Mastermind Tactic Cards Gain `cardDisplayData` Projection (Un-defers the Last D-11106 Deferred Type)**
+
+`buildCardDisplayData` now projects a display entry for EVERY mastermind card — the base card AND all tactic cards — replacing the former base-only `findMastermindBaseCard` walk with `findMastermindCardsForDisplay` (returns the full `masterminds[].cards` array). This un-defers mastermind tactic cards under D-11106's own amendment mechanism ("each deferred card type gains projection support only when a new WP explicitly justifies its inclusion, defines the source-field map"). Justification: `fightMastermind` pushes each defeated tactic into the defeating player's victory pile (a per-card-rendered zone), so a tactic with no `cardDisplayData` entry renders as the literal `<unknown>` placeholder — production symptom (match `1HU0E1bgAy7`): a fully-defeated 4-tactic mastermind left 4 `<unknown>` cards in the victory pile. Source-field map: tactic ext_ids use the base card's grammar `${setAbbr}-mastermind-${slug}-${cardSlug}` (`mastermind.setup.ts:240`), which is byte-identical to each mastermind card's FlatCard key (`registry/shared.ts:flattenSet`); name + imageUrl come from the FlatCard, cost from the SetData card's `vAttack` via `parseCostNullable`. Uses the existing four-field `UICardDisplay` shape — NO field added, so the D-11106 four-field lock is untouched and no UIState shape change occurs (tactics already flow into the victory pile as `CardExtId`s; only their display resolution was missing).
+
+This completes the pattern: mastermind tactics were the LAST of D-11106's eight deferred types. The other seven were already un-deferred — scheme-twist + mastermind-strike (D-17201/WP-172), and bystander + wound + officer + sidekick + scheme (D-17301/WP-173). The bystander un-deferral (`pile-bystander`) was driven by the identical `<unknown>`-in-victory-pile symptom, making this the direct precedent. D-11106's mastermind-tactic clause is hereby superseded; the rest of D-11106 stands. Replay hashes unaffected (`cardDisplayData` is a setup-time display snapshot; it drives no game logic, RNG, or `G` mutation).
+
+**Packet:** None — operator-directed bug fix, no standalone WP/EC (same disposition as D-24013). Code landed under `INFRA:`; this entry under `SPEC:`.
+**Supersedes:** the mastermind-tactic clause of D-11106 (the remaining clauses stand).
+**Drafted:** 2026-06-13. **Landed:** 2026-06-13.
+**Status:** Active
+
+---
+
+**D-24015: Diagnostic Report Carries the Current UIState Snapshot (Amends D-22801's "No UIState" Clause)**
+
+The arena-client diagnostic report (WP-228 / D-22801) is extended to include
+`uiStateSnapshot` — the current audience-filtered UIState projection read from
+`useUiStateStore().snapshot` at export click, or `null` when no match is active.
+This amends D-22801's "no `G`/`ctx`/UIState/card data" clause to permit the
+UIState snapshot specifically; raw `G`/`ctx` remain excluded (the client never
+holds them — only the `filterUIStateForAudience`-filtered projection exists
+client-side). The snapshot is read from the Pinia store, not via an engine
+import: it is typed `unknown` in `diagnostics.ts` so that module stays free of
+any engine surface, and `client/bgioClient.ts` (the sole engine-import site) is
+not modified — there is no `subscribe` hook, so the report carries the single
+current snapshot at click time, not a buffered history. Because the snapshot is
+already audience-filtered server-side, it carries no other player's hidden cards
+and opens no new cross-player visibility surface — it is the same data the
+player's own HUD renders, in a file they themselves download. All other D-22801
+posture stands unchanged: credential redaction (the snapshot does not contain the
+`credentials` value), client-only zero-network-egress export, the bounded
+`DIAGNOSTIC_BUFFER_CAP = 200` console/error ring buffer, and the client-layer
+wall-clock reads outside the engine determinism boundary. Deferred to follow-ups:
+a rolling snapshot history (would hook `bgioClient.ts` `subscribe`) and the
+on-click `[DIAG_EXPORT]` correlation marker.
+
+**Packet:** WP-246 (EC-277).
+**Amends:** D-22801 (the "no UIState/`G`/card data" clause only; the rest stands).
+**Drafted:** 2026-06-13 (reserved). **Landed:** 2026-06-13.
+**Status:** Active
+
+---
+
+**D-24016: Count-Scaled Hero Attack Framework — `attack-per-count` Keyword + `HeroCountSource` Resolver**
+
+Count-scaled "+N Attack for each X" hero abilities are handled by a SINGLE parameterized
+mechanism, not a keyword per card. A new closed-union hero keyword `attack-per-count` grants
+attack equal to `magnitude × resolveCountSource(G, playerID, countSource)` when the hero card
+is played (`onPlay`), where `magnitude` is the per-unit rate (Black Widow's Covert Operation =
+`1`, a non-negative integer under the standard gate) and `countSource` is a value of a new
+closed, drift-controlled `HeroCountSource` enum carried on the `HeroEffectDescriptor`
+(`countSource?: HeroCountSource`). `resolveCountSource` is a pure, total resolver (unknown
+source → `0`; no registry import — classification by ext_id string / `G` reads only). The
+enum is SEEDED with `victory-bystanders`, which counts the player's victory-pile bystanders
+across BOTH ext_id forms (`BYSTANDER_EXT_ID = 'pile-bystander'` and `bystander-villain-deck-NN`)
+and excludes villain/henchman/tactic VP cards. The marker token grammar is
+`[keyword:attack-per-count:<countSource>:<perUnit>]` (added to
+`apply-hero-ability-markers.mjs`'s `VALID_TOKEN_PATTERN`); only
+`core/black-widow/covert-operation` is marked in this packet. Because the printed text
+carries "+N[icon:attack]", the setup parser would otherwise also emit a flat `attack` effect;
+to prevent a double-count, the parser SUPPRESSES the `attack` keyword + its magnitude on any
+line that also carries an `attack-per-count` effect — the explicit count-scaled keyword
+subsumes the attack icon (mirrors the D-21901 reveal-cost-attack precedent).
+
+**Extension recipe (the point of this decision):** a NEW "+N attack for each X" card needs
+(1) IF X is a new source: one `HeroCountSource` enum + array entry + one `resolveCountSource`
+branch + a drift test (engine, governed by a fresh DECISIONS sub-entry); (2) a data marker.
+Marking the whole corpus is a single follow-up **sweep** WP (the WP-225 pattern), never
+per-card WPs. Deferred: per-turn count-sources (need a played/drawn-this-turn ledger),
+filtered/fractional/negative counts, `recruit-per-count`/draw/rescue scaling. Determinism
+preserved (pure function of `G` at play time; no RNG/clock); re-pin the replay sentinel only
+if it diverges (no fixture plays Covert Operation).
+
+**Packet:** WP-247 (EC-278).
+**Drafted:** 2026-06-13 (reserved). **Landed:** TBD (execution close — flips to Active).
+**Status:** Active
+
+---
+
+**D-24017: Hero-Ability Rescue Is Logged to the Game Log (Observability)**
+
+The hero-ability `rescue` executor (`hero/heroEffects.execute.ts` `case 'rescue'`) now
+appends a `G.messages` line in two cases that were previously **silent**: (1) a successful
+rescue logs `Player <id> rescued <N> bystander(s) via a hero ability.`, and (2) an
+empty-Bystander-supply no-op logs `Player <id> could not rescue a Bystander via a hero
+ability — the Bystander supply is empty.` This mirrors how fight rescues are already logged
+(`fightVillain.ts` / `fightMastermind.ts`) and surfaces in `UIState.log` (projected by
+`uiState.build.ts`, so it reaches the client — confirmed via the WP-246 diagnostic snapshot).
+
+**Why:** a live diagnostic (match `qxiY97A0m2J`) showed Black Widow's "Mission Accomplished"
+(`[hc:tech]: Rescue a Bystander`) appearing to "do nothing" — the Bystander supply had been
+exhausted (`piles.bystandersCount: 0`), so the rescue was a correct no-op, but the executor
+emitted no feedback, so the player could not tell whether the card was broken or merely had
+nothing to rescue. Rescue gameplay is unchanged; this is **observability only** — the same
+zone moves happen, plus a log line. Determinism preserved (a deterministic string append to
+`G.messages`, no RNG/clock); the replay sentinel did NOT diverge (no recorded fixture plays a
+hero-ability rescue), so no re-pin. Scoped to the `rescue` executor only — broader
+hero-effect logging and condition-unmet feedback are out of scope.
+
+**Direct fix** (operator-sanctioned, not a WP — small additive engine bugfix, mirrors the
+2026-06-13 mastermind-bystander rescue fix precedent). Engine `test` 1267 → 1269 pass / 0 fail.
+
+**Landed:** 2026-06-13.
+**Status:** Active
+
+---
+
+**D-24018: Canonical Qualified `extId` for Loadout Composition (Registry Viewer ↔ Engine Id-Space Alignment)**
+
+`FlatCard` carries a canonical set-qualified `extId` of the locked form `{setAbbr}/{slug}`
+(e.g. `core/magneto`) alongside the display-only flat-card `key`
+(`core-mastermind-magneto-magneto`). The registry-side setup-contract validator
+(`packages/registry/src/setupContract/setupContract.validate.ts`) and the Registry Viewer
+loadout picker (`apps/registry-viewer/src/components/LoadoutBuilder.vue`) now read `extId`,
+NOT `key`, so the id space the viewer authors and validates against is the SAME id space the
+engine's authoritative match-setup validator (`packages/game-engine/src/matchSetup.validate.ts`)
+accepts (D-10014). `extId` is derived at flatten time per card type, mirroring the engine's
+per-field slug derivation exactly: hero slug (engine `extractHeroSlug`), mastermind group
+slug, villain group slug (engine `extractVillainGroupSlug`), henchman group slug, scheme slug.
+The composition ext_id pattern in `setupContract.schema.ts` widens from `^[a-z0-9-]+$` to
+`^[a-z0-9-]+/[a-z0-9-]+$` (envelope `setupId`/`themeId` stay bare); `MATCH-SETUP-JSON-SCHEMA.json`
+mirrors it.
+
+**Why:** a field report — `Failed to create match … HTTP 500 Internal Server Error` on
+`POST /games/legendary-arena/create` — root-caused to the Registry Viewer emitting flat-card
+keys into loadout composition fields. The engine rejects flat-card keys and bare slugs
+(D-10014) and accepts only the qualified form, so `Game.setup()` threw and boardgame.io
+returned a generic 500. The viewer's own validator green-lit those keys because it built its
+known-id set from `card.key` — a DIFFERENT id space than the engine. The two validators had
+silently diverged.
+
+**Invariant (the point of this decision):** the registry `setupContract` validator and the
+engine `matchSetup.validate.ts` MUST validate against the same id space (qualified `extId`).
+If they diverge again, viewer-valid loadouts will 500 at match creation. The engine validator
+is byte-unchanged — it already produced the correct qualified ids; this entry aligns the
+registry and viewer to it.
+
+**Also:** the arena lobby (`apps/arena-client/src/lobby/lagnLoadout.ts`) now ingests native
+LAGN files (WP-244) by mapping a `setup` block onto the composition shape the existing
+`parseLoadoutJson` validates (that locked WP-092/093 guard is untouched), and a content
+preview reflects mastermind/scheme/villains/henchmen/heroes back before create (LAGN names,
+ext_id fallback for MATCH-SETUP).
+
+**Determinism:** unaffected — no engine gameplay or RNG path changed; `matchSetup.validate.ts`
+is byte-unchanged. Registry / registry-viewer / arena-client only.
+
+**Follow-up — theme bare-slug resolution (LANDED, commit `d6a621d`):** `prefillFromTheme`
+(`apps/registry-viewer/src/composables/useLoadoutDraft.ts`) now resolves each bare theme
+`setupIntent` slug to its qualified `extId` via `resolveThemeSlugToExtId(slug, cardType, cards)`.
+Two non-obvious rules: (1) match on the **slug portion of `FlatCard.extId`**, NOT `FlatCard.slug`
+— for hero/mastermind/villain/henchman `FlatCard.slug` is the per-*card* slug (hero `wolverine`
+→ `keen-senses`) while the engine derives the ext_id from the *entity* slug (`core/wolverine`);
+(2) **cardType filtering is mandatory** — `magneto` is a hero (`vill/magneto`) AND a mastermind
+(`core/magneto`), so resolving without the type guard could pick the wrong field's id and 500.
+
+**Ambiguity policy (governance-relevant):** when a bare slug has no `core/` printing but exists
+in 2+ non-core sets, the resolver picks the lexicographically-first `extId` deterministically
+(returning null — keeping the slug bare so the validator flags it — only when zero candidates
+exist). This keeps the theme **playable** rather than 500-ing. The trade-off, measured against
+real data: **all 16** such ambiguous heroes have **mechanically DIFFERENT decks** per printing
+(NOT cosmetic reprints — e.g. `dstr/doctor-strange` is a 4-card Artifact deck,
+`msis/doctor-strange` a 6-card Phasing deck), so the deterministic pick may not be the theme
+author's intended version. Per the survival lens (a thematically-adjacent playable match beats a
+broken theme) this is accepted over a hard-error, but the substitution is **surfaced** — not
+silent — via a `?debug`-gated `devLog("theme", …)` naming the chosen printing + alternatives
+(commit pending). The **proper fix** (deferred) is qualifying the ambiguous slugs at the
+theme-data source (store `{set}/{slug}` in the theme JSONs so the author controls the printing);
+once qualified, the fallback stops firing. `onDownload` (MATCH-SETUP export) also gained the
+`isValid` early-return that `onDownloadLagn` already had (defense-in-depth; the button was
+already `:disabled`).
+
+**Follow-up — ambiguous theme slugs qualified at source (LANDED 2026-06-13, branch
+`claude/lagn-upload-extid-roundtrip`):** deferred item (a) is done. The 24 ambiguous
+`setupIntent` references across 17 theme JSONs (`content/themes/*.json`) now store the
+set-qualified `{setAbbr}/{slug}` form, chosen per-theme from name/tags/references so the author
+controls the printing (e.g. `doctor-strange-sorcerer` → `dstr/doctor-strange`, the comic
+Artifact deck; `black-order-assault` [tag `mcu`] → `msis/doctor-strange`, the MCU deck — the
+same bare slug intentionally resolving to different printings per theme, which a single global
+canonical-printing map could NOT express). 7 picks corrected a wrong lexicographic auto-pick
+(`onslaught-unleashed` beast `ssw2`→`xmen`; `venom-lethal-protector` venom `vill`→`vnom`;
+`secret-wars-battleworld` captain-marvel `msis`→`ssw1`; `dark-city-streets` +
+`five-families-of-crime` daredevil `cvwr`→`dkcy`; `contest-of-champions` nova `chmp`→`cosm`;
+`black-order-assault` doctor-strange `dstr`→`msis`); the other 17 pin the already-correct pick
+against future set-addition sort drift. The qualified form is the same `<setAbbr>/<slug>`
+convention the theme schema already uses for `sidekickCardIds`/`officerCardIds` (D-22104), and
+`resolveThemeSlugToExtId` passes any slug containing `/` through untouched — so no viewer/engine
+code changed; this is data-only. A re-runnable guard, `scripts/check-theme-slug-resolution.mjs
+--check`, replicates the resolver against real card data and exits non-zero on any
+ambiguous/unresolved theme slug (now 0/0). The `?debug` devLog substitution warning (commit
+`d5e3965`) no longer fires for these themes.
+
+**Item (c) RESOLVED:** all 68 index-served themes carry `themeSchemaVersion: 2`, in-repo AND on
+live R2 (verified `images.barefootbetters.com/themes`); `index.json` excludes the only
+field-absent files (local combined-export / minimal-example scratch JSON). No further migration
+needed.
+
+**Still deferred:** (b) `apps/registry-viewer/src/registry/types/index.ts` is a stale
+pCloud-sync duplicate of the active `types-index.ts` (hygiene delete).
+
+**R2 re-upload (pending operator):** the 17 changed theme files must be copied to
+`r2:legendary-arena/themes/` *without* regenerating `index.json` (no themes added/removed). The
+stock `scripts/upload-themes-to-r2.mjs` rebuilds `index.json` from the directory and would sweep
+in the 3 non-theme scratch JSONs, so use a targeted `rclone copy --include` of the changed files
+for this change.
+
+**Direct fix** (operator-sanctioned, not a WP — cross-layer bugfix on a live revenue path;
+mirrors the D-24017 direct-fix precedent). Commit `f7e2efb` on branch
+`claude/lagn-upload-extid-roundtrip`. Tests: 1990 pass / 0 fail (engine 1269, registry 116,
+viewer 52, arena 553), incl. a D-24018 regression guard (flat-card key rejected, qualified
+accepted) + 11 LAGN converter tests; `pnpm -r build` clean.
+
+**Landed:** 2026-06-13.
+**Status:** Active
+
+---
+
+**D-24019: Optional-KO-then-Reward Hero Effect Framework — `optional-ko-reward` Keyword + Player-Choice Resolve Move**
+
+Hero abilities of the form "You may KO a card from your hand or discard pile. If
+you do, `<reward>`" are handled by a SINGLE parameterized mechanism, not a keyword
+per card. A new closed-union hero keyword `optional-ko-reward` parks an
+interactive choice when the hero card is played (`onPlay`): the active player
+either declines (no KO, no reward) or KOs exactly one card from their hand or
+discard pile, in which case a `<reward>` is granted. The reward is a value of the
+existing closed `HeroKeyword` union carried on the `HeroEffectDescriptor`
+(`rewardType?: HeroKeyword`, with the existing `magnitude` as the reward
+magnitude); on KO it is dispatched to the ALREADY-BUILT reward executor
+(`rescue`/`draw`/`attack`/`recruit`) rather than re-implemented. The choice reuses
+the WP-242 interactive-choice infrastructure: a FIFO `G.pendingOptionalKoRewards`
+(lazy-initialized at the park site, like `pendingKoHeroChoices`), a new
+`resolveOptionalKoReward` move (`{decline}` or `{zone,cardId}`, front-pop,
+`client:false`) plus a `hasPendingOptionalKoReward` predicate, the board-freeze +
+turn-end guards extended to exempt all three resolve moves, and a `getLegalMoves`
+short-circuit whose deterministic bot/sim default (`selectDefaultOptionalKoTarget`:
+lowest-cost eligible card, discard-preferred) KOs and takes the reward (decline is
+human-only). The reward fires ONLY on an actual KO (atomic). The marker token
+grammar is `[keyword:optional-ko-reward:<reward>:<perUnit>]` (added to
+`apply-hero-ability-markers.mjs`'s `VALID_TOKEN_PATTERN`); only
+`core/black-widow/dangerous-rescue` (reward `rescue`) is marked in this packet.
+
+**Extension recipe (the point of this decision):** a NEW "you may KO a card, then
+X" card needs (1) IF X is a new reward: build the reward executor (its own WP) +
+add it to the seeded reward set; (2) a data marker. Marking the whole ~15-card
+family is a single follow-up **sweep** WP (the WP-225 pattern), never per-card
+WPs. Deferred: the `gain-shard` / `gain-new-recruit` rewards (no executor yet),
+multi-card / repeat KO, and KO from other zones. Determinism preserved (pure
+park/resolve + a pure bot default; the only RNG is the existing draw-reward
+reshuffle); re-pin the replay sentinel only if it diverges (no fixture plays
+Dangerous Rescue). The player-facing choice surface (projection + prompt) ships
+in the co-release-locked WP-249 / EC-280 (D-24020); this engine packet parks,
+resolves, and bot-auto-resolves but renders no human prompt on its own.
+
+**Packet:** WP-248 (EC-279). Co-release: WP-249 (EC-280).
+**Drafted:** 2026-06-13 (reserved). **Landed:** TBD (execution close — flips to Active).
+**Status:** Active
+
+---
+
+**D-24020: Optional-KO-then-Reward UX — Chooser-Only Projection + Client Prompt**
+
+The player-facing surface for WP-248's `optional-ko-reward` choice (D-24019) is a
+chooser-only UIState projection + an arena-client prompt, mirroring the WP-243
+KO-hero UX. The engine projects a `UIPendingOptionalKoReward` (the front pending
+choice: a reward label + the eligible hand and discard cards with display data,
+recomputed fresh with defensive copies) into UIState; `uiState.filter.ts` redacts
+it — and the underlying hand/discard contents — for every player except the
+chooser and for spectators (the D-24011 hand-privacy rule). The arena-client adds
+`resolveOptionalKoReward` to the `UiMoveName` union, renders a non-dismissible
+`OptionalKoRewardPrompt.vue` (a zone-labeled selectable list of eligible
+hand/discard cards plus a Decline button, submitting
+`resolveOptionalKoReward({zone,cardId})` or `({decline:true})`), mounts it in both
+`PlayDesktop.vue` and `PlayMobile.vue`, and disables End Turn / Pass Priority
+while the choice is pending (`hasPendingOptionalKoReward`, mirroring
+`hasPendingKoChoice`). This packet changes NO engine gameplay — it only projects
+existing state and submits the existing move; the arena-client UIState fixtures
+are backfilled in the same packet so `vue-tsc` stays green (the WP-166/207/227
+recurrence). Co-release-locked with WP-248 (the prompt is inert without the engine
+state + move; the engine has no human choice surface without this packet).
+
+**Packet:** WP-249 (EC-280). Co-release: WP-248 (EC-279).
+**Drafted:** 2026-06-13 (reserved). **Landed:** TBD (execution close — flips to Active).
+**Status:** Active
+
+**D-24021: Hero-Effect Coverage Gate — Parser-Driven Non-Regression Taxonomy + Hybrid CI Posture**
+
+`pnpm sim:coverage` (`scripts/hero-effect-coverage.mjs`) drives the real setup-time
+parser (`buildHeroAbilityHooks`) over every hero card in all in-repo sets and buckets
+each parsed ability line as EXECUTABLE / PARSED_NOT_EXECUTED / NO_EFFECT, plus an
+`unsupportedMechanics` tally of `[keyword:X]` tokens whose normalized name is not a
+`HERO_KEYWORD`. `--check` compares the current corpus to a committed baseline
+(`scripts/coverage/hero-effect-coverage.baseline.json`, `schemaVersion: 1`) under a
+**hybrid** posture: a per-set `noEffect` rise or a baseline set missing from the
+current corpus HARD-FAILS (exit 1); a brand-new unsupported mechanic WARNS only
+(exit 0 — new mechanics appear routinely as sets get authored); a broken run
+(missing/unreadable baseline, missing `dist/`, absent/invalid `schemaVersion`, JSON
+parse failure, or zero corpus) is a PROBE FAILURE (exit 2). The gate is **decoupled
+from the executor**: it keys on `noEffect` (pure parser output), never on the probe's
+informational executed-keyword list (which mirrors the executor's handled set for the
+human-report EXECUTABLE/PARSED split only) — so the Lever 1/2 effect-system refactor
+(`docs/ai/DESIGN-EFFECT-AUTHORING-SCALE.md`) can change the executor without the
+gate's verdict depending on it. Serialization is byte-deterministic (object keys
+sorted by UTF-16 code unit, fixed formatting) via one `serializeDeterministic` shared
+by `--json` / `--check` / `--update-baseline`; the baseline changes only via
+`--update-baseline`, run on `main` after confirming the change is intentional. Tooling
++ CI only — no engine/registry source or contract change. A CI job
+`hero-effect-coverage` runs `pnpm -r build` then `pnpm sim:coverage --check`.
+
+**Packet:** WP-250 (EC-281).
+**Drafted:** 2026-06-13. **Landed:** 2026-06-14 (execution close).
+**Status:** Active
+
+**D-24022: Hero Effect Dispatch via HERO_EFFECT_HANDLERS ImplementationMap**
+
+`executeSingleEffect` (`hero/heroEffects.execute.ts`) dispatches hero effects through a
+runtime-only `HERO_EFFECT_HANDLERS: Partial<Record<HeroKeyword, HeroEffectHandler>>`
+ImplementationMap (mirroring the WP-009B scheme/mastermind pattern) instead of a `switch`.
+Each handler is a named function holding the former case body verbatim; the map lives
+OUTSIDE `G` (functions are never serialized). Behavior is byte-identical — the pre-dispatch
+gates (`MVP_KEYWORDS` membership + magnitude pre-check) and the per-handler logic are
+unchanged, and the WP-250 coverage gate's per-set `noEffect` baseline is unchanged, proving
+identity at the corpus level. The union stays typed + drift-detected: the map is keyed by
+`HeroKeyword` and `Partial` (only `wound`/`conditional` unmapped), and a bidirectional
+registry-drift test pins `Object.keys(HERO_EFFECT_HANDLERS)` == the exported `MVP_KEYWORDS`.
+Adding a future effect is now a handler + a map entry + a drift-test member, not a `switch`
+edit — the open-dispatch foundation the WP-252 villain parameterization mirrors.
+
+**Packet:** WP-251 (EC-282).
+**Drafted:** 2026-06-15. **Landed:** 2026-06-15 (execution close).
+**Status:** Active
+
+---
+
+**D-24023: Parameterized Villain Effect Primitives + VILLAIN_EFFECT_HANDLERS ImplementationMap (Reopens + Supersedes D-20201 / D-18901)**
+
+Villain effects dispatch through a runtime-only `VILLAIN_EFFECT_HANDLERS: Record<VillainEffectPrimitive, VillainEffectHandler>` ImplementationMap (mirroring D-24022's hero map) keyed by a closed 5-member `VillainEffectPrimitive` set (`ko-hero`, `gain-wound`, `capture-hq-hero`, `hero-deck-top-to-escape`, `capture-bystander`), consuming a parameterized `VillainEffectDescriptor { primitive, target?, magnitude?, selector? }`. The ten fragmented `VillainEffectKeyword`s collapse into the five primitives; `koHeroEachPlayerMag2`'s literal `for i<2` loop becomes a `descriptor.magnitude ?? 1` loop. The setup parser accepts BOTH the legacy `[effect:<keyword>]` grammar (translated through the frozen `LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR` table) AND a new parameterized `[effect:<primitive>(:<target|selector>)(:<magnitude>)]` grammar; `apply-effect-markers.mjs`'s validator is widened to match (emitter unchanged). **Card data is byte-unchanged** — every existing token is legacy and still parses. A future magnitude/selector variant (e.g. `[effect:ko-hero:each:3]`) is now **data-only** — no new keyword, no switch arm, no drift test.
+
+**Behavior identity (the load-bearing design).** `VillainAbilityHook.effects` is retyped to `VillainEffectDescriptor[]`, but the applied-effects narrative surface stays `VillainEffectKeyword[]`: `executeVillainAbilities` reverse-maps each dispatched descriptor back to its legacy keyword via `descriptorToLegacyKeyword` (the inverse table `DESCRIPTOR_TO_LEGACY_VILLAIN_KEYWORD`, total + injective over the 10 legacy descriptors) before pushing to the applied-effects accumulator. So `notableEvents`, `EFFECT_KEYWORD_LABELS`, the message log, and `apps/arena-client/**` are byte-identical and out of scope (zero diff — the WP-166/207/227 vue-tsc recurrence is dodged; arena-client has zero `villainAbilityHooks` references). `keywords` (legacy, kept keyword-typed) and `effects` (descriptors) are now DISTINCT arrays in `buildVillainAbilityHooks` (was a shared reference). Verified: engine test 1323 → 1329 / 0 (the 1323 unmodified + 6 new: primitive drift, translation totality, reverse-map round-trip ×10, injectivity, dual-grammar equivalence, parameterized-no-keyword); `sim:coverage --check` OK; build 0; no `switch(effect)`/literal-2 loop; `data/cards`/`events`/`arena-client`/`test/fixtures` zero diff.
+
+**Replay-hash note (representational, not behavioral).** `villainAbilityHooks` is a field of `LegendaryGameState`, which `hashGameState` serializes in full — so retyping `hook.effects` to descriptor objects WOULD change `finalStateHash` for any scenario whose hooks carry effects. It does NOT for the WP-158 sentinel because the replay harness runs with `EMPTY_REGISTRY` (`getSet: () => undefined`) → `buildVillainAbilityHooks` collects nothing → `villainAbilityHooks` is always `[]` (an empty array serializes identically as keywords or descriptors). So the sentinel `finalStateHash` + fixture are byte-unchanged (verified). **Caveat for future real-registry fixtures:** a fixture built against a real registry (non-empty hooks) WILL see a `finalStateHash` change from the hook-table representation — that change is representational (the message-log + outcome + within-run-determinism oracles stay identical; gameplay is unchanged), and re-baselining that fixture's hash is the correct, documented response, NOT a behavioral regression. The reverse-map keeps the *narrative* surface identical; the hook *table* representation is the legitimate, intended change of Lever 1.
+
+**Reopens + supersedes D-20201 + D-18901.** Both were minted when the cost/benefit favored a frozen keyword union: D-20201 (closed-union-per-magnitude) judged that parameterizing magnitude would force a parser regex + dispatch-contract + overlay-validator + drift-test change "for only N=2 empirically"; D-18901 (incremental each-player vocabulary expansion) added each variant keyword-by-keyword. Two things flipped that calculus: (1) the WP-250 `sim:coverage` non-regression gate now catches effect-coverage regressions automatically, and (2) the coverage probe found 122 distinct unmodeled `[keyword:X]` mechanics across 40 sets — a per-keyword cadence projects to ~6 months. Parameterization (Lever 1 of `docs/ai/DESIGN-EFFECT-AUTHORING-SCALE.md`) makes new variants data-only, collapsing that cost. The literal-loop-bound + closed-union policies of D-20201/D-18901 are retired; `VillainEffectKeyword`/`VILLAIN_EFFECT_KEYWORDS` stay frozen at 10 as the translation input (never appended again).
+
+**Packet:** WP-252 (EC-283).
+**Drafted:** 2026-06-15. **Landed:** 2026-06-15 (execution close).
+**Status:** Active
+
+---
+
+**D-24024: Parameterized Hero Reveal Branch-List + `revealRulesForLegacyKeyword` Translation (Lever 1 for Heroes; collapses the 8 `reveal-*` keywords)**
+
+The eight fragmented `reveal-*` HeroKeywords (`reveal`, `reveal-ko`, `reveal-min`, `reveal-ko-or-draw`, `reveal-cost-attack`, `reveal-odd-draw`, `reveal-attack-choose`, `reveal-ko-attack`) collapse into ONE parameterized `reveal` `HERO_EFFECT_HANDLERS` entry consuming an ordered `RevealRule { predicate, actions[], continue? }` branch-list (additive optional `revealCount?` / `revealRules?` on `HeroEffectDescriptor`). `RevealPredicate.kind` ∈ {`always`, `cost-lte`, `cost-gte`, `cost-zero`, `cost-odd`} (`threshold?` on the two cost-bounded kinds); `RevealAction.kind` ∈ {`draw`, `ko`, `attack-by-cost`, `attack-fixed`, `choose-discard-or-return`} (`amount?` on `attack-fixed`); both are closed unions with `REVEAL_PREDICATE_KINDS` / `REVEAL_ACTION_KINDS` drift arrays. The single `reveal` handler peeks the deck top (× `revealCount`, =1 today) and evaluates the rules first-match-wins (a rule's `continue: true` keeps evaluating later rules — the reveal-attack-choose attack-then-always-park shape). The seven `reveal-*` handler functions are removed; their verbatim zone-mutation bodies live in per-action helpers. A future reveal variant is now a data marker, not a new keyword + handler + drift-test + WP — Lever 1 of `docs/ai/DESIGN-EFFECT-AUTHORING-SCALE.md` for heroes (mirrors D-24023 for villains).
+
+**Translation is a FUNCTION, not a static table (the hero/villain difference).** `revealRulesForLegacyKeyword(keyword, magnitude): RevealRule[]` (`rules/revealRule.ts`) maps each of the 8 legacy card markers to the branch-list its former handler hard-coded, so `data/cards/**` is byte-unchanged. TWO magnitude tiers reproduce the legacy self-guards exactly (the function form is required because the gating is magnitude-dependent, unlike the villain side's static `LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR`): the **valid tier** {`reveal`, `reveal-min`} returns `[]` ONLY for an INVALID magnitude — **M=0 is VALID** (`reveal` 0 → `cost-lte 0` draws a cost-0 card; `reveal-min` 0 → `cost-gte 0` draws every card); the **positive tier** {`reveal-ko-or-draw`, `reveal-attack-choose`, `reveal-ko-attack`} returns `[]` for an INVALID OR `< 1` magnitude (reproducing each handler's `magnitude < 1` whole-effect self-guard); the **no-magnitude** keywords {`reveal-ko`, `reveal-odd-draw`, `reveal-cost-attack`} ignore magnitude and always translate. Empty rules make the collapsed handler a no-op, reproducing the legacy skip.
+
+**Magnitude pre-gate + dropped top-level magnitude.** `'reveal'` is exempted from the `executeSingleEffect` top-level magnitude pre-gate (added to `NO_MAGNITUDE_KEYWORDS`) so the no-magnitude reveals (`reveal-ko` / `reveal-odd-draw` / `reveal-cost-attack`) and the M=0-valid reveals still fire — ALL reveal magnitude gating now lives in the translation + the per-rule predicates. Top-level `magnitude` is **DROPPED** for the collapsed `reveal` (a cost threshold lives in `predicate.threshold`, a fixed attack grant in `action.amount`), resolving the legacy `magnitude` overload (cost ceiling vs `reveal-ko-attack`'s fixed grant).
+
+**NO reverse-map needed (the hero/villain difference, Q2).** Unlike D-24023's villain hook (whose `effects` fed the applied-effects narrative → it needed `descriptorToLegacyKeyword`), the hero hook records `keywords: HeroKeyword[]` INDEPENDENTLY of `effects`, `executeHeroEffects` returns `void` and accumulates nothing, and hero reveals never touch `notableEvents` (`EFFECT_KEYWORD_LABELS` is villain-only). So the parser simply keeps writing the legacy `reveal-*` keyword onto `hook.keywords` (translation affects only `effects`/`revealRules`), and `notableEvents`, `apps/arena-client/**`, and the replay `finalStateHash` are byte-identical with zero extra machinery. (The WP-158 sentinel harness also runs with `EMPTY_REGISTRY` → hero hooks `[]`, so the hash is doubly protected.)
+
+**Drift re-spec + dual grammar.** The WP-251 bidirectional handler-drift test splits: handler-completeness keys on a new `HANDLED_KEYWORDS` (8 keys; hard count `15 → 8`), executable-coverage keys on `MVP_KEYWORDS` = `HANDLED_KEYWORDS` ∪ the 7 frozen-translated reveal keywords (a member with neither a handler NOR a non-empty translation fails). The setup parser accepts BOTH the legacy `[keyword:reveal-*(:N)?]` grammar (translated) AND a forward-compat parameterized `[keyword:reveal:<predicate>:<actions>(:continue)?]` grammar (one token = one `RevealRule`); the legacy `[keyword:reveal:N]` form is disambiguated because the parameterized predicate segment must start with a letter. The `revealCount` loop is implemented (count=1 today → byte-identical; count>1 re-reads `deck[0]` after each iteration's mutation; non-deck-mutating actions at count>1 are deferred). The 8 `reveal-*` keywords stay FROZEN in `HERO_KEYWORDS` (17 entries unchanged) as translation input — no `reveal-*` keyword is ever appended again.
+
+**Verified:** engine `build` exit 0 + `test` **1329 → 1359 / 0** (the 1329 reveal assertions byte-identical after the Amendment-A fixture-INPUT migration; + per-keyword legacy-equivalence for all 8, the M=0 valid-tier tests, the count=2 deck-mutating loop, predicate/action drift, translation parity, dual-grammar, and the no-reverse-map keyword assertion); `pnpm sim:coverage --check` OK (per-set `noEffect` unchanged — a reveal hook always has ≥1 effect, so the gate is invariant to the type/revealRules change; the per-keyword equivalence tests are the real identity proof); sentinel `finalStateHash` byte-unchanged; `data/cards` / `events` / `arena-client` / `test/fixtures` zero diff. **Retires the per-reveal-keyword cadence** the way D-24023 retired D-20201 / D-18901 — a new reveal mechanic is now a branch-list parameter, not a WP.
+
+**Packet:** WP-253 (EC-284).
+**Drafted:** 2026-06-15. **Landed:** 2026-06-15 (execution close).
+**Status:** Active
+
+---
+
+**D-24025: Lobby Qualified-Form Ext_id Guard — Tenth `parseLoadoutJson` Error Code `unqualified_ext_id` (grammar-only, layer-boundary-safe)**
+
+`apps/arena-client`'s `parseLoadoutJson` (WP-092 shape guard) validated loadout SHAPE only, never id GRAMMAR, so a pre-D-24018 export — flat-card keys (`core-scheme-midtown-bank-robbery`) or bare slugs (`black-widow`) — passed the lobby and 500'd inside `Game.setup()` instead of failing in the lobby with an actionable message. WP-254 adds a tenth `ParseErrorCode` member `"unqualified_ext_id"` (nine → ten; the nine are byte-unchanged) and a fail-fast envelope-grammar pass over the five composition entity-id fields (`schemeId`, `mastermindId`, and each element of `villainGroupIds` / `henchmanGroupIds` / `heroDeckIds`): a value passes iff `value === value.trim()`, contains exactly one `/`, and both sides are non-empty. The pass runs AFTER the `COMPOSITION_FIELDS` type-check loop and BEFORE the `playerCount` checks, fail-fast (scalars first, then arrays villain → henchman → hero, first offender). Both the MATCH-SETUP and LAGN intake paths gain the guard from this one change.
+
+**Grammar-only, re-derived (layer boundary).** The check mirrors the engine's authoritative `parseQualifiedId` envelope grammar (D-10014) but is **re-derived by hand** — `apps/arena-client` must not import `@legendary-arena/registry` or the engine setup-tooling surface `@legendary-arena/game-engine/setup` at runtime (D-14401). It is the slash ENVELOPE only, never a `[a-z0-9-]` charset or registry-existence check: the engine remains the existence/charset authority (D-10014), and a lobby charset check could reject an engine-valid id — the inverse of the D-24018 bug. The message is **single-home** (`UNQUALIFIED_EXT_ID_TEMPLATE` in `parseLoadoutJson.ts`), deliberately NOT joined to the WP-093 five-copy byte-identity gate (D-9301); it is documented (not byte-locked) in `MATCH-SETUP-VALIDATION.md`, whose stale §Stage 2 `^[a-z0-9-]+$` prose this WP reconciles to the qualified `^[a-z0-9-]+/[a-z0-9-]+$` form (per the schema, D-24018).
+
+**Empirical-scaffold redraft (2026-06-15).** The original WP-254 draft + hardening reasoned "strictly additive — no existing test changes" and reached READY without running the suite. A scaffold run showed the guard rejects the bare-slug valid-loadout fixtures: 568 → 552 pass / 16 fail (14 in `parseLoadoutJson.test.ts`, 2 in `lobbyApi.test.ts` — outside the original three-file allowlist). The redraft folds the bare-slug → qualified fixture migration into scope (assertions unchanged) and adds `lobbyApi.test.ts` to the allowlist (four code files). The incident also drove the `01.0a §Step 3` / `01.4 §Empirical Scaffold (Validation-Tightening WPs)` rule that any validation-tightening WP be scaffold-tested before its pre-flight verdict.
+
+**Verified (execution, 2026-06-16):** implemented per EC-285 (commit `25f40038`) — `ParseErrorCode` nine → ten; `isQualifiedExtId` mirrors `parseQualifiedId` (slash envelope only); fail-fast pass after the type loop, before `playerCount`; bracket-notation array fields; WP-093 five-copy template byte-unchanged; no registry/engine import. The bare-slug valid-loadout fixtures migrated to qualified ids (assertions unchanged); arena-client `test` **568 → 576 / 0**, `typecheck` 0.
+**Packet:** WP-254 (EC-285).
+**Drafted:** 2026-06-15 (redrafted same day). **Landed:** 2026-06-16 (execution close).
+**Status:** Active — ✅ D-24026 live-verified 2026-06-16 (User-Visible Surface = play.legendary-arena.com; merged #342 `765f75c2`, the play deploy serves bundle `index-BXp3Og8h.js` with `__GIT_SHA__` `765f75c` + the `unqualified_ext_id` guard code).
+
+---
+
+**D-24026: "Done" Means User-Observable, Not Merged — `User-Visible Surface` Classification + Live-Verification Definition-of-Done Gate**
+
+Every Work Packet now declares a `**User-Visible Surface:**` in its header (one of
+`play.legendary-arena.com` / `cards.legendary-arena.com` / `dashboard` / `wiki` /
+`none — infrastructure`) plus a `## User-Visible Impact` statement, and the
+Definition of Done carries a CONDITIONAL gate keyed on it: a packet whose surface
+is NOT `none — infrastructure` is **not done on green tests + a merged PR alone** —
+the change must be confirmed **live on the named surface** (a real match on
+play.legendary-arena.com, the deployed cards/dashboard page) with observable
+evidence (a screenshot, an observed behavior, or a deploy-confirmed commit SHA
+serving the change). A packet whose surface IS `none — infrastructure` inverts the
+gate: its `STATUS.md` entry MUST state "No user-observable change — infrastructure
+only" (with the payoff named) so a run of such packets is never read as visible
+progress.
+
+**Why.** "Done" had drifted to mean "tests pass + PR merged + governance ledger
+updated" — an engineering-internal bar fully decoupled from whether a player,
+visitor, or operator can observe anything. WP-248 through WP-253 were each marked
+"done" while the operator saw zero change on cards.legendary-arena.com and
+play.legendary-arena.com. That was *mostly correct and mostly invisible by design*:
+WP-250 (coverage gate) is tooling; WP-251/252/253 are behavior-identical engine
+refactors (the reveal/villain vocabulary collapse — byte-identical by construction,
+sentinel hash unchanged); only WP-249 added a player-facing prompt, and narrowly.
+The defect was not the work — it was that "done" never distinguished
+"infrastructure that pays off later" from "value a human can see now," so six
+consecutive closes read as progress on the revenue-facing surfaces when there was
+none. This gate makes that distinction mandatory and auditable at draft time
+(`00.3 §15.1` lint check), at execution close (`EC-TEMPLATE` After Completing +
+Rules; `01.0b` Step 11), and in the WP's own Definition of Done.
+
+**Scope / enforcement surface.** `docs/ai/work-packets/PACKET-TEMPLATE.md` (header
+field + `## User-Visible Impact` section + conditional DoD gate);
+`docs/ai/REFERENCE/00.3-prompt-lint-checklist.md §15.1` (draft-time lint check +
+FAIL conditions); `docs/ai/execution-checklists/EC-TEMPLATE.md` (After Completing
+item + a Rule mirroring the `typecheck` conditional-gate precedent);
+`docs/ai/REFERENCE/01.0b-wp-execution-phase.md §Step 11` (push+cleanup note). No
+code, no engine/contract change — a process-governance change only. It does NOT
+relax any existing gate (tests/build/typecheck/scope-boundary all still required);
+it ADDS the observability requirement on top.
+
+**Packet:** none — SPEC governance change (process/template/lint docs). Authored
+2026-06-15 in response to the operator's "the definition of done is drifting in
+meaning" flag.
+**Status:** Active
+
+---
+
+**D-24027: Reveal Peek-Advance Multi-Peek + `revealCount` Marker (the WP-253-Deferred Multi-Peek; First Visible-Win Card "The Amazing Spider-Man")**
+
+D-24024 (WP-253) collapsed the 8 `reveal-*` keywords into one parameterized `reveal` handler with a `revealCount` loop seeded at count=1, and explicitly DEFERRED the count>1 case where a non-deck-mutating peek would re-read the same `deck[0]`. This decision lands that deferred multi-peek and marks the game's flagship hero card with it. The `heroEffectReveal` peek loop now reads `deck[peekOffset]` (`let peekOffset = 0`) under a **DUAL BOUND** — it iterates at most `revealCount` times (`peekIndex < revealCount`) AND stops when `peekOffset >= deck.length` (an offset-only loop would reveal the WHOLE deck; both bounds are required). After each `applyRevealRules`, the offset advances by 1 ONLY when the deck length is unchanged (the card stayed); it stays put when the deck shrank (a draw/ko slid the next card into the same index). The loop re-reads the live `deck` each iteration (no snapshot).
+
+**Skip-and-advance, never abort (copilot #22).** A peek with a missing `topCardId` OR `cardStats === undefined` (a S.H.I.E.L.D. starter has no `G.cardStats` entry, D-21502) does `peekOffset++; continue` — it leaves the card on the deck and peeks the next, rather than `return`ing and aborting the rest of the reveal. The ONLY whole-loop exit is `peekOffset >= deck.length`. **count=1 is BYTE-IDENTICAL** to the WP-253 `deck[0]` peek: a single iteration runs at offset 0, and both the skip-and-advance and the deck-end stop reduce to the WP-253 no-op `return`. Verified by leaving the 8 per-keyword reveal tests and the WP-253 count=2 deck-mutating test untouched. **Accepted limitation:** a cost-0 starter in the top-N window is revealed-but-NOT-drawn (no stats to evaluate its cost — the D-21502 missing-stats convention); drawing starters via reveal needs a starter-cost source and is deferred. The alternative (abort on a starter in the window) is the exact "the card did nothing" failure D-24017 exists to stamp out.
+
+**`revealCount` marker.** A dedicated 2-segment token `REVEAL_COUNT_PATTERN = /\[keyword:reveal-count:(\d+)\]/g` (mirroring `COUNT_SCALED_PATTERN`'s dedicated-token shape) sets `revealCount` (n ≥ 1) on the `reveal` descriptor emitted from the SAME ability line; absent ⇒ the WP-253 default of 1. The count is DESCRIPTOR-level (how many deck-top cards to peek), not rule-level. `reveal-count` is a MODIFIER marker, NOT a HeroKeyword — it is absent from `HERO_KEYWORDS` (`isValidHeroKeyword('reveal-count')` is false), so the 17-entry drift test stays untouched; only `REVEAL_COUNT_PATTERN` consumes it (`REVEAL_RULE_PATTERN` needs the literal `reveal:<predicate>` so it does not match `reveal-count:`, and the `KEYWORD_PATTERN` match for `reveal-count` is ignored as an invalid keyword).
+
+**First visible win under D-24026.** "The Amazing Spider-Man" (`core` / `the-amazing-spider-man`), dark today (`effects: []`), is marked `[keyword:reveal:cost-lte-2:draw][keyword:reveal-count:3]` ⇒ `{ type: 'reveal', revealCount: 3, revealRules: [{ predicate: { kind: 'cost-lte', threshold: 2 }, actions: [{ kind: 'draw' }] }] }`. Playing it reveals the top three cards and draws any costing 2 or less, leaving the rest on the deck. This is the first WP shipped under the D-24026 live-verification gate (surface = play.legendary-arena.com): green tests + a merged PR do not close it — it is not done until the reveal + draws are observed firing live.
+
+**Verified:** engine `build` exit 0 + `test` **1359 → 1365 / 0** (+6: mixed-cost reveal-top-3 asserting the EXACT remaining deck order `['cost-5','cost-9']`, SHIELD-starter-in-window skip-not-abort, short-deck clean stop; `[keyword:reveal-count:3]` → `revealCount: 3`, absent ⇒ 1, the marked Spider-Man line → the locked descriptor); `pnpm sim:coverage --check` OK — `the-amazing-spider-man`'s hook moves NO_EFFECT → EXECUTABLE (`core` `noEffect` 76 → 75; corpus 3218 → 3217 — a coverage IMPROVEMENT). The 8 reveal-keyword tests + the WP-253 count=2 test pass UNCHANGED (the count=1 byte-identity proof); `data/cards` diff = the one ability line. No new `RevealPredicate`/`RevealAction` kinds; `revealRule.ts` contracts + the 5+5 drift arrays unchanged. (The coverage probe's informational static-scan WARNs the new `reveal:cost-lte-2:draw` + `reveal-count` tokens as "unsupported mechanics" — a crude-tokenizer artifact, WARN-only/non-gating per D-24021; the engine fully executes them.)
+
+**Packet:** WP-255 (EC-286).
+**Drafted:** 2026-06-15. **Landed:** 2026-06-15 (execution close).
+**Status:** Active
+
+---
+
+**D-24028: Lightweight (Single-Session) Lane for Small Additive WPs — Eligibility Gate + Empirical-over-Procedural Independence**
+
+The two-session pattern (`01.0a`) optimizes for cross-layer coordination, contract safety, and audit separation. For small, single-scope, additive work it inverts the cost — process exceeds execution (the WP-254 precedent: ~2h of code across three PRs + a redraft cycle, with excessive permission round-trips). This decision adds an **opt-in, strictly-narrower** lightweight lane that collapses such a WP into one session / one branch / one PR, governed by `01.0a §Lightweight Lane (single session)` with a cross-reference in `01.0b`.
+
+**The eligibility gate is the locked invariant** (ALL required; any miss → the two-session pattern; any ambiguity resolves against eligibility): single layer / single package; ≤ 4 code-test files + ≤ 1 same-layer runtime-wiring file; no `01.6` trigger; no new contract file; ≤ 1 scoped rationale-only D-entry; surface limited to narrow validation / UX copy (never scoring/PAR/identity/sync/monetization/RNG/determinism); strictly additive or a mechanical migration; zero determinism/persistence/sentinel-hash impact (`finalStateHash` unchanged or N/A). Eligibility is **provisional at draft** (structural criteria) and **confirmed at govern-close** (empirical criteria).
+
+**Nothing load-bearing is dropped.** Tests + typecheck green, scaffold-first for validation-tightening, layer-boundary discipline, the EC allowlist + locked values, the `00.3` lint gate, the two-commit topology (`EC-NNN:` + `SPEC:`), a **condensed pre-flight** (dependencies complete + cited authority/contracts on `main` + scope locked), and D-24026 live-verification for user-visible surfaces all remain. What collapses: the two-session split, the separate `SPEC:`-draft PR, the separate live-verification PR (→ a single post-merge STATUS-flip commit, since live-verification is inherently post-deploy), and the full `01.7` copilot audit (→ a targeted self-review).
+
+**The tradeoff (rationale).** The two-session split provides *procedural* independence (draft author ≠ executor at the same moment). The lane replaces it with **empirical** independence: a mandatory scaffold run — the change prototyped and the affected suite run, with observed output recorded; no reasoning or simulation substitute. An observed test result does not care who holds the pen, which is the stronger guarantee. WP-254's original pre-flight failed precisely because it was reasoned, not run; the scaffold gate (`01.4 §Empirical Scaffold`, `01.0a §Step 3`) is the fix.
+
+**Anti-gaming + self-demotion.** A WP is disqualified from the lane if eligibility is argued in prose rather than demonstrated with evidence (a `git diff --name-only` file count, an unchanged `finalStateHash`, the absence of a contract file, the scaffold output), if the scaffold is skipped or not run before eligibility is confirmed, or if inline EC amendments exceed 3 (deliberately tighter than `01.0b`'s ~5-amendment heavyweight threshold). The lane self-demotes — STOP, convert to two-session or split — the moment a new contract is required, a layer is crossed, a determinism/persistence/hash surface is touched, the file/wiring budget is exceeded, a `01.6` trigger fires, or any scope-classification ambiguity arises. The lane MUST NOT absorb out-of-scope work.
+
+**Packet:** none — SPEC governance change (`01.0a` / `01.0b` process docs). Authored 2026-06-16 in response to the operator's WP-254 retrospective (a minor WP consumed a day + excessive permission pauses); complements the `01.4` / `01.0a §Step 3` scaffold-first rule (D-24025 incident) and the #344 CLAUDE.md full-preflight mandate.
+**Status:** Active
+
+**D-24029: Effect Descriptor Model — Composable Primitives (Cards Declare Compositions; the Engine Interprets a Closed Primitive Registry)**
+
+Ratifies the architecture proposed in `docs/ai/DESIGN-EFFECT-MODEL-DECISION.md` (merged as a DRAFT proposal via #350) and fulfils the "new D-entry will be needed" anticipated by `DESIGN-EFFECT-AUTHORING-SCALE.md` §6. It answers whether new card mechanics keep costing engine work (closed one-keyword-per-mechanic) or become data: **cards become self-describing as bounded, declarative compositions the engine interprets — never arbitrary per-card logic.** Determinism, replay, and the `G`-is-runtime-only boundary forbid blindly executing card-carried code, so "self-describing" means a homogeneous effect-descriptor AST over a closed primitive registry.
+
+**The primitive/mechanic split is the load-bearing rule.** A **primitive** is an *irreducible, deterministic* engine building block — an action (`move-card`, `gain-resource`, `draw-card`, `ko-card`, `reveal-cards`), a selector (`top-of-deck`, `current-player`, `chosen-card`), a value expression (`constant(N)`, `card-printed-stat(card, stat)`, `count(cards)`), a control combinator (`sequence`, `conditional`, `choice`, `for-each`), or a context binding (`bind`/`ref`). A **mechanic** (Berserk, Focus, Wall-Crawl) is a card-facing concept and is normally a *composition* of primitives. A primitive named for a mechanic (e.g. `discard-top-gain-from-stat`) FAILS this test — it recreates the closed-keyword problem one level up, and model C silently decays into model A.
+
+**The closed union changes level; it does not disappear.** Before: it enumerated supported *mechanics* (large, fast-growing — the grind). After: it enumerates supported *primitives* (small, slow-growing). **Primitive registry:** closed, versioned, deterministic, drift-tested, decision-ceremonied. **Mechanic space:** open, data-authored, coverage-ledgered. The rule for every new mechanic is *"new primitive, or a composition of existing ones?"* A composition ships as card data (markup + regenerated coverage baseline + mechanic ledger + a behavior fixture) with NO new keyword/handler/union edit/D-entry — UNLESS it exposes a genuinely new architectural rule or data contract. Only a genuinely-new primitive earns engine work + the full ceremony (deterministic contract, schema, ImplementationMap registration, fixtures, drift protection, a D-entry).
+
+**Descriptor shape + the context-lifetime invariant.** The descriptor is a homogeneous AST — every node carries a `type`; compositions are explicit `{ type: 'sequence', steps: [...] }`, never raw arrays. `bind: <name>` stores an action's output; `ref: <name>` reads it. **Invariant (replay-load-bearing):** the execution context is created per top-level effect evaluation, a binding is lexically scoped to its enclosing `sequence`, and the context is **NEVER written to `G`** — bound values are transient interpreter state, re-derived identically on replay, not game state. A binding persisted into `G` would violate the persistence boundary and risk double-application on replay.
+
+**Not a per-card scripting DSL.** Model D (arbitrary card scripts) is explicitly rejected — it trades determinism-by-construction for interpreter/sandbox complexity, violates the junior-readable code standard, and is unneeded for a co-op non-stack deck-builder. Composable primitives capture most of the authoring benefit with deterministic, inspectable behavior.
+
+**Relationships + honest scope.** This continues the Lever direction, not a reversal: D-24021 (coverage gate / instrument), D-24024 (the `reveal-*` collapse — the first parameterization, a partial step), and supersedes the intent of D-20201 (closed-union-per-magnitude) on the path it touches. Interaction semantics — timing, triggers, ordering, replacement, and context lifetime under nesting — remain the genuinely hard area and may later justify new primitives or a small interaction subsystem; this decision does not pretend otherwise.
+
+**First proof case + front-loaded cost.** Berserk ("discard the top card of your deck; +Attack equal to its printed Attack") is the first mechanic authored as a composition (a `sequence` of `move-card` + `bind discardedCard`, then `gain-resource attack` of `card-printed-stat(discardedCard, attack)`). Its Recruit-stat cousin is then pure data. The first WP **bootstraps the primitive infrastructure** — the descriptor schema, the interpreter for `sequence`/`bind`/value-expressions, and the first action primitives — so it is a *larger* first step than a narrow keyword would have been (front-loaded cost), with every later cousin becoming data.
+
+**Packet:** none — architecture decision; the design doc (`docs/ai/DESIGN-EFFECT-MODEL-DECISION.md`) merged via #350. `DESIGN-EFFECT-AUTHORING-SCALE.md` §2b/§5/§6 updated to reflect the shift from mechanic-keywords to primitive composition. The Berserk proving WP follows.
+**Status:** Active
+
+---
+
+**D-24030: Effect Primitive Registry v1 — Homogeneous Effect-Descriptor AST + Deterministic Interpreter + Transient Execution-Context Invariant (the CLOSED surface)**
+
+Implements the closed half of **D-24029** (composable primitives) as the bootstrap landed by WP-256 (Berserk). The engine gains a small, closed, versioned, drift-tested set of **primitives** the interpreter walks — never arbitrary per-card code. The descriptor is a **homogeneous AST**: every node carries a `type`; a composition is an explicit `{ type: 'sequence', steps: [...] }`, never a raw array. The first node types (`rules/effectPrimitive.types.ts`) are `sequence` (control), `move-card` + `gain-resource` (actions), and the `card-printed-stat` value expression; the first parameter unions are `EFFECT_RESOURCE_KINDS` (`attack`/`recruit`), `EFFECT_ZONE_KINDS` (`deck`/`discard`), `EFFECT_CARD_POSITIONS` (`top`), `EFFECT_OWNER_KINDS` (`current-player`). Each closed union carries a canonical readonly array with a drift test (code-style §Drift Detection); the two dispatch registries (`EFFECT_NODE_HANDLERS`, `VALUE_EXPRESSION_EVALUATORS` in `hero/effectPrimitive.interpret.ts`) are ImplementationMaps held outside `G` whose keys are asserted bidirectionally against their arrays (the WP-251 `HANDLED_KEYWORDS` pattern).
+
+**The closed union grows by PRIMITIVES, not mechanics (D-24029 §7).** `recruit`/`recruit`-stat are seeded so the Berserk Recruit cousin is pure data, not an engine edit; a primitive named for a mechanic (`discard-top-gain-from-stat`) FAILS D-24029 §6. The `HeroKeyword` union and its 17-entry drift test are **untouched** — Berserk is NOT a keyword.
+
+**Load-bearing replay invariant (D-24029 §9):** the `bind`/`ref` `EffectExecutionContext` is a local `Map<string, CardExtId>` created **per top-level effect evaluation**, lexically scoped to its enclosing `sequence`, and **NEVER written to `G`/`ctx`** — bound values are transient interpreter state, re-derived identically on replay, not game state. A binding in `G` would break the persistence boundary and risk replay double-application. Determinism is preserved throughout: `card-printed-stat` reads setup-resolved `G.cardStats`; empty-source `move-card` is a deterministic no-op (no reshuffle, mirroring the `reveal` D-21502 posture); a missing `cardStats` entry or unbound `ref` resolves to 0; unknown node/value types warn to `G.messages` and continue (never throw). The interpreter imports no `boardgame.io`/registry (uses `zoneOps` + `addResources`).
+
+**Packet:** WP-256 / EC-287.
+**Status:** Active (landed by WP-256 / EC-287, 2026-06-16; commit `d53cce3f`).
+
+---
+
+**D-24031: Hero Composition Marker Seam — the OPEN, Data-Authored, Coverage-Ledgered Mechanic Space**
+
+Implements the open half of **D-24029** (landed by WP-256). A card **mechanic** (Berserk) is a *composition of primitives* expressed as data, distinct from the closed primitive registry (D-24030). `rules/heroCompositions.ts` holds `HERO_COMPOSITION_MARKERS: Record<string, EffectNode>` mapping a card marker name to a top-level AST, seeded with exactly one entry — `berserk` → `sequence[ move-card{deck.top → discard, bind discardedCard}, gain-resource{attack, card-printed-stat(discardedCard, attack)} ]` — plus `HERO_COMPOSITION_MARKER_NAMES` (the canonical key array). The setup parser recognizes a `[keyword:X]` token whose normalized name is a registry key and attaches a copy of that AST to a **new additive** `HeroAbilityHook.primitiveEffects?: EffectNode[]` — **never** to `hook.keywords` (`berserk` is not a `HeroKeyword`). `executeHeroEffects` interprets `primitiveEffects` inside the same hook-conditions gate as legacy `effects`.
+
+**This is the open surface (D-24029 §7):** adding a mechanically-adjacent mechanic — the Recruit-stat Berserk cousin (`resource:recruit`/`stat:recruit`) — is a **data row** in `HERO_COMPOSITION_MARKERS` (no new keyword, primitive, handler, union edit, or D-entry), proven by a WP-256 test that feeds the cousin AST to the interpreter. The 29 existing `[keyword:Berserk]` markers (`wpnx`/`xmen` heroes) keep working unchanged — **`data/cards` byte-unchanged** (the parser learns to translate them, mirroring WP-252/253). The Lever-3 instruments learn the mechanic space without duplicating vocabulary: the coverage probe (`scripts/hero-effect-coverage.mjs`) counts a hook with `primitiveEffects` as EXECUTABLE and unions `HERO_COMPOSITION_MARKER_NAMES` into its known-markup set (so `berserk` leaves `unsupportedMechanics`); the mechanic ledger (`scripts/hero-mechanic-ledger.mjs`) reports composition markers as `executable` with an interpreter handler column; `mechanic-provenance.json` records `berserk → {wp:"WP-256", decision:"D-24031"}`. Premature-abstraction counter-pressure (D-24029 §10) holds: only `berserk` is seeded; no general AST-from-markup parser and no second card are built this WP.
+
+**Packet:** WP-256 / EC-287.
+**Status:** Active (landed by WP-256 / EC-287, 2026-06-16; commit `d53cce3f`).
+
+---
+
+**D-24032: Match-Setup Supply-Pile Minimums — bystanders/wounds/officers ≥ 30 (Engine-Authoritative Floor)**
+
+`validateMatchSetup` (the engine's authoritative match-setup gate, run inside `Game.setup()`) now enforces a per-pile minimum on the four `MatchSetupConfig` count fields, in addition to the existing non-negative-integer shape check: `bystandersCount`, `woundsCount`, and `officersCount` must each be ≥ 30; `sidekicksCount` keeps its floor of 0 (a match may legitimately use no sidekicks). The floors live in `COUNT_FIELD_MINIMUMS` (`matchSetup.validate.ts`) and match the Registry Viewer loadout builder's `DEFAULT_*` count defaults (30/30/30/0). A config below a floor produces a structured `MatchSetupError` for that field, so `Game.setup()` throws and match creation aborts with a full-sentence message — the same surface as every other setup error.
+
+**Why:** a supply pile configured below its floor starts a match but starves its pile-driven mechanic mid-game. Motivating field report: the `loadout-test.json` sample shipped `bystandersCount: 1`, so core/spider-man Web-Shooters' "Rescue a Bystander" became a silent no-op once that lone bystander was captured/consumed (`heroEffects.execute.ts#rescue` correctly logged "supply is empty"). The engine rescue logic was correct; the under-provisioned config was the bug. The floor turns an unplayable config into a fail-fast at match creation rather than a confusing in-game dead mechanic.
+
+**Scope / non-breaking:** the floor is checked only after the value is a confirmed non-negative integer, so a bad-type value still reports the type error. Only the match-creation path (`Game.setup` → `validateMatchSetup`) is gated; the replay/snapshot and fixture paths call `buildInitialGameState` directly and are unaffected (historical replays with sub-30 counts still verify). The Registry Viewer's `DEFAULT_*` counts already satisfy the floor; `loadout-test.json` is bumped to comply (bystanders 1→30 prior commit; officers 5→30 here). The browser-side `setupContract` / `parseLoadoutJson` shape guards are NOT changed — semantic minimums remain engine-owned (consistent with how ext_id existence is engine-owned), so the Viewer could still build a sub-floor loadout that fails at match-create; mirroring the floor into `setupContract` for earlier authoring feedback is a noted optional fast-follow.
+
+**Packet:** Ad-hoc operator fix (branch `claude/fix-sample-loadout-bystander-count`; no WP) — conversational bug-fix from the Web-Shooters rescue field report.
+**Status:** Active.
+
+---
+
+**D-24033: Hollow-Effect Boundary — Handler-Reachability, Not State-Diff (Reason Taxonomy + Explicit Deferred Allowlist)**
+
+A declared card ability that produces nothing is a *hollow effect* — a defect the engine must surface — **only** when the declared mechanic reaches no executable handler. The classification is **handler reachability, NOT a `G` state-diff**: a reachable handler that intentionally no-ops (empty bystander supply, empty deck, a failed `[hc:]`/`[team:]` condition, or an explicitly-deferred mechanic) is correct behavior and is **not** hollow. The closed reason taxonomy `EFFECT_EXECUTION_REASONS = ['applied','handler-noop','condition-failed','deferred','no-handler','unsupported-keyword','parse-unrecognized']` (drift-tested) flags exactly three: `parse-unrecognized`, `no-handler`, `unsupported-keyword`. "Deferred = not hollow" holds only for mechanics on an explicit `DEFERRED_BY_DESIGN_MECHANICS` allowlist (its members locked here at execution) — `wound`/`conditional` have no handler today, so without the allowlist they would (mis)classify as `no-handler`.
+
+**Why:** the most likely implementation drift is diffing pre/post `G` and flagging correct empty-supply/failed-condition plays — a false-positive firehose on working behavior. Anchoring the boundary on reachability makes the detector precise: it fires on genuinely unimplemented mechanics (the Web-Shooters bug class, generalized to hero + villain/ambush) and stays silent on legitimate no-ops.
+
+**Packet:** WP-257 / EC-288. Implements `DESIGN-HOLLOW-EFFECT-DETECTION.md §3`.
+**Status:** **Active** (landed 2026-06-16 via WP-257 / EC-288). `DEFERRED_BY_DESIGN_MECHANICS = { 'wound', 'conditional' }` (the two HeroKeywords with no handler today). The hero detector applies the per-hook rule (a hook flags only when no declared effect reached a handler AND ≥1 was a hollow reason; a mixed hook never flags); the villain detector classifies at the executor's out-of-vocab skip site + per unresolved marker. Engine suite 1394 → 1433/0.
+
+---
+
+**D-24034: Hollow-Effect Runtime Channel — `G.diagnostics.hollowEffects` (Shape, Cap/Reset, Parser `unresolvedMarkers` Surfacing)**
+
+The detector emits a `HollowEffectRecord { cardId; cardType: 'hero'|'villain'|'henchman'; timing; mechanic; reason; turn }` into a runtime-only channel `G.diagnostics = { hollowEffects: HollowEffectRecord[]; hollowEffectsDropped: number }`, plus one full-sentence `G.messages` line (the record is the machine-readable contract; the message is operator-visibility only). The channel is JSON-serializable, **runtime-only** (never persisted, never snapshotted), **never read as gameplay input** (no move/rule/`endIf` may consume it), bounded by `HOLLOW_EFFECTS_CAP` + a dropped-count, lazy-init at the push site (mirroring `pendingOptionalKoRewards`), and reset empty at the match-creation/hydration boundary (`buildInitialGameState`). Detecting `parse-unrecognized` requires the parser (`heroAbility.setup.ts` / `villainAbility.setup.ts`) to surface unresolved marker tokens on an additive `hook.unresolvedMarkers?: string[]` — hooks otherwise carry parsed descriptors only, so an unresolved marker is indistinguishable from flavor text, which must NOT flag.
+
+**Why:** the channel must observe without ever influencing the game (determinism + the persistence boundary: `G` is runtime-only). The `unresolvedMarkers` surfacing is the non-obvious enabler — without it, `parse-unrecognized` cannot be told apart from a no-mechanic flavor line.
+
+**Packet:** WP-257 / EC-288. Implements `DESIGN-HOLLOW-EFFECT-DETECTION.md §4–§5`.
+**Status:** **Active** (landed 2026-06-16 via WP-257 / EC-288). Execution refinement: the channel "resets empty at `buildInitialGameState`" is realized as the channel being **absent** (`G.diagnostics === undefined`) at match start, NOT a seeded `{ hollowEffects: [], hollowEffectsDropped: 0 }` literal. A seeded-empty literal would add `"diagnostics":{...}` to the canonical-JSON `finalStateHash` (`hashGameState` serializes the whole `G`), breaking the AC-E "sentinel/replay `finalStateHash` unchanged" requirement on the EMPTY_REGISTRY fixtures. The writer (`recordHollowEffect`) lazy-inits the channel on the first hollow event (mirroring `pendingOptionalKoRewards`); each match calls `buildInitialGameState` fresh, so absence ≡ empty with no mid-match reset. `HOLLOW_EFFECTS_CAP = 256`. The parser surfaces unresolved markers on `HeroAbilityHook.unresolvedMarkers` / `VillainAbilityHook.unresolvedMarkers`; recognized non-keyword modifiers (`reveal-count`) are excluded from the hero scan so they do not false-flag.
+
+---
+
+**D-24037: Autoplay Abort Surfacing — `markAborted` + Error-Exit Review Window + Envelope `aborted`/`abortReason`**
+
+When the server-side autoplay ("Watch Bot Play") bot loop exits abnormally — an unhandled exception, a vanished match (`db.fetch` returns `null` mid-loop after an in-memory match-store wipe), or a loop-detected stage stall — the playback controller is marked **aborted** (new `markAborted(reason)`: sets `isAborted` + `abortReason`, pauses the controller for scrub consistency; **distinct from** `gameOver`, never sets it) and kept registered for the **same 5-minute review window the natural game-over path already uses**, instead of being deleted immediately. The success envelope (`buildResponse`) gains `aborted: boolean` (always present; `false` during normal play and on a natural game over) + `abortReason?: string` (a full sentence, present only when `aborted === true`). The normal-exit path marks game-over **only when not already aborted**, so a loop-detected stall is preserved. `gameOver` and `aborted` are independent terminal states (a controller is at most one of {playing, gameOver, aborted}); the 404 not-found envelope keeps `aborted: false` among its neutral defaults.
+
+**Why:** the prior error-exit path `console.error`'d the fault and **immediately deleted** the controller, leaving every connected spectator on a frozen board with zero signal and the client's next status/control probe getting a bare `404` — indistinguishable from natural post-match cleanup. Diagnosed from client capture `UDK-shUse1C` (build `d6387ec`): healthy engine state frozen at `turn 3 / start` after the reveal chain, empty client console buffer. Surfacing the abort over the HTTP envelope the client already speaks lets the paired client follow-up (WP-262) render "Bot match stopped" instead of a silent freeze. This **refines the error half of D-16308** ("controller removed from the map on every `runBotMatch` exit path"): eventual removal is preserved (now deferred 5 minutes on the error path too, matching the normal path), and the controller carries an explicit abort flag during the review window. The flags are Class-1 runtime state (D-16306) — never persisted, never snapshotted.
+
+**Packet:** WP-261 / EC-292.
+**Status:** Active (landed 2026-06-18, EC-292 commit `88a74411`).
+
+---
+
+**D-24038: Autoplay Bot-Loop Progress Invariant — All Stages via `getLegalMoves`; No Silent Spin to `maxTurns`**
+
+The bot loop selects its move(s) in **every** stage (start, main, cleanup) from the engine's `getLegalMoves(G, ctx)`, honoring the parked-choice short-circuit (D-24009 `resolveKoHeroChoice` / D-24019 `resolveOptionalKoReward`) in **all** stages — not only the main spend loop. Each stage-advancing dispatch (`revealVillainCard` / `advanceStage` / `endTurn` / `resolve*`) is followed by a `_stateID` progress check; a move expected to progress that leaves `_stateID` unchanged **aborts** the loop (`markAborted`, D-24037) rather than re-dispatching the same no-op to the 400-turn `maxTurns` cap.
+
+**Why:** two latent freezes share one root cause — a hardcoded stage move that becomes a permanent no-op while a player-choice is parked. (1) The start/cleanup handlers hardcoded `revealVillainCard`→`advanceStage` / `endTurn` and never consulted `getLegalMoves`, so a choice parked during `onTurnStart` or the reveal (a ko-hero ambush villain, some masterminds — not Magneto) made `advanceStage` a permanent no-op → the loop spun to `maxTurns` ≈ a 10-minute "freeze". (2) Even the main spend loop filtered legal moves to `recruitHero|fightVillain|fightMastermind|advanceStage`, **dropping** the `resolve*` short-circuit, so a KO-hero choice parked mid-main by a `fightVillain` emptied `spendMoves` → `break` → the same spin. Routing all stages through `getLegalMoves` resolves the choice wherever it parks; the `_stateID` assertion converts any residual no-progress into a bounded, observable abort instead of a long spin. The server stays wiring-only — `getLegalMoves` is the engine's decision and the loop only dispatches it (moving *more* decisions into the engine, not fewer).
+
+**Packet:** WP-261 / EC-292.
+**Status:** Active (landed 2026-06-18, EC-292 commit `88a74411`).
+
+---
+
+**D-24035: Runtime-Observed Hollow-Effect `/coverage` Overlay — Canonical Artifact + Determinism Contract + Build-Time-Copy Delivery**
+
+The dashboard `/coverage` page gains a **runtime-observed** overlay distinguishing mechanics actually encountered-hollow during deterministic simulation play from the static `executable / unsupported / unmarked / deferred` status. The overlay is fed by a new committed canonical artifact `docs/ai/coverage/runtime-observed-hollows.json` (`schemaVersion: 1`) carrying, per mechanic, `{ hitCount, lastSeenTurn?, byReason, examples[] }` (extending `DESIGN-HOLLOW-EFFECT-DETECTION.md §6.2`'s `runtimeObserved`) plus a `generatedFrom { runSeed, gamesPlayed, matrixDescription }` provenance block and a `summary` roll-up. The artifact is produced by a Shared-Tooling harness (`scripts/runtime-observed-hollows.mjs`) that runs a **fixed-`runSeed`, bounded deterministic sweep** via the engine's `sweepSetupMatrix`, reads each finished game's `G.diagnostics.hollowEffects` (the WP-257 / D-24034 channel; the three hollow reasons `no-handler` / `unsupported-keyword` / `parse-unrecognized` of D-24033), and aggregates per mechanic with deterministically-sorted keys and bounded `examples`. **Engine-never-writes-the-ledger boundary:** the overlay/artifact is derived **strictly downstream** from `G.diagnostics.hollowEffects` — the engine only emits the runtime signal; it never writes the artifact, mutates the mechanic ledger, or knows the overlay exists (`DESIGN-HOLLOW-EFFECT-DETECTION.md §6.2 / §9`; the `packages/**` diff is empty). **Determinism contract:** fixed seed + bounded sweep ⇒ a byte-identical artifact every run ⇒ a freshness gate (`sim:runtime-observed:check`) regenerates and diffs it (exit 1 on drift), mirroring the `hero-effect-coverage` static gate (D-24021). The exact `runSeed` / sweep axes / `gamesPlayed` cap are execution-time locked values (set, recorded in `generatedFrom`, scaffold-confirmed by an observed run) — the WP/EC lock the requirement (deterministic, bounded, committed, `:check`-gated, CI-affordable), not the literals. **Drift direction:** a mechanic newly appearing in `byMechanic` (or a `hitCount` rise) is the meaningful regression signal; a mechanic leaving (its handler implemented downstream) is progress, absorbed via `--update-baseline`. **Delivery:** the dashboard reads the artifact via the existing build-time-copy convention (`apps/dashboard/scripts/build-coverage-ledger.mjs` → gitignored `apps/dashboard/src/data/runtime-observed-hollows.json`); there is **NO `/api/coverage`** — the dashboard is mock-mode-first / static-bundle. The runtime-observed status renders **visually distinct** from the static status. If a per-PR `:check` running games proves too heavy for CI, the freshness gate falls back to a scheduled cron (the D-24002 `roadmap-counts` weekly-cron precedent; `sweep-weekly.yml` analog) instead of a per-PR gate.
+
+**Why:** static coverage answers *"is this mechanic unsupported in theory?"*; the runtime overlay answers *"was it actually encountered during play?"* — separating paper gaps from gaps that bite players, so the highest-value mechanic-implementation work is prioritized by real runtime evidence rather than a static list. Keeping the artifact a deterministic, committed, drift-gated downstream record (the ledger precedent) preserves the persistence boundary (`G.diagnostics` is runtime-only) and the layer boundary (the engine emits; tooling consumes; the dashboard reads JSON, never the engine).
+
+**Packet:** WP-259 / EC-290. Implements `DESIGN-HOLLOW-EFFECT-DETECTION.md §6.2` + §8 (WP-259 acceptance criteria) + §10. Depends on **WP-263 / D-24039** (the predecessor that surfaces the channel as the `SweepCellResult.hollowEffects` sibling fields the harness reads).
+**Status:** Active (2026-06-18, WP-259 / EC-290 executed at commit `b395df71`). **Execution outcome:** the committed per-PR artifact is a fast random-policy recorded **zero-state** (the passive random policy executes no declared abilities → no hollows); surfacing real runtime hollows needs active competent play, which is multi-minute/game (the real-registry decision cost) and **not CI-affordable per-PR**, so the heavier competent-play sweep that populates real signal is **deferred to a scheduled cron** per this decision's CI-affordability fallback (noted, not built in WP-259). Per-PR freshness via `sim:runtime-observed:check` in the `hero-effect-coverage` CI job.
+
+---
+
+**D-24039: Simulation Capture/Sweep Projection Surfaces the Runtime-Only Hollow-Effect Diagnostics (Additive Sibling Fields via `captureGameDiagnostics`)**
+
+The simulation capture path surfaces a finished game's runtime-only `G.diagnostics` channel (the WP-257 / D-24034 `hollowEffects` + `hollowEffectsDropped`) as **additive sibling fields** on `CapturedGameResult` (single game, `simulateOneGameAndCaptureMoves`) and `SweepCellResult` (per cell, `sweepSetupMatrix`), populated via a new exported pure helper `captureGameDiagnostics(gameState): CapturedDiagnostics` that reads `gameState.diagnostics?.hollowEffects ?? []` (returned as a **fresh shallow copy** so the projection holds no reference into the discarded sim `G`) + `gameState.diagnostics?.hollowEffectsDropped ?? 0`. The fields are **siblings** of `outcome` — they are **NOT** nested into `CapturedOutcomeSummary`, which stays exactly `{ winner, escapedVillains }` (the WP-193 "smallest seam" narrow type) with its field-set drift assertion unchanged. Both projections' field-set drift guards (`simulation.captureMoves.test.ts`, `sweep.runner.test.ts`) are updated in the same change. The engine does not re-classify or re-detect — it copies what the executors already recorded (`reason ∈ { no-handler, unsupported-keyword, parse-unrecognized }`).
+
+**Why:** WP-259 (the runtime-observed `/coverage` overlay) must read each finished simulated game's hollow effects off the locked `sweepSetupMatrix` driver, but that driver and its single-game companion discard the finished `G` and project only `{ winner, escapedVillains }` — so the WP-257 channel was **unreadable off any exported simulation surface**. Reading it otherwise would force WP-259 to edit `packages/**` (which it forbids), re-implement a simulation loop ("no new simulation engine"), or reconstruct hollows from `G.messages` ("never re-detect") — all forbidden. A small additive read accessor in the engine is the in-boundary fix: it keeps the channel **runtime-only** (D-24034 preserved — surfaced as a derived read-only RETURN value, never persisted, never written back to `G`, never gameplay input), keeps the sim byte-identical (no new randomness / clock / IO / `G` mutation; `finalStateHash` unchanged, replay-test-guarded), and lets WP-259 stay projection-and-report only. A predecessor engine packet rather than a fold-in keeps WP-259's `packages/** diff empty` invariant intact.
+
+**Packet:** WP-263 / EC-293. Unblocks WP-259 / EC-290 (D-24035).
+**Status:** Active (2026-06-17, WP-263 / EC-293 executed at commit `d86ba240`).
+
+---
+
+**D-24036: Architect-Lane Gap Intake — Runtime-Confirmed Hollow Gaps → Backlog Candidates (Consumer-Owned Projection, Single-Lane Fold, No Invented Facts)**
+
+The dashboard Pipeline page's **Architect lane** surfaces, as draft-WP backlog candidates, the card mechanics WP-259's `/coverage` overlay marks **runtime-confirmed hollow** — declared abilities actually encountered in play whose handlers were unreachable. A producer composable (`apps/dashboard/src/composables/useArchitectGapIntake.ts`) receives WP-259's `runtimeObservedByMechanic` lookup (`Record<string, RuntimeObservedEntry>`, from `useCoverageLedger()`) by **dependency injection** and returns `ComputedRef<ArchitectGapProjection>`. It selects a mechanic whose entry has `hitCount > 0` and ≥ 1 example with a mappable `cardType`, and emits one `ArchitectGapCandidate = { mechanic; exampleCardId; cardType; timing; reason; observedCount; sourceRow; proposedTargetLayer }` per selected mechanic: `mechanic` and `sourceRow` are the map key (WP-259 exposes no dedicated row id); `exampleCardId` / `cardType` / `timing` / `reason` copy the first mappable example; `observedCount` = `entry.hitCount`; `proposedTargetLayer` is the **closed** union `'game-engine-hero' | 'game-engine-villain'` derived solely from a fixed `cardType` map (`hero` → hero; `villain` / `henchman` → villain; any other type ⇒ no candidate). `reason` is opaque pass-through evidence — never compared against a literal value (D-20703). Candidate ordering is deterministic (`observedCount` desc → `mechanic` asc → `exampleCardId` asc); the projection's `backlog: PipelineItem[]` is derived 1:1 (`label = "<mechanic> — <reason> (<n>× in play)"`, `meta = 'Hollow gap'`). The projection type `ArchitectGapProjection` is declared in the **consumer** `useAgentPipeline.ts` (D-23901, one-directional import); the producer imports it; `ArchitectGapCandidate` / `ArchitectTargetLayer` live in `apps/dashboard/src/types/architectGap.ts`. `useAgentPipeline` gains an **optional** fourth parameter `architectGapData?: ArchitectGapProjection` whose `backlog` is prepended to `architectBacklog` via `unshift` — the **Architect lane only** (D-23902 single-lane discipline); the Builder / Inspector / Evaluator lanes and every existing caller stay byte-identical when it is absent (the WP-239 `triageData` backward-compat precedent).
+
+**Why:** the hollow-effect reporting loop's third surface (`DESIGN-HOLLOW-EFFECT-DETECTION.md §6.3`) closes the loop from *detect* (WP-257) → *show* (WP-258 `/debug`, WP-259 `/coverage`) → *act* — turning runtime-confirmed gaps into a backlog a human architect can draft an implementation WP from, **without the engine knowing the pipeline exists** (the §9 boundary: the dashboard reads downstream-derived data; no engine/registry/server import). Candidates carry only diagnostic facts copied from the overlay or derived by the locked mapping — they invent nothing (DESIGN §9) and claim no implementation scope (DESIGN §6.3 / §8). This decision **projects** D-24034 (the reason taxonomy) and D-24035 (the `/coverage` overlay); it re-decides neither. The intake mirrors the WP-239 `triageData` dependency-injection pattern exactly (consumer-owned projection, single-lane fold, optional-param backward-compat), keeping the dashboard view-model pure, deterministic, and free of new data sources, endpoints, RNG, or game-state mutation.
+
+**Packet:** WP-260 / EC-291. Implements `DESIGN-HOLLOW-EFFECT-DETECTION.md §6.3` + §8 (WP-260 acceptance criteria) + §10. Depends on **WP-259 / D-24035** (the `runtimeObservedByMechanic` overlay this reads).
+**Status:** **Active** 2026-06-18 (WP-260 / EC-291 executed; commit `209f6165`; merged to `main` as `c50a233c` / PR #384; baseline `0465ef69`; dashboard `test` 392/0 + `typecheck` 0). The producer `useArchitectGapIntake.ts`, the consumer-owned `ArchitectGapProjection` + optional 4th `architectGapData` Architect-lane fold, and the `PipelinePage.vue` mount-wiring landed exactly as specified. **✅ D-24026 LIVE-VERIFIED 2026-06-18** on the deployed `dashboard.legendary-arena.com/pipeline` (operator-authenticated): the Architect lane renders the **empty path** — its existing `0 open draft(s)` KPI item with no `Hollow gap` rows and no crash — because the committed WP-259 overlay is the zero-state (`byMechanic = {}`), so the gap projection is empty and the fold is a no-op (the expected live baseline until WP-259's competent-play sweep cron lands; see STATUS.md for the evidence).
+
+---
+
+**D-24042: Autoplay Client Abort Surfacing — Stall-Detection Poll (Abort-State-Only) + "Bot Match Stopped" Banner + Live-Control Disable**
+
+The arena-client autoplay control bar (`AutoplayControls.vue`) consumes WP-261's `aborted` / `abortReason` envelope fields (mirrored onto the client's local `AutoplayControlResponse` — a structural copy, no server-layer type import) and surfaces an abort the spectator would otherwise never see. Because the bar learns playback state only from the mount probe and from control responses, it gains a bounded **stall-detection poll**: while the bar is mounted and the match is neither aborted nor game-over, it re-probes `getStatus(matchId)` every `STALL_POLL_INTERVAL_MS` and classifies the result via a pure helper `interpretStallProbe` — `'aborted'` (envelope `aborted === true`) → set the abort state + stop; `'stopped'` (`gameOver === true`, or a `null`/404 = controller torn down) → stop; `'continue'` (normal live envelope, or a thrown non-404 fault that is logged) → keep polling. **The poll updates the abort state (`aborted` / `abortReason`) ONLY** — it never writes `cursor` / `historyLength` / `mode` / `paused` and never injects a `uiState` snapshot, so a rewound spectator is never yanked to the live edge (D-16301 / D-16309 preserved). The interval clears on unmount. When `aborted`, the bar renders a **"Bot match stopped"** banner (`data-testid="autoplay-aborted"`) carrying the server's public-safe `abortReason` sentence, extending the existing `expired` / "Session expired" span pattern; and the live-advancing controls (pause/resume toggle, step-forward, go-to-end) disable on the same footing as `isGameOver`, while the rewind controls (step-back, restart) stay enabled while `historyLength > 0` so the spectator can review the captured run during the server's 5-minute review window.
+
+**Why:** WP-261 made the server emit the abort, but the client probed the envelope only once at mount, so a mid-playback abort still left a silent frozen board — the client half of the no-silent-freeze guarantee. Polling is the out-of-band signal the Socket.IO live transport cannot provide (a freeze *is* the absence of broadcasts). The abort-state-only constraint is load-bearing: a poll that called the full `applyResponse` would overwrite the cursor and yank a scrubbing spectator forward, regressing the WP-164 rewind UX. Treating an abort like a game over for control purposes (live off, rewind kept) reuses the established review-window posture rather than inventing a second disable model. The decision projects D-24037 (the server abort contract); it re-decides nothing server-side.
+
+**Packet:** WP-262 / EC-296. Consumes WP-261 / D-24037 (the `aborted` / `abortReason` envelope).
+**Status:** **Active** 2026-06-18 (WP-262 / EC-296 executed; EC-296 commit on branch `claude/wp262-autoplay-stall-banner-client`; baseline `816f5e48`; arena-client `typecheck` 0 + `test` **589 → 604 / 0**). Landed exactly as drafted: `aborted: boolean` (always) + `abortReason?: string` mirrored onto the client `AutoplayControlResponse` (structural copy, no server-layer import); `STALL_POLL_INTERVAL_MS = 3000` defined once in `autoplayPlayback.ts`; pure `interpretStallProbe` (settled results only — `null`/404 ⇒ `'stopped'`, `aborted` wins over `gameOver`); the abort-state-only stall poll in `AutoplayControls.vue` (single in-flight probe, stops on abort/stopped/unmount, interval cleared on unmount, post-unmount-safe, never touches cursor/mode/history/paused); the `data-testid="autoplay-aborted"` banner extending the `expired` span; live-control disable on abort (toggle/step-forward/go-to-end off, step-back/restart kept while `historyLength > 0`); initial-aborted seed from `initialStatus` with no poll start. **Execution amendment:** `PlayDesktop.test.ts` gained an `enableAutoUnmount(afterEach)` leak-guard (it mounts the now-polling bar; a leaked interval hangs `node:test`) — a same-layer test-hygiene file within the lightweight lane's "+1 runtime-wiring file" allowance, not a `PlayDesktop.vue` production change. No `apps/server/**` / `packages/**` / `api-endpoints.md` diff. **D-24026 live-verification pending** (post-deploy, against an in-process `200`+`aborted:true` path; a 404 deploy-wipe is the stopped-controller path, not the banner).
+
+---
+
+**D-24040: Parameterized Simulation Turn Cap — Optional `maxTurns` (Default `MAX_TURNS_PER_GAME`)**
+
+The simulation entry points (`runPerTurnLoop`, `buildGameOutcome`, `simulateOneGame`, `simulateOneGameAndCaptureMoves`, `runSimulation`, `sweepSetupMatrix`) accept an optional trailing `maxTurns: number` parameter that caps the per-turn loop, **defaulting to `MAX_TURNS_PER_GAME` (200)** — the single source of the default. Every existing (omitting) call site is byte-identical; the warm-up games inside `simulateOneGameAndCaptureMoves` use the same `maxTurns` as the captured game (PRNG-stream parity, D-19303). It is a PARAM, not a result field — `CapturedGameResult` / `SweepCellResult` / `CapturedOutcomeSummary` / `SimulationResult` are unchanged, so the field-set drift guards stay green.
+
+**Why:** `MAX_TURNS_PER_GAME` is a behavior-only safety cap ("Not a gameplay rule"), but it was hardcoded with no override. A competent-play diagnostics sweep over not-yet-implemented heroes either runs multi-minute/game at 200 turns or never terminates (the cards do nothing → no progress → 200-turn spin), which is neither CI- nor cron-affordable. An opt-in `maxTurns` lets a sweep run short, terminating games (~30–50 turns still exercise the early-game recruit/play/fight where hollow abilities fire) while the default keeps multiplayer, replay, and every existing sim call byte-identical. Determinism is preserved: capping is deterministic, the default path is byte-identical, and the sentinel `finalStateHash` (replay-fixture-guarded, default path) is unchanged. The 10-arg `sweepSetupMatrix` signature smell is accepted as the minimal additive change; an options-object refactor is deferred.
+
+**Packet:** WP-264 / EC-294. Enables WP-265 (the bounded-heuristic real-signal runtime-observed cron).
+**Status:** Active (landed 2026-06-18, EC-294 commit `a7fd83a2`).
+
+---
+
+**D-24041: Real-Signal Runtime-Observed Hollows via a Competent Hero-Diverse Per-PR Sweep (Re-Scoped 2026-06-19; the Cron is Dropped)**
+
+The dashboard `/coverage` runtime-observed overlay is fed by a **competent-heuristic**, **`maxTurns`-bounded** (D-24040), **hero-diverse** simulation sweep that surfaces mechanics actually hit during competent play, replacing WP-259's fast random-policy **zero-state**. The matrix sweeps hero decks across many sets (the measured signal lever) over the known-valid sentinel core (scheme `core/legacy-virus-the` + mastermind `core/dr-doom` + villain `core/brotherhood` + henchman `core/savage-land-mutates`) × a few seeds per board, defined as a **hardcoded locked constant** in the harness (NOT a runtime read of the static `hero-mechanic-ledger.json` — that would couple two generated artifacts' determinism). The committed `runtime-observed-hollows.json` carries real `byMechanic` entries (`hollowEffectsDropped: 0`). Determinism holds (seeded heuristic + bounded turns + fixed matrix ⇒ byte-identical). The freshness gate is **WP-259's existing per-PR `sim:runtime-observed:check`, KEPT** — there is **no cron, no `runtime-observed-refresh.yml`, and no `ci.yml` change**. The `runSeed` / `maxTurns` / per-board seed count / hero-set matrix are execution-time locked values, scaffold-confirmed (healthy multi-mechanic signal, `dropped: 0`, byte-stable, per-PR-affordable).
+
+**Why (re-scope):** the original D-24041 (2026-06-18) deferred to a weekly cron on the premise that a competent sweep is "multi-minute/game, not per-PR-affordable." WP-266 (onBegin parity, D-24043) and measurement disproved that: with the bot finally drawing + playing cards, a competent game runs **~4 ms** (the earlier "17 ms" was first-game JIT warm-up), so a rich matrix completes in **~1–2 s** — trivially per-PR-affordable. The measurement also corrected the matrix axis: **seed variation surfaces no new signal** (the same heroes have the same hollow-able abilities — 40 seeds on one board = 1 mechanic), while **hero-deck diversity across sets is the lever** (14 set-boards = 5 distinct mechanics, all validating against the real registry). A per-PR `--check` is therefore both affordable AND fresher than a weekly cron — it goes red the moment a PR implements a mechanic, the same drift-gate posture as `hero-effect-coverage` / `hero-mechanic-ledger` — so the cron is pure overhead and is dropped. The engine never writes the artifact, the dashboard reads JSON, and `packages/**` stays empty — the WP-259 boundaries are preserved.
+
+**Packet:** WP-265 / EC-295. Re-scopes off the original cron design. Depends on D-24043 (WP-266 — the enabler) + D-24040 (WP-264 — the `maxTurns` bound). Supersedes the D-24035 CI-affordability **cron** fallback (the affordability concern that motivated it no longer holds).
+**Status:** **Active** 2026-06-19 (WP-265 / EC-295 executed; EC-295 commit `dcb00404`; baseline `fb56c0a3`). Landed exactly as re-scoped: the harness sweeps a hardcoded hero-diverse matrix (39 hero-deck sets × 5 hero IDs over the sentinel core × 8 seeds/board, `maxTurns=50`, `runSeed=wp265-real-v1`) with `createCompetentHeuristicPolicy`; the committed `runtime-observed-hollows.json` carries 16 distinct mechanics / 176 observations / `hollowEffectsDropped: 0` over 312 games, byte-identical on re-run. WP-259's per-PR `sim:runtime-observed:check` is KEPT (no cron, no `ci.yml`/`.github/workflows` change); the matrix is a hardcoded locked value (no runtime ledger read). 2 files (harness + artifact); `packages/**` + `data/cards/**` + tracked dashboard src/scripts diff empty; dashboard `test` 392/0 + `typecheck` 0. **✅ D-24026 LIVE-VERIFIED 2026-06-19** (operator-viewed deployed `/coverage`: the "Observed in play" column populated — "16 distinct · 176 observations", `⚡ N×` badges on all 16 committed mechanics summing to 176, byte-for-byte the committed artifact). Completes the hollow-effect reporting loop end-to-end (WP-257 emit → WP-258/259/260 surface), now real signal.
+
+---
+
+**D-24043: Simulation onBegin Parity — Shared Auto-Draw + One-Shot Reveal Gate in the Observation-Only Per-Turn Loops**
+
+The three non-framework per-turn loops — the simulation runner (`runPerTurnLoop`, `simulation.runner.ts`), the PAR aggregator (`simulateOneGame`, `par.aggregator.ts`), and the replay-fixture harness (`rotateToNextTurn`, `runFixture.ts`) — mirror the play-phase `onBegin` at every turn start via ONE shared pure helper `applyOnBeginParity(gameState, playerId, shuffleProvider)`: reset `villainRevealedThisTurn` + `hasDrawnThisTurn`, then auto-draw the active player's hand to `HAND_SIZE` (the WP-236 onBegin draw, via `drawCardsIntoHand`). `onTurnStart` rule-hook firing is intentionally NOT mirrored (D-0205, observation-only). Paired with a one-shot reveal gate in `getLegalMoves` — `revealVillainCard` is offered iff `stage === 'start' && !villainRevealedThisTurn`, mirroring the WP-212 move-level guard. The replay harness already performed this inline (WP-212 reveal reset + WP-236 auto-draw); the runner and aggregator did not, so their bot hands were empty forever and `playCard` was never legal. Extracting the shared helper at the third use unifies all three (the "abstract on the third copy" code-style rule); the helper takes a `ShuffleProvider` so it carries no randomness of its own.
+
+**Why:** the simulation + PAR harnesses have been running hand-empty degenerate games since WP-236 moved the opening draw into `onBegin` without giving the observation-only loops a compensating auto-draw. With no hand, no card is ever played, no hero effect executes, and the WP-257 hollow channel stays empty in every simulated game — so WP-265's real-signal runtime-observed sweep could not surface a single hollow. Two coupled corrections fix it: the reveal gate stops the competent policy's turn-1 infinite re-reveal (it scored reveal above advance and re-picked it forever), and the auto-draw gives the bot a hand to play. Determinism is preserved — the helper draws only from the caller's existing seeded PRNG stream (no new randomness/clock/IO source), the replay path stays byte-behavior-identical (`replayFixtures.test.ts` green; `finalStateHash` unchanged), and the simulation/PAR trajectories change deterministically per seed (by design — the bot now plays cards). Scaffold-confirmed off `78d278d5`: the full engine suite stays **1454 / 1454** (every sim assertion is structural — shape / finiteness / drift-guard / capture↔replay — not a pinned seeded outcome), a competent sweep surfaces **≥1 hero hollow** (`outwit` on `wwhk/bruce-banner/solve-the-impossible`) in **~17 ms**, and the random-policy `runtime-observed-hollows.json` shifts off the zero-state (regenerated in-WP — the committed proof the sim now plays). This also corrects the D-24041 premise that competent play is "multi-minute" — that figure was the broken hand-empty / infinite-reveal state; with parity, competent games terminate in milliseconds (a WP-265 re-scope input).
+
+**Packet:** WP-266 / EC-297. Unblocks WP-265 (the real-signal runtime-observed cron). Precedents: WP-236 (onBegin auto-draw), WP-212 (once-per-turn reveal guard), WP-263 (engine-predecessor pattern for the runtime-observed surface).
+**Status:** **Active** 2026-06-19 (WP-266 / EC-297 executed; EC-297 commit `1f58d43b`; baseline `fa5c8afa`; engine `test` **1454 → 1462 / 0**). Landed exactly as drafted: the shared pure helper `applyOnBeginParity(gameState, playerId, shuffleProvider)` (reset both once-per-turn flags + auto-draw to `HAND_SIZE`, rule hooks deferred) in `simulation/onBeginParity.ts`, called by the simulation runner + PAR aggregator (once before the loop for turn 1 + once in the turn-transition block) and by `runFixture.rotateToNextTurn` (replacing its inline WP-212 + WP-236 block); the one-shot reveal gate in `getLegalMoves` (`stage === 'start' && !villainRevealedThisTurn`). `replayFixtures.test.ts` green (`finalStateHash` unchanged — the replay routing is byte-behavior-identical); 0 seeded-outcome re-baseline (every sim assertion is structural). The forced byproduct landed too: the random-policy `runtime-observed-hollows.json` regenerated off the zero-state (2 `outwit` observations) + its generator's now-false zero-state prose corrected; policy stays `random` (the competent cron remains WP-265). No result-shape change; `index.ts` + `data/cards/**` byte-unchanged.
+
+---
+
+**D-24044: Empowered via a Class-Count Value Primitive — the First Parameterized Composition + First Shared-Zone-Read Value Expression**
+
+Empowered's unconditional core form (`[keyword:Empowered] by [hc:FIXEDCOLOR]` → +Attack equal to the count of that-class cards in the HQ) is authored as a **parameterized composition** over the D-24029/D-24030 substrate, extending it two ways: (1) a new closed value-expression primitive `count-cards-by-class-in-zone` (appended to `VALUE_EXPRESSION_TYPES`) that reads `G.cardTraits[id].heroClass` over a board zone, with its own closed `EffectCountZoneKind` union — `['hq']` — the first **shared/board** zone reference, kept separate from the per-player move-card `EFFECT_ZONE_KINDS = [deck, discard]` (the interpreter resolves `hq` from `G.hq`, not `playerZones`); (2) the first **parameterized composition marker** — `empowered` (a new `PARAMETERIZED_COMPOSITION_MARKER_NAMES`, deduped into `HERO_COMPOSITION_MARKER_NAMES`) whose AST is **built per parsed color** by `buildEmpoweredComposition(heroClass)`, the parser extracting `[hc:COLOR]` from an anchored marker tail (`^\s*by\s*\[hc:COLOR\]`, no broad forward scan) and suppressing that consumed token from the Step-1a `heroClassMatch` conditions using the same `normalizeTraitSlug` value. The interpreter stays mechanic-agnostic (it knows only `count-cards-by-class-in-zone`, no `empowered` branch); `HeroKeyword`/`EFFECT_NODE_TYPES`/`EFFECT_ZONE_KINDS` are unchanged; no executor edit (the WP-256 `hook.primitiveEffects` loop runs it); no coverage-script edit (recognition rides the marker-names union).
+
+**Honest-Partial Invariant:** the core resolves ONLY when the anchored tail matches AND consuming the parameter leaves no residual gating class/team condition on the line; every deferred variant (color-of-choice, Double/Triple, conditional-prefix `[hc:X]: …Empowered`, recruit-instead-of-attack, multi-class, villain/mastermind) stays an `unresolvedMarker` → a `parse-unrecognized` runtime hollow. Implementing the core does not silence what it does not cover — recognizing the mechanic globally would convert deferred variants into silent no-ops, the precise failure the hollow-detection initiative prevents.
+
+**Why:** Empowered is the highest-leverage next mechanic — the `count-cards-by-class-in-zone` primitive and the parameterized-composition seam (a param extracted from adjacent text → a built AST) are reused by most remaining "+X per Y" / "by [param]" hollow mechanics, so this WP buys substrate, not just one mechanic. Determinism holds: the count reads only committed state (`G.hq`, `G.cardTraits`), is index-ordered over the HQ slots, missing-state → 0, no RNG; the `EMPTY_REGISTRY` replay harness keeps the sentinel `finalStateHash` unchanged. The only determinism-derived artifact that moves is `runtime-observed-hollows.json` (empowered core-form hits leave the hollow set).
+
+**Packet:** WP-267 / EC-298. Extends D-24029 / D-24030 / D-24031. Precedents: WP-256 (static composition marker), WP-179 (`heroClassMatch` `G.cardTraits` read).
+**Status:** **Active** 2026-06-19 (WP-267 / EC-298 executed; EC-298 commit `e43b5925`; baseline `a3095f18`; engine `test` **1462 → 1473 / 0**). Landed as drafted: the `count-cards-by-class-in-zone` value expression + `EffectCountZoneKind=['hq']`, `buildEmpoweredComposition` + `PARAMETERIZED_COMPOSITION_MARKER_NAMES` (deduped into `HERO_COMPOSITION_MARKER_NAMES`), and the anchored-tail parser branch with condition suppression + the Honest-Partial unresolved fallback. `runtime-observed-hollows.json`: `empowered` cleared (16→15 distinct / 176→163 obs), `hollowEffectsDropped: 0`, byte-stable; coverage baseline +5 core-form hooks (deferred variants stay `noEffect` by-hook); `finalStateHash` unchanged (EMPTY_REGISTRY). **Known by-name limitation:** the mechanic ledger (WP-256 by-name machinery) marks all 7 empowered cards executable, so the `/coverage` By-card static view over-claims the ~4 deferred-variant cards (bkpt/wtif) whose specific forms defer; the runtime hollow path remains the honest signal (the load-bearing invariant), and a by-hook ledger for variant-bearing mechanics is a follow-up.
+
+---
+
+**D-24045: By-Hook Composition Ledger — Parser `resolvedMarkers` Provenance**
+
+The hero mechanic ledger classifies a **composition-marker** mechanic (`empowered`, `berserk`) as `executable` for a given card **only when that card's hook actually resolved the marker** (by-hook), not merely because the name is a known composition marker (by-name). The engine parser records the resolved markers per ability line in a new `HeroAbilityHook.resolvedMarkers?: string[]` field — the positive symmetric counterpart of WP-257's `unresolvedMarkers` — pushed in the two composition-resolve branches (static `HERO_COMPOSITION_MARKERS` + parameterized `empowered`), assigned on the hook only when non-empty. The ledger (`hero-mechanic-ledger.mjs`) builds each hero's hooks via `buildHeroAbilityHooks(registry, { heroDeckIds: [extId] })` (mirroring the coverage probe) and classifies a **parameterized** composition marker (`empowered`) executable iff it is in that card's aggregated `resolvedMarkers`, otherwise `unsupported`; static markers (`berserk`) stay executable **by-name** (they have no deferred variants — see Status for the execution-time scoping rationale). `MVP_KEYWORDS`/`KNOWN_KEYWORDS`/`unmarked` classification is unchanged.
+
+**Why:** WP-267's `empowered` was the first composition mechanic with deferred variants, exposing that the ledger's by-name marking (D-24031 machinery, harmless for variant-less berserk) over-claims on `/coverage` By-card — showing the bkpt/wtif deferred-variant cards Executable when their forms defer. The by-hook coverage probe (`primitiveEffects.length`) and the runtime hollow detector were already honest; this closes the gap across all three coverage surfaces. `resolvedMarkers` is parse-time provenance only — never written to `G`/persisted, no execution/replay change (`primitiveEffects` + `finalStateHash` unchanged). Resolves the D-24044 known limitation.
+
+**Packet:** WP-268 / EC-299. Resolves D-24044. Mirrors D-24034 (`unresolvedMarkers`). Precedent: WP-250 coverage-probe hook-building.
+**Status:** **Active** 2026-06-20 (WP-268 / EC-299 executed; EC-299 commit `89fc0529`; baseline `048e5723`; engine `test` **1473 → 1477 / 0**). Landed as drafted for the **parser**: `HeroAbilityHook.resolvedMarkers?` pushed in BOTH composition-resolve branches (static `berserk` + parameterized `empowered`), assigned only when non-empty, symmetric with `unresolvedMarkers`; `finalStateHash` unchanged, no execution-path edit. **Ledger scoping refinement (operator decision, execution):** the by-hook classification is applied to **parameterized** composition markers (`empowered`) ONLY; static markers (`berserk`) stay executable **by-name** (D-24031). Rationale: berserk has no deferred variants — every PARSED berserk resolves — so the only cards a by-hook berserk rule would flip are transform-hero **back-face** berserk (`xmen/legion` on `bend-steel`, `xmen/aurora-northstar` on `blazing-fists`; the marker sits on `sides[1]`, never built into a canonical-face hook by `buildHeroAbilityHooks`), which is a separate transform-modeling gap, not the by-name over-claim this WP targets — so by-name avoids under-claiming them. The parser still records `resolvedMarkers` for both branches (complete provenance for a future transform-aware consumer). **Measured ledger flip (executable 126 → 120):** 6 `empowered` deferred-variant rows flip executable→unsupported (`antm/black-knight` color-of-choice, `antm/jocasta` conditional-prefix, `bkpt/princess-shuri`, `bkpt/queen-storm-of-wakanda`, `wtif/star-lord-tchalla`, `wtif/uatu-the-watcher`); `antm/wonder-man` (core form) + all `berserk` stay executable; byte-stable regen; `sim:coverage --check` baseline + `mechanics:metadata:check` feed unchanged (WP-269's feed drops `status`). **D-24026 live-verify pending** post-deploy (`/coverage` By-card shows the 6 deferred `empowered` cards Unsupported + the executable KPI drops to the honest count). Resolves D-24044.
+
+### D-24046 — The Registry-Viewer Hero Mechanic Feed Is a Normalized, Viewer-Safe R2 Metadata JSON Derived From the Coverage Ledger; Raw Tokens Are Hidden Fail-Closed
+
+**Status:** **Active** (landed 2026-06-20 via WP-269 / EC-300 execution). Reserved from baseline `5a3fe275`; reconciled onto current `main` 2026-06-20 after a WP-number collision with the concurrent #409 draft, which reserved this same decision as D-24044 before D-24044 was taken by WP-267/empowered on `main`. Realized as specified: deterministic transform `scripts/build-card-mechanics-metadata.mjs` → `data/metadata/card-mechanics.json` (134 mechanics, 12 curated visible, 309 cards, `generatedAt` sentinel `1970-01-01T00:00:00.000Z`), validated by data-only `CardMechanicsIndexSchema` in `@legendary-arena/registry/schema`, CI freshness gate `mechanics:metadata:check`.
+
+**Context.** The registry-viewer (cards.legendary-arena.com) needs to query/filter cards by the hero mechanics surfaced on the dashboard `/coverage` page. That taxonomy is generated by repo-root scripts that import `@legendary-arena/game-engine`, which the viewer's layer boundary forbids it to import; the dashboard's copy lives in another app the viewer must not import. The raw ledger set (134 distinct hero mechanics) is inflated by free-text `[keyword:X]` marker slugification (near-duplicates like `cyber-mod` / `cyber-mod-wound`, an `(unmarked)` sentinel, punctuation artifacts) and is not UI-safe.
+
+**Decision.** The bridge is an **R2-published metadata JSON** at `/metadata/card-mechanics.json` (staged in-repo at `data/metadata/card-mechanics.json`, same flow as `card-types.json`), produced by a deterministic repo-root transform from the committed hero ledger and validated by a data-only `CardMechanicsIndexSchema` in `@legendary-arena/registry/schema`. The locked contract:
+
+- `{ version, scope: "hero", generatedAt, mechanics: [{ slug, label, scope, source, cardCount, cardIds, hidden }], cards: { <extId>: { mechanics: string[] } } }`.
+- `source` is the closed union `keyword | composition-marker | free-text` (classified in the transform via the game-engine **dist** — build-script-only; the schema and the viewer never import the engine).
+- `hidden` is **fail-closed**: any mechanic absent from the curated `scripts/coverage/mechanic-labels.json` is `hidden: true` and excluded from the viewer's default filter ribbon (the viewer renders only `hidden !== true`). Surfacing a mechanic is an explicit human curation decision.
+- The per-card `cards{}` mapping is authoritative for filtering: the **viewer never parses ability text at runtime**; the producer did the work.
+- The transform is deterministic (no `Date.now()`; `generatedAt` derives from input) so a CI freshness gate (`mechanics:metadata:check`) can pin it, mirroring `ledger:heroes:check`.
+
+**Scope is hero-only.** `scope` is the literal `"hero"` because the ledger is hero-only. Extending to villains/masterminds/schemes/henchmen is the queued WP-271 (data production), kept separate from this feed (WP-269) and the viewer surface (WP-270) per the data-production-vs-consumption split.
+
+**Why.** Keeps the engine/dashboard coupling out of the viewer (the viewer only ever fetches a validated R2 JSON, its established pattern); makes normalization an explicit, auditable curation layer instead of shipping raw slug inflation as UI chips; and keeps the data contract first (producer WP-269 locks it; consumer WP-270 reads it).
+
+**Supersedes / relates to.** Extends the WP-086 (`card-types.json`) / WP-183 / WP-184 metadata-publish precedent. Does not alter the dashboard `/coverage` ledger or its D-24026 verification posture.
+
+### D-24047 — Conditional-Prefix Class-Gated Empowered Resolves via a Structural Parse Gate + Suppress-One-Retain-Gate, Reusing the WP-256 Conditions-Gate Executor
+
+**Status:** **Active (2026-06-20).** Executed by WP-272 / EC-302 (engine `test` 1477 → 1488 / 0; coverage +25 executable hooks across `antm`+`bkpt`; ledger 3 hero rows `unsupported → executable` by-hook; sentinel `finalStateHash` unchanged; `data/cards/**` byte-unchanged).
+
+**Context.** WP-267 / D-24044 authored the unconditional core of **Empowered** (`[keyword:Empowered] by [hc:FIXEDCOLOR]` → `+Attack = count of that-class HQ cards`) and **explicitly deferred** every gated/variadic form, including the **conditional-prefix** form `[hc:X]: You get [keyword:Empowered] by [hc:Y]`, to keep its scope honest (the Honest-Partial Invariant). That deferral left a class of cards dead in real play — a 2026-06-20 live diagnostics capture (`gitSha 048e572`) shows `antm/wonder-man/ionic-energy` (`[hc:ranged]: … Empowered by [hc:ranged]`) firing `parse-unrecognized` on every play. The conditional-prefix form is the cheapest remaining Empowered variant: its composition is the same `buildEmpoweredComposition` output, its gate is an ordinary `heroClassMatch` condition, and the WP-256 executor already runs `hook.primitiveEffects` **inside the conditions-passed gate**.
+
+**Decision.** WP-272 lifts the conditional-prefix deferral **for the class-gated case only**, as a **parser-only** change (no new primitive, value expression, union, builder, executor, or contract-file edit):
+
+- **Structural resolve gate (not condition-counting).** A `[keyword:Empowered]` token resolves the conditional-prefix form only when ALL hold: (1) exactly one `[keyword:Empowered]` marker in the ability text; (2) the text begins with a single class-condition prefix `^\s*\[hc:([a-z0-9-]+)\]\s*:` (gate class `X`); (3) the text immediately after the marker matches the anchored tail `^\s*by\s*\[hc:([a-z0-9-]+)\]` (count color `Y`, fixed); (4) the text after the tail does not continue `and [hc:…]`; (5) no `[team:…]` token. A condition-counting gate ("residual conditions are all `heroClassMatch`") is **forbidden** — it mis-resolves `wtif/star-lord-tchalla/fight-or-flight` (`Choose one: Empowered by [hc:strength], or by [hc:covert]`) by treating the second choose-one branch's `[hc:covert]` as a gate. The single-marker guard (#1) is the structural defense.
+- **Suppress-one-retain-gate.** On resolve, push `buildEmpoweredComposition(normalizeTraitSlug(Y))` to `primitiveEffects`, push `empowered` to `resolvedMarkers` (the WP-268 by-hook provenance), remove **exactly one** `heroClassMatch(normalizeTraitSlug(Y))` (the consumed count param) and **retain** `heroClassMatch(normalizeTraitSlug(X))` (the gate). Retaining the prefix gate IS the conditional behavior — the WP-256 conditions-gate executor fires the effect only when it passes. Never clear all conditions on this path (that is the WP-267 core-path shortcut, valid only for the sole-condition case).
+- **Resolve order.** Attempt the unchanged WP-267 sole-condition core first; only then the conditional-prefix path; else the unchanged `unresolvedMarkers` fallback.
+
+**Honest-Partial Invariant preserved.** Color-of-choice, multi-class, choose-one, team-gated, Double/Triple, and hero-name/multicolored/team-target Empowered all fall through the structural gate to `unresolvedMarkers` → `parse-unrecognized` runtime hollows. WP-267's core-form behavior and `one-hit-wonder`/`fight-or-flight`'s pre-existing handling are unchanged (the single-marker + leading-prefix guards keep them off the new path).
+
+**Out of scope (named).** This decision does NOT correct WP-267's pre-existing **choose-one over-resolution** (`one-hit-wonder` / `fight-or-flight` resolve their `[keyword:Empowered] by [hc:COLOR]` tail unconditionally because the "Choose one: … or" prefix carries no markup the parser gates on) — that needs a choice model and is a separate WP. It adds no class-set count primitive (multi-class) and no player-choice primitive (color-of-choice / choose-one).
+
+**Determinism.** Parser-time text recognition over already-committed `data/cards/**` markup; the resolved effect reuses WP-267's index-ordered HQ count (deterministic, missing-state → 0, never throws). The `EMPTY_REGISTRY` replay harness keeps the sentinel `finalStateHash` unchanged; `runtime-observed-hollows.json` is the only determinism-derived artifact that *could* move, and at execution it regenerated **byte-identical** (15 distinct mechanics / 163 observations / dropped 0, `empowered` absent both before and after) — the WP-265 competent sweep does not sample a play of the five conditional-prefix cards within its bounded games, so the measured `empowered` obs-delta is 0. The conditional-prefix flip is therefore visible on `/coverage` via the by-hook ledger + the coverage baseline, not via the runtime-observed sample.
+
+**Relates to.** Extends D-24044 (parameterized Empowered composition) and consumes D-24045 (by-hook `resolvedMarkers` ledger). Second Empowered form authored over the D-24029 composable-primitive substrate.
 
 Protect this file.

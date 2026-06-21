@@ -14,7 +14,7 @@ status: draft
 source:
   - ../docs/01-VISION.md
   - ../docs/ai/work-packets/WP-149-public-leaderboard-marketing-page.md
-last-reviewed: 2026-05-15
+last-reviewed: 2026-06-16
 ---
 
 # Homepage Review Template
@@ -36,111 +36,93 @@ last-reviewed: 2026-05-15
 
 ## Summary
 
-The original comprehensive marketing review of
-`www.legendary-arena.com`'s homepage. Evaluates the homepage against
-three questions (What is the problem? What is the product? What are
-the results?) using the StoryBrand SB7 framework and a game-specific
-Player Needs Pyramid derived from Maslow's hierarchy. Contains the
-full depth of SB7 rationale, current-state audit, draft copy blocks,
-and detailed analysis in a single document.
+The marketing **audit instrument** for `www.legendary-arena.com`'s
+homepage. It evaluates the homepage against three questions (What is the
+problem? What is the product? What are the results?) using the StoryBrand
+SB7 framework, produces a current-state grade and a GO / NO-GO decision,
+and applies a conversion-layer overlay (the Sales Conversion Audit).
 
-The template's content was later split into two focused companions —
-[Homepage Spec](homepage-spec.md) (build document) and
-[Homepage Appendix](homepage-appendix.md) (strategy reference) — but
-this document remains valuable as the unified, full-context view of
-the homepage marketing strategy.
+This document was originally the comprehensive, single-file marketing
+review. Its content has since been split — the build requirements moved to
+[Homepage Spec](homepage-spec.md) and the strategy/theory to
+[Homepage Appendix](homepage-appendix.md) — and the template was then
+**deduplicated to the review layer only**. It no longer restates the
+Player Needs Pyramid, the problem catalog, the copy blocks, or the
+readiness checklist; it links to their single owners and holds just the
+audit.
 
 ## Mechanics
 
-The template evaluates the homepage against three questions, each
-mapped to specific SB7 elements:
+The template is now a thin instrument with three parts:
 
-1. **What is the problem?** (Character, Problem, Guide empathy) —
-   Names the villain (pay-to-win), states external, internal, and
-   philosophical problem levels, provides an empathy statement.
-   Includes the full 28-problem catalog under four themes (Fairness,
-   Skill Measurement, Authenticity, Scalability) with SB7 level
-   mappings and source references.
+1. **How to Run This Review** — read the homepage as a cold visitor; grade
+   it against the readiness checklist, GO / NO-GO rule, and critical fail
+   conditions in [Homepage Spec](homepage-spec.md) (the single canonical
+   copy of those criteria); run the Sales Conversion Audit; record the
+   result.
 
-2. **What is the product?** (Guide authority, Plan, Call to Action) —
-   Category + benefit label, three locked pillars (Skill decides /
-   Mastery is earned / The rules don't drift), process plan, agreement
-   plan (The Fair Play Promise), CTA placement strategy.
+2. **Current-State Audit** — the review's deliverable. Per-question grades
+   (currently Problem F, Product C+, Results F), element-level audits for
+   hero / product / results, and a note on existing infrastructure
+   (tournaments, products, newsletter, community links — present but
+   under-promoted). This is the point-in-time scorecard; re-grade it when
+   the homepage changes.
 
-3. **What are the results?** (Avoid Failure, Ends in Success, Identity
-   Transformation) — Failure stakes, success vision across three
-   resolutions, identity transformation from/to, required proof
-   elements.
+3. **Sales Conversion Audit** — a conversion-layer overlay derived from
+   sales-process principles. Six binary checks: outcome-not-product,
+   reality gap, diagnosis before prescription, objection prevention,
+   direct ask, and follow-up path. Confirms the page moves a visitor from
+   problem recognition to a decision, not just that the SB7 story elements
+   exist.
 
-The template also contains:
+### Single-source ownership (post-dedup)
 
-- **Hero section specification** with grunt test requirements and
-  current-state audit
-- **Player Needs Pyramid** — five game-specific levels (Access, Trust,
-  Community, Recognition, Mastery) with per-level analysis, homepage
-  copy opportunities, and section mappings
-- **L2→L4 dependency analysis** — why recognition systems require an
-  enforced trust layer
-- **Badge system architecture** — five categories (Skill, Progression,
-  Recognition, Challenge, Legacy) with metadata model and design rules
-- **Public Leaderboard (WP-149)** — three views, API contract,
-  replay-verified rankings
-- **Recommended homepage flow** — 18-row section sequence with SB7
-  element and status mappings
-- **9-section readiness checklist** with binary pass/fail items
-- **10 critical fail conditions** with impact statements
+| Content | Lives in |
+|---------|----------|
+| Hero spec, problem/product/results copy, reference build, CTA language bank, objection-handling section, readiness checklist, GO / NO-GO, critical fail conditions, recommended flow | [Homepage Spec](homepage-spec.md) |
+| Player Needs Pyramid, 28-problem catalog, badge architecture, L2→L4 analysis, Reality Gap model, Objection Library, content framework, physical-vs-digital truth table | [Homepage Appendix](homepage-appendix.md) |
+| How-to-run, current-state scorecard, Sales Conversion Audit | This page's source document |
 
-### Relationship to Spec and Appendix
-
-The template is the unified source document. The spec and appendix
-split its content for different audiences:
-
-| Content | Also In |
-|---------|---------|
-| Hero spec, copy blocks, checklist, flow table, fail conditions | [Homepage Spec](homepage-spec.md) |
-| Player Needs Pyramid, 20-problem catalog, badge architecture, L2→L4 analysis | [Homepage Appendix](homepage-appendix.md) |
-
-Content added in the spec/appendix that is not in this template:
-
-- Core Positioning statement (spec)
-- Final Homepage Output reference build (spec)
-- Severity-tiered GO / NO-GO (spec)
-- Content framework for newsletters, blogs, and emails (appendix)
+Re-adding build copy or strategy theory to the review template
+re-introduces drift (that is how the template once read "20 problems"
+while the catalog had grown to 28). Send build changes to the spec and
+strategy changes to the appendix.
 
 ## Interactions
 
-- **[Homepage Spec](homepage-spec.md)** — The build document derived
-  from this template. Contains the execution-focused content
-  (hero, copy, checklist, final output) plus new additions
-  (Core Positioning, severity tiers).
-- **[Homepage Appendix](homepage-appendix.md)** — The strategy
-  reference derived from this template. Contains the theoretical
-  content (pyramid, problems, badges) plus the content framework.
+- **[Homepage Spec](homepage-spec.md)** — the build document and the
+  single source of the readiness checklist, GO / NO-GO, and critical fail
+  conditions the review grades against.
+- **[Homepage Appendix](homepage-appendix.md)** — the strategy reference
+  (pyramid, problem catalog, Reality Gap model, Objection Library, content
+  framework).
 - **[Homepage Marketing Scorecard](homepage-marketing-scorecard.md)** —
-  The scorecard grades the homepage using the same three-question
-  framework defined in this template.
-- **[Scoring](scoring.md)** — PAR scoring underpins the recognition
-  analysis and the 20-problem catalog entries on skill measurement.
+  the recorded grade, produced by running this review.
+- **[Scoring](scoring.md)** — PAR scoring underpins the recognition and
+  skill-measurement entries in the appendix catalog.
 
 ## Edge Cases
 
-- **Template vs. spec divergence.** The template and the spec/appendix
-  may drift as the spec receives updates (e.g., the content framework
-  and severity tiers exist only in the spec/appendix). The template is
-  the original unified view; the spec is the current build target.
-  When in doubt about what to implement, use the spec.
-- **Copy blocks are drafts.** The template contains implementation-ready
-  copy, but final copy is a marketing decision. The grades and
-  checklist evaluate structural presence, not specific wording.
+- **Thin by design.** If this template starts to re-describe the pyramid,
+  the catalog, or copy blocks, it is drifting back toward the old monolith.
+  Keep it to the review layer.
+- **Build status vs. marketing grade.** The spec's recommended-flow table
+  keeps a per-section build status ("Exists / Needs creation"); the
+  marketing-quality grade lives here in the current-state audit. They are
+  two different lenses, intentionally kept apart.
+- **Copy and grades are point-in-time.** The current-state audit reflects
+  the homepage on its "last recorded" date; re-grade after changes. Final
+  copy is a marketing decision — the audit evaluates structural presence,
+  not specific wording.
 
 ## References
 
 - `C:\www\legendary-arena-com\docs\marketing\homepage-review-template.md`
-  — the full template (authoritative)
+  — the review template source (authoritative)
 - `C:\www\legendary-arena-com\docs\marketing\homepage-spec.md`
-  — derived build document
+  — build document
 - `C:\www\legendary-arena-com\docs\marketing\homepage-appendix.md`
-  — derived strategy reference
+  — strategy reference
 - [01-VISION.md](../docs/01-VISION.md) — marketing site vision and
   decisions
 - [WP-149](../docs/ai/work-packets/WP-149-public-leaderboard-marketing-page.md)

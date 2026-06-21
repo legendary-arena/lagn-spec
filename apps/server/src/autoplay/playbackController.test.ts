@@ -179,31 +179,49 @@ test('buildResponse always carries mode (D-16304) and uiState only when supplied
   assert.deepEqual(withView.uiState, { stub: true });
 });
 
-test('controller remains in map after normal exit for review; error exit deletes immediately (D-16308)', async () => {
-  // Normal exit: controller stays (deferred cleanup for review window)
+test('normal exit defers cleanup + marks game over; abnormal exit marks aborted + defers, never deletes immediately (D-24037 / D-16308)', async () => {
+  // Normal exit: the controller stays for the review window, marked game-over.
   const normalKey = 'normal-review';
   await withRegisteredController(normalKey, 100, async (controller) => {
     assert.equal(autoplayControllers.has(normalKey), true);
     controller.pushState(snap(0));
   });
-  // Still present after normal exit (game-over review window)
   assert.equal(autoplayControllers.has(normalKey), true);
-  const controller = autoplayControllers.get(normalKey);
-  assert.equal(controller.isGameOver(), true);
-  assert.equal(controller.isPaused(), true);
-  // Clean up manually for test isolation
+  const normalController = autoplayControllers.get(normalKey);
+  assert.equal(normalController.isGameOver(), true);
+  assert.equal(normalController.isAborted(), false);
+  assert.equal(normalController.isPaused(), true);
   autoplayControllers.delete(normalKey);
 
-  // Error exit: immediate cleanup, no review
-  for (let i = 0; i < 5; i += 1) {
-    const key = `throw-${i}`;
-    await assert.rejects(
-      withRegisteredController(key, 100, async () => {
-        throw new Error('simulated bot loop failure');
-      }),
-    );
-    assert.equal(autoplayControllers.has(key), false);
-  }
+  // Abnormal exit: the controller is marked aborted with a PUBLIC-SAFE reason
+  // and stays in the map (deferred cleanup), so the client sees an explicit
+  // stopped state instead of a frozen board / 404.
+  const abortKey = 'throw-review';
+  const rawFault = 'RAW_FAULT_TOKEN_should_not_leak';
+  await assert.rejects(
+    withRegisteredController(abortKey, 100, async () => {
+      throw new Error(rawFault);
+    }),
+  );
+  // why: D-24037 — no silent immediate delete; the aborted controller remains
+  // registered synchronously after the body throws.
+  assert.equal(autoplayControllers.has(abortKey), true);
+  const abortedController = autoplayControllers.get(abortKey);
+  assert.equal(abortedController.isAborted(), true);
+  assert.equal(abortedController.isGameOver(), false);
+  assert.equal(abortedController.isPaused(), true);
+
+  // The guest-visible reason is a public-safe sentence; the raw thrown-error
+  // token never reaches the controller or the response envelope.
+  const reason = abortedController.getAbortReason();
+  assert.equal(reason, 'The bot loop stopped after an unexpected server error.');
+  assert.equal(reason.includes(rawFault), false);
+  const body = buildResponse(abortedController);
+  assert.equal(JSON.stringify(body).includes(rawFault), false);
+  assert.equal(body.aborted, true);
+  assert.equal(body.abortReason, 'The bot loop stopped after an unexpected server error.');
+
+  autoplayControllers.delete(abortKey);
 });
 
 test('setSpeedMode halves delay at 2x, quarters at 4x, floors at 10ms', () => {
@@ -287,4 +305,55 @@ test('buildResponse includes speedMode and gameOver fields', () => {
   const gameOverResponse = buildResponse(controller);
   assert.equal(gameOverResponse.speedMode, '2x');
   assert.equal(gameOverResponse.gameOver, true);
+});
+
+test('markAborted sets a distinct terminal flag, pauses, and is not a game over (D-24037)', () => {
+  const controller = createPlaybackController(800);
+  controller.pushState(snap(0));
+  assert.equal(controller.isAborted(), false);
+  assert.equal(controller.getAbortReason(), null);
+  assert.equal(controller.isGameOver(), false);
+
+  controller.markAborted('The bot loop stopped after an unexpected server error.');
+  assert.equal(controller.isAborted(), true);
+  assert.equal(controller.getAbortReason(), 'The bot loop stopped after an unexpected server error.');
+  // why: D-24037 — an abort pauses (for scrub consistency) but is NOT a game
+  // over; the two terminal flags are independent.
+  assert.equal(controller.isPaused(), true);
+  assert.equal(controller.isGameOver(), false);
+});
+
+test('markAborted is terminal — the first reason wins; later calls are no-ops (D-24037)', () => {
+  const controller = createPlaybackController(800);
+  controller.markAborted('The bot loop stopped: the match state was no longer available.');
+  controller.markAborted('The bot loop stopped after an unexpected server error.');
+  // why: D-24037 — once aborted the controller is not re-marked, so the first
+  // detected cause is preserved.
+  assert.equal(controller.getAbortReason(), 'The bot loop stopped: the match state was no longer available.');
+});
+
+test('buildResponse always carries aborted; abortReason is an own key only when aborted (D-24037)', () => {
+  const controller = createPlaybackController(800);
+  controller.pushState(snap(0));
+
+  const healthy = buildResponse(controller);
+  assert.equal(healthy.aborted, false);
+  // why: abortReason must be ABSENT as an own key (not merely undefined) on a
+  // healthy envelope, so clients can gate on the key's presence.
+  assert.equal(Object.hasOwn(healthy, 'abortReason'), false);
+
+  controller.markAborted('The bot loop stopped: the start stage did not advance.');
+  const aborted = buildResponse(controller);
+  assert.equal(aborted.aborted, true);
+  assert.equal(aborted.abortReason, 'The bot loop stopped: the start stage did not advance.');
+});
+
+test('a natural game over reports gameOver true, aborted false, and no abortReason key (D-24037)', () => {
+  const controller = createPlaybackController(800);
+  controller.pushState(snap(0));
+  controller.markGameOver();
+  const response = buildResponse(controller);
+  assert.equal(response.gameOver, true);
+  assert.equal(response.aborted, false);
+  assert.equal(Object.hasOwn(response, 'abortReason'), false);
 });

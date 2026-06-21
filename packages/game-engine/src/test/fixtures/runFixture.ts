@@ -37,7 +37,7 @@ import { resetTurnEconomy } from '../../economy/economy.logic.js';
 import { TURN_STAGES } from '../../turn/turnPhases.types.js';
 import { CORE_MOVE_NAMES } from '../../moves/coreMoves.types.js';
 import { drawCards, playCard, endTurn } from '../../moves/coreMoves.impl.js';
-import { HAND_SIZE, drawCardsIntoHand } from '../../moves/drawCards.logic.js';
+import { applyOnBeginParity } from '../../simulation/onBeginParity.js';
 import { revealVillainCard } from '../../villainDeck/villainDeck.reveal.js';
 import { fightVillain } from '../../moves/fightVillain.js';
 import { recruitHero } from '../../moves/recruitHero.js';
@@ -277,26 +277,14 @@ function rotateToNextTurn(
   cursor.completedTurnCount += 1;
   gameState.currentStage = TURN_STAGES[0]!;
   gameState.turnEconomy = resetTurnEconomy();
-  // why: mirror the play phase onBegin reset of the once-per-turn villain
-  // reveal allowance (WP-212). Without it the harness leaves a stale true flag
-  // across the turn boundary and the wrapper guard wrongly blocks the next
-  // player's legitimate first-of-turn reveal, diverging from real play.
-  gameState.villainRevealedThisTurn = false;
-  // why: mirror BOTH the play phase onBegin reset of the once-per-turn draw
-  // allowance AND the auto-draw it performs (WP-236, extending the WP-212
-  // D-20903 harness-mirror lesson to the draw). The harness reimplements
-  // onBegin; without mirroring the auto-draw, replayed games never draw the
-  // start-of-turn hand and diverge from real play. The reshuffle reuses the
+  // why: mirror the rest of the play phase onBegin — reset the once-per-turn
+  // flags and auto-draw the incoming player's hand to HAND_SIZE (WP-212 reveal
+  // reset + WP-236 auto-draw), now shared with the simulation runner + PAR
+  // aggregator via applyOnBeginParity (WP-266). The reshuffle reuses the
   // harness's single mulberry32 stream (nextRandom) so determinism holds.
-  gameState.hasDrawnThisTurn = false;
-  const activePlayerZones = gameState.playerZones[cursor.currentPlayer];
-  if (activePlayerZones) {
-    const cardsToDraw = Math.max(0, HAND_SIZE - activePlayerZones.hand.length);
-    drawCardsIntoHand(activePlayerZones, cardsToDraw, {
-      random: { Shuffle: <T>(deck: T[]): T[] => shuffleWithPrng(deck, nextRandom) },
-    });
-    gameState.hasDrawnThisTurn = true;
-  }
+  applyOnBeginParity(gameState, cursor.currentPlayer, {
+    random: { Shuffle: <T>(deck: T[]): T[] => shuffleWithPrng(deck, nextRandom) },
+  });
 }
 
 /**

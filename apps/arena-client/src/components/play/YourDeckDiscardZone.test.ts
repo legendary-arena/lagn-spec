@@ -51,4 +51,58 @@ describe('YourDeckDiscardZone (WP-129)', () => {
     });
     assert.equal(wrapper.find('[data-testid="play-your-discard-empty"]').exists(), true);
   });
+
+  test('WP-243: collapsed by default — the full discard list is hidden until expanded', () => {
+    const wrapper = mount(YourDeckDiscardZone, {
+      props: {
+        deckCount: 10,
+        discardCount: 2,
+        discardCards: ['hero-a', 'hero-b'],
+        discardDisplay: [
+          { extId: 'hero-a', name: 'Hero A', imageUrl: '', cost: 1 },
+          { extId: 'hero-b', name: 'Hero B', imageUrl: '', cost: 2 },
+        ],
+      },
+    });
+    assert.equal(
+      wrapper.find('[data-testid="play-your-discard-all"]').exists(),
+      false,
+      'full discard list hidden when collapsed',
+    );
+    assert.equal(
+      wrapper.find('[data-testid="play-your-discard-expand"]').exists(),
+      true,
+      'expand toggle present when discardCards is non-empty',
+    );
+  });
+
+  test('WP-243: expanding "View all" lists every discard card', async () => {
+    const wrapper = mount(YourDeckDiscardZone, {
+      props: {
+        deckCount: 10,
+        discardCount: 2,
+        discardCards: ['hero-a', 'hero-b'],
+        discardDisplay: [
+          { extId: 'hero-a', name: 'Hero A', imageUrl: '', cost: 1 },
+          { extId: 'hero-b', name: 'Hero B', imageUrl: '', cost: 2 },
+        ],
+      },
+    });
+    await wrapper.find('[data-testid="play-your-discard-expand"]').trigger('click');
+    const all = wrapper.find('[data-testid="play-your-discard-all"]');
+    assert.equal(all.exists(), true, 'full discard list shown after expanding');
+    const tiles = all.findAll('[data-testid="card-tile"]');
+    assert.equal(tiles.length, 2, 'one tile per discard card');
+  });
+
+  test('WP-243: no expand toggle when discardCards is empty or redacted', () => {
+    const wrapper = mount(YourDeckDiscardZone, {
+      props: { deckCount: 10, discardCount: 0 },
+    });
+    assert.equal(
+      wrapper.find('[data-testid="play-your-discard-expand"]').exists(),
+      false,
+      'no expand toggle without discardCards',
+    );
+  });
 });

@@ -49,6 +49,28 @@ export default defineComponent({
       type: Number,
       required: true,
     },
+    /**
+     * Villain group IDs from the match composition. Optional; when provided,
+     * displayed alongside mastermind and scheme.
+     */
+    villainGroupIds: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
+    /**
+     * Henchman group IDs from the match composition.
+     */
+    henchmanGroupIds: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
+    /**
+     * Hero deck IDs from the match composition.
+     */
+    heroDeckIds: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
   },
   setup(props) {
     function activePlayerLabel(): string {
@@ -104,6 +126,15 @@ export default defineComponent({
       </span>
       <span data-testid="play-hud-scheme-name">
         <strong>Scheme:</strong> {{ schemeName() }}
+      </span>
+      <span v-if="villainGroupIds.length > 0" data-testid="play-hud-villain-groups">
+        <strong>Villains:</strong> {{ villainGroupIds.join(', ') }}
+      </span>
+      <span v-if="henchmanGroupIds.length > 0" data-testid="play-hud-henchman-groups">
+        <strong>Henchmen:</strong> {{ henchmanGroupIds.join(', ') }}
+      </span>
+      <span v-if="heroDeckIds.length > 0" data-testid="play-hud-hero-decks">
+        <strong>Heroes:</strong> {{ heroDeckIds.join(', ') }}
       </span>
       <span data-testid="play-hud-turn">Turn {{ snapshot.game.turn }}</span>
       <span data-testid="play-hud-active">Active: {{ activePlayerLabel() }}</span>

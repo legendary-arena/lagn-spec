@@ -9,8 +9,9 @@ import { getCardTypes } from "./lib/cardTypesClient";
 import { getCardAbilities, buildAbilityTagIndex } from "./lib/cardAbilitiesClient";
 import { getSchemeTwistPatterns, getSchemeTwistAssignments } from "./lib/schemeTwistClient";
 import { getCardPatterns } from "./lib/cardPatternsClient";
+import { getCardMechanics, cardMatchesMechanics } from "./lib/cardMechanicsClient";
 import { devLog } from "./lib/devLog";
-import type { CardTypeEntry, CardAbilityEntry, SchemeTwistPattern, CardPattern } from "@legendary-arena/registry/schema";
+import type { CardTypeEntry, CardAbilityEntry, SchemeTwistPattern, CardPattern, CardMechanicsIndex } from "@legendary-arena/registry/schema";
 import { setGlossaries } from "./composables/useRules";
 import { useGlossary, rebuildGlossaryEntries } from "./composables/useGlossary";
 import { useLightbox } from "./composables/useLightbox";
@@ -30,6 +31,7 @@ import LoadoutPreview from "./components/LoadoutPreview.vue";
 import AbilityEffectFilter from "./components/AbilityEffectFilter.vue";
 import SchemeTwistFilter from "./components/SchemeTwistFilter.vue";
 import PatternFilter from "./components/PatternFilter.vue";
+import MechanicFilter from "./components/MechanicFilter.vue";
 import AppShell from "./components/branding/AppShell.vue";
 import { useSetupFromUrl } from "./composables/useSetupFromUrl";
 import type {
@@ -130,6 +132,7 @@ const activeFilterCount = computed(() => {
   if (selectedEffectSlugs.value.size > 0) n += selectedEffectSlugs.value.size;
   if (selectedTwistSlugs.value.size > 0) n += selectedTwistSlugs.value.size;
   if (selectedMechanicalPatternSlugs.value.size > 0) n += selectedMechanicalPatternSlugs.value.size;
+  if (selectedMechanicSlugs.value.size > 0) n += selectedMechanicSlugs.value.size;
   return n;
 });
 
@@ -244,6 +247,16 @@ const henchmanPatternAssignments = ref<Map<string, string>>(new Map());
 const mastermindPatternAssignments = ref<Map<string, string>>(new Map());
 const selectedMechanicalPatternSlugs = ref<Set<string>>(new Set());
 
+// ── Hero mechanic taxonomy (WP-270 / EC-301) ─────────────────────────────────
+// Hero-mechanic feed (card-mechanics.json, WP-269): the mechanics[] list drives
+// the filter ribbon and the per-card cards{ extId: { mechanics } } mapping
+// drives filtering. null until onMounted resolves; becomes the non-blocking
+// empty index if the fetch fails or the schema rejects (cardMechanicsClient.ts
+// never throws), in which case the ribbon stays hidden and the grid renders
+// unchanged.
+const cardMechanicsIndex = ref<CardMechanicsIndex | null>(null);
+const selectedMechanicSlugs = ref<Set<string>>(new Set());
+
 function toggleGroup(group: TypeGroup) {
   const allSelected = group.types.every((t) => selectedTypes.value.has(t));
   const next = new Set(selectedTypes.value);
@@ -290,6 +303,7 @@ function clearAllFilters() {
   selectedEffectSlugs.value = new Set();
   selectedTwistSlugs.value = new Set();
   selectedMechanicalPatternSlugs.value = new Set();
+  selectedMechanicSlugs.value = new Set();
   selectedCard.value = null;
   applyFilters();
 }
@@ -417,6 +431,14 @@ onMounted(async () => {
     // share an O(1) lookup table built from the registry's structural data.
     buildCardKeyToEntitySlugIndex();
     enrichMechanicalPatterns(allCards.value);
+
+    // why: WP-270 — hero-mechanic feed (card-mechanics.json, WP-269).
+    // cardMechanicsClient.ts is non-blocking (returns the empty index on HTTP
+    // failure or schema rejection, never throws), so no try/catch is needed at
+    // this seam. When the index has no visible mechanics the MechanicFilter
+    // ribbon stays hidden via its internal v-if; the card view stays functional.
+    loadStatus.value = "Loading hero mechanics taxonomy…";
+    cardMechanicsIndex.value = await getCardMechanics(metadataBaseUrl);
 
     // why: Parallel to getThemes() above — glossary fetch is non-blocking.
     // If R2 is unreachable or the JSON files are missing, console.warn and
@@ -653,10 +675,11 @@ function applyFilters() {
   // filter (a card matches if ANY selected effect's tag is present); AND
   // with every other filter (set / hero class / card type / search —
   // existing applyQuery() semantics preserved upstream).
+  let effectFiltered = twistFiltered;
   if (selectedEffectSlugs.value.size > 0 && abilityTagIndex.value) {
     const tagIndex = abilityTagIndex.value;
     const selected = selectedEffectSlugs.value;
-    filteredCards.value = twistFiltered.filter((card) => {
+    effectFiltered = twistFiltered.filter((card) => {
       const tags = tagIndex.get(card.key);
       if (!tags) return false;
       for (const slug of selected) {
@@ -664,8 +687,21 @@ function applyFilters() {
       }
       return false;
     });
+  }
+  // why: WP-270 — hero-mechanic filter, applied AFTER applyQuery() and the
+  // other post-query filters so OR-within-selected-mechanics composes as an AND
+  // with the text query + every other filter. Card→mechanic membership is read
+  // ONLY from the feed's per-card cards[extId].mechanics mapping via
+  // cardMatchesMechanics; the viewer never parses ability text at runtime (the
+  // producer, WP-269, already classified each hero's mechanics).
+  if (selectedMechanicSlugs.value.size > 0 && cardMechanicsIndex.value) {
+    const index = cardMechanicsIndex.value;
+    const selected = selectedMechanicSlugs.value;
+    filteredCards.value = effectFiltered.filter((card) =>
+      cardMatchesMechanics(index, card.extId, selected),
+    );
   } else {
-    filteredCards.value = twistFiltered;
+    filteredCards.value = effectFiltered;
   }
   selectedCard.value = null;
 }
@@ -916,6 +952,16 @@ function navigateToCard(slug: string) {
             :tag-index="abilityTagIndex"
             v-model:selected-effect-slugs="selectedEffectSlugs"
             @update:selected-effect-slugs="applyFilters"
+          />
+
+          <!-- Hero mechanic chip ribbon (WP-270). Fed by card-mechanics.json
+               (WP-269); MechanicFilter renders only hidden !== true mechanics
+               and hides itself when none are visible (empty/invalid feed or all
+               hidden), so the outer wrapper needs no extra guard. -->
+          <MechanicFilter
+            :mechanics="cardMechanicsIndex?.mechanics ?? []"
+            v-model:selected-mechanic-slugs="selectedMechanicSlugs"
+            @update:selected-mechanic-slugs="applyFilters"
           />
 
           <!-- Scheme twist pattern chip ribbon (WP-183). Gated on a single

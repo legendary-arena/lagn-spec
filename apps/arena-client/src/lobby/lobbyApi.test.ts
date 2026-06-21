@@ -6,16 +6,21 @@ import type { LobbyMatchSummary } from './lobbyApi';
 import type { MatchSetupConfig } from '@legendary-arena/game-engine';
 import { parseLoadoutJson } from './parseLoadoutJson';
 
+// WP-254 (D-24025): qualified <setAbbr>/<slug> ext_ids. The
+// parseLoadoutJson + createMatch block below routes this through the new lobby
+// guard, which rejects bare slugs; migrating the VALUES keeps every assertion
+// (here and in the WP-090 createMatch/listMatches block, which round-trips the
+// same constant) byte-identical.
 const SAMPLE_CONFIG: MatchSetupConfig = {
-  schemeId: 'scheme-midtown-bank-robbery',
-  mastermindId: 'mastermind-magneto',
-  villainGroupIds: ['villains-brotherhood'],
-  henchmanGroupIds: ['henchmen-hand-ninjas'],
+  schemeId: 'core/midtown-bank-robbery',
+  mastermindId: 'core/magneto',
+  villainGroupIds: ['core/brotherhood'],
+  henchmanGroupIds: ['core/hand-ninjas'],
   heroDeckIds: [
-    'hero-spider-man',
-    'hero-hulk',
-    'hero-wolverine',
-    'hero-black-widow',
+    'core/spider-man',
+    'core/hulk',
+    'core/wolverine',
+    'core/black-widow',
   ],
   bystandersCount: 1,
   woundsCount: 30,

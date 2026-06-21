@@ -13,12 +13,16 @@ import assert from 'node:assert/strict';
 import {
   VILLAIN_ABILITY_TIMINGS,
   VILLAIN_EFFECT_KEYWORDS,
+  VILLAIN_EFFECT_PRIMITIVES,
+  LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR,
+  descriptorToLegacyKeyword,
   getVillainHooksForCard,
 } from './villainAbility.types.js';
 import type {
   VillainAbilityHook,
   VillainAbilityTiming,
   VillainEffectKeyword,
+  VillainEffectPrimitive,
 } from './villainAbility.types.js';
 import type { CardExtId } from '../state/zones.types.js';
 
@@ -146,13 +150,13 @@ describe('getVillainHooksForCard', () => {
       cardId: 'core-villain-skrulls-super-skrull' as CardExtId,
       timing: 'onAmbush',
       keywords: ['captureBystander'],
-      effects: ['captureBystander'],
+      effects: [{ primitive: 'capture-bystander' }],
     },
     {
       cardId: 'core-villain-skrulls-super-skrull' as CardExtId,
       timing: 'onFight',
       keywords: ['koHeroCurrentPlayer'],
-      effects: ['koHeroCurrentPlayer'],
+      effects: [{ primitive: 'ko-hero', target: 'current' }],
     },
     {
       cardId: 'henchman-doombot-legion-00' as CardExtId,
@@ -169,7 +173,10 @@ describe('getVillainHooksForCard', () => {
       'onFight',
     );
     assert.equal(matched.length, 1, 'exactly one onFight hook for that card');
-    assert.deepStrictEqual(matched[0]!.effects, ['koHeroCurrentPlayer']);
+    assert.deepStrictEqual(matched[0]!.keywords, ['koHeroCurrentPlayer']);
+    assert.deepStrictEqual(matched[0]!.effects, [
+      { primitive: 'ko-hero', target: 'current' },
+    ]);
   });
 
   it('returns an empty array when cardId is absent', () => {
@@ -207,7 +214,7 @@ describe('VillainAbilityHook serialization', () => {
       cardId: 'core-villain-hood-the-hood' as CardExtId,
       timing: 'onAmbush',
       keywords: ['captureBystander'],
-      effects: ['captureBystander'],
+      effects: [{ primitive: 'capture-bystander' }],
     };
 
     const serialized = JSON.stringify(sample);
@@ -215,5 +222,93 @@ describe('VillainAbilityHook serialization', () => {
 
     const deserialized = JSON.parse(serialized) as VillainAbilityHook;
     assert.deepStrictEqual(deserialized, sample, 'hook must survive JSON round-trip');
+  });
+});
+
+describe('VILLAIN_EFFECT_PRIMITIVES drift-detection', () => {
+  // why: VILLAIN_EFFECT_PRIMITIVES is the canonical readonly array for the
+  // parameterized vocabulary (WP-252 / D-24023). Per code-style §Drift
+  // Detection a canonical array must assert it matches its union exactly —
+  // adding a primitive to the union but not the array (or vice versa) would
+  // silently break dispatch. The 5 primitives collapse the 10 frozen keywords.
+  it('contains exactly the 5 canonical primitives in order', () => {
+    const expectedPrimitives: VillainEffectPrimitive[] = [
+      'ko-hero',
+      'gain-wound',
+      'capture-hq-hero',
+      'hero-deck-top-to-escape',
+      'capture-bystander',
+    ];
+    assert.equal(
+      VILLAIN_EFFECT_PRIMITIVES.length,
+      5,
+      'VILLAIN_EFFECT_PRIMITIVES must have exactly 5 entries',
+    );
+    assert.deepStrictEqual(
+      [...VILLAIN_EFFECT_PRIMITIVES],
+      expectedPrimitives,
+      'VILLAIN_EFFECT_PRIMITIVES must match the canonical primitives in order',
+    );
+    const uniquePrimitives = new Set(VILLAIN_EFFECT_PRIMITIVES);
+    assert.equal(
+      uniquePrimitives.size,
+      VILLAIN_EFFECT_PRIMITIVES.length,
+      'VILLAIN_EFFECT_PRIMITIVES must have no duplicates',
+    );
+  });
+});
+
+describe('legacy-keyword ↔ descriptor translation (WP-252 / D-24023)', () => {
+  // why: the parser translates every legacy [effect:<keyword>] marker through
+  // LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR, and the executor reverse-maps each
+  // dispatched descriptor back to a keyword for the applied-effects
+  // accumulator. The table must be total (every keyword) with valid primitives;
+  // the reverse-map must round-trip (so notableEvents / EFFECT_KEYWORD_LABELS /
+  // the replay hash stay keyword-identical) and be injective (10 distinct
+  // descriptors — no two keywords collapse to one descriptor).
+  it('maps every legacy keyword to a descriptor with a valid primitive', () => {
+    const primitiveSet = new Set<string>(VILLAIN_EFFECT_PRIMITIVES);
+    for (const keyword of VILLAIN_EFFECT_KEYWORDS) {
+      const descriptor = LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR[keyword];
+      assert.ok(descriptor, `LEGACY table must have an entry for "${keyword}"`);
+      assert.ok(
+        primitiveSet.has(descriptor.primitive),
+        `descriptor for "${keyword}" must use a canonical primitive`,
+      );
+    }
+  });
+
+  it('reverse-maps every legacy descriptor back to its keyword (round-trip, all 10)', () => {
+    for (const keyword of VILLAIN_EFFECT_KEYWORDS) {
+      const descriptor = LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR[keyword];
+      assert.equal(
+        descriptorToLegacyKeyword(descriptor),
+        keyword,
+        `descriptorToLegacyKeyword must round-trip "${keyword}"`,
+      );
+    }
+  });
+
+  it('is injective — the 10 legacy descriptors are distinct', () => {
+    const seen = new Set<string>();
+    for (const keyword of VILLAIN_EFFECT_KEYWORDS) {
+      const descriptor = LEGACY_VILLAIN_KEYWORD_TO_DESCRIPTOR[keyword];
+      const descriptorKey = JSON.stringify([
+        descriptor.primitive,
+        descriptor.target ?? '',
+        descriptor.magnitude ?? '',
+        descriptor.selector ?? '',
+      ]);
+      assert.ok(
+        !seen.has(descriptorKey),
+        `descriptor for "${keyword}" must be unique (injective inverse)`,
+      );
+      seen.add(descriptorKey);
+    }
+    assert.equal(
+      seen.size,
+      VILLAIN_EFFECT_KEYWORDS.length,
+      'all 10 legacy descriptors must be distinct',
+    );
   });
 });

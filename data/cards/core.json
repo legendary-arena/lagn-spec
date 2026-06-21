@@ -43,7 +43,7 @@
           "attack": "2",
           "recruit": null,
           "abilities": [
-            "[hc:covert]: You may KO a card from your hand or discard pile. If you do, rescue a Bystander."
+            "[hc:covert]: You may KO a card from your hand or discard pile. If you do, rescue a Bystander. [keyword:optional-ko-reward:rescue:1]"
           ]
         },
         {
@@ -58,7 +58,7 @@
           "attack": "0+",
           "recruit": null,
           "abilities": [
-            "You get +1[icon:attack] for each Bystander in your Victory Pile."
+            "You get +1[icon:attack] for each Bystander in your Victory Pile. [keyword:attack-per-count:victory-bystanders:1]"
           ]
         },
         {
@@ -1265,7 +1265,7 @@
           "attack": null,
           "recruit": null,
           "abilities": [
-            "Reveal the top three cards of your deck. Put any that cost 2[icon:vp] or less into your hand. Put the rest back in any order."
+            "Reveal the top three cards of your deck. Put any that cost 2[icon:vp] or less into your hand. Put the rest back in any order. [keyword:reveal:cost-lte-2:draw][keyword:reveal-count:3]"
           ]
         }
       ],

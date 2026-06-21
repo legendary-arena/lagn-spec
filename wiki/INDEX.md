@@ -1,7 +1,7 @@
 # Wiki Index
 
-> **25 / 50** entity pages.
-> Last regenerated: 2026-06-10.
+> **26 / 50** entity pages.
+> Last regenerated: 2026-06-18.
 > See [SCHEMA.md](SCHEMA.md) for the entity-page contract and
 > [README.md](README.md) for purpose, conventions, and authority.
 
@@ -100,6 +100,10 @@ Step-by-step walkthroughs for completing specific tasks.
 - [Wiki Viewer](wiki-viewer.md) — How to create, edit, preview,
   and publish ewiki pages: page template, commit prefixes, build
   pipeline, markdown syntax, and local dev server.
+- [Hugo Onboarding](hugo-onboarding.md) — Day-one ramp for the
+  `www.legendary-arena.com` marketing site: WordPress→Hugo mental
+  model, from-scratch local setup, project tour, and step-by-step
+  recipes for common tasks (menus, products, posts, hotfixes).
 - [Figma Logo Design](figma-logo-design.md) — Deterministic
   pipeline for building production-grade SVG logo systems in Figma.
 - [Blog Post Authoring](blog-post-authoring.md) — Writing and
@@ -174,6 +178,7 @@ following are useful entry points:
 - **`hugo`** — Pages covering Hugo site infrastructure:
   [Wiki Viewer](wiki-viewer.md),
   [Hugo Web System](hugo-web-system.md),
+  [Hugo Onboarding](hugo-onboarding.md),
   [Ewiki Authoring](ewiki-authoring.md)
 - **`layer-marketing`** — Pages anchored in the marketing layer:
   [Homepage Marketing Scorecard](homepage-marketing-scorecard.md),

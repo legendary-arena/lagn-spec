@@ -334,6 +334,50 @@ describe('fightMastermind', () => {
     );
   });
 
+  it('non-final fight: captured bystanders are rescued immediately, not held for the vanquish', () => {
+    // why: regression test for the play.legendary-arena.com report — a
+    // Mastermind holding bystanders must release them on EVERY tactic
+    // defeat, not only the final blow (Universal Rules v23 §"When you fight
+    // a Mastermind/Commander"). Three tactics remain after this fight, so
+    // the mastermind is NOT vanquished, yet both held bystanders must move
+    // to the victory pile.
+    const gameState = createMockGameState({
+      turnEconomy: { attack: 10, recruit: 0, spentAttack: 0, spentRecruit: 0 },
+      mastermind: {
+        id: 'test-mastermind' as CardExtId,
+        baseCardId: 'test-mastermind-base' as CardExtId,
+        tacticsDeck: ['tactic-1', 'tactic-2', 'tactic-3'] as CardExtId[],
+        tacticsDefeated: [] as CardExtId[],
+        strikePile: [] as CardExtId[],
+        attachedBystanders: ['pile-bystander-a', 'pile-bystander-b'] as CardExtId[],
+      },
+    });
+
+    const moveContext = createMockMoveContext(gameState);
+    fightMastermind(moveContext);
+
+    assert.equal(
+      moveContext.G.counters[ENDGAME_CONDITIONS.MASTERMIND_DEFEATED],
+      undefined,
+      'MASTERMIND_DEFEATED must NOT be set while tactics remain',
+    );
+    assert.deepStrictEqual(
+      moveContext.G.playerZones['0']!.victory,
+      ['tactic-1', 'pile-bystander-a', 'pile-bystander-b'],
+      'the defeated tactic and both held bystanders are awarded on this non-final fight',
+    );
+    assert.deepStrictEqual(
+      moveContext.G.mastermind.attachedBystanders,
+      [],
+      'mastermind bystander store must be cleared after the non-final rescue',
+    );
+    assert.equal(
+      moveContext.G.notableEvents.length,
+      0,
+      'the vanquish-only mastermindDefeated event must NOT fire while tactics remain',
+    );
+  });
+
   it('JSON.stringify(G) succeeds after fight', () => {
     const gameState = createMockGameState({
       turnEconomy: { attack: 10, recruit: 0, spentAttack: 0, spentRecruit: 0 },
@@ -348,11 +392,12 @@ describe('fightMastermind', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Integration: Master Strike capture (real handler) then vanquish across two
-// fights. Reproduces the play.legendary-arena.com report where a mastermind
-// that captured bystanders is defeated on the second attack — proves the
-// captured bystanders are awarded to victory end-to-end through the real
-// capture + fight code paths, not just the unit-level award branch.
+// Integration: Master Strike capture (real handler) then per-fight rescue
+// across two fights. Reproduces the play.legendary-arena.com report where a
+// mastermind that captured bystanders was only releasing them on the final
+// blow — proves the captured bystanders are awarded to victory on EACH tactic
+// defeat, end-to-end through the real capture + fight code paths, with a
+// fresh capture between fights to show the per-fight semantics.
 // ---------------------------------------------------------------------------
 
 /**
@@ -416,35 +461,49 @@ function makeIntegrationState(): LegendaryGameState {
   } as unknown as LegendaryGameState;
 }
 
-describe('fightMastermind — integration: Master Strike capture then vanquish', () => {
-  it('awards bystanders captured by Master Strikes when the last tactic is defeated', () => {
+describe('fightMastermind — integration: Master Strike capture then per-fight rescue', () => {
+  it('rescues the held bystander on EACH tactic defeat, including a fresh capture between fights', () => {
     const gameState = makeIntegrationState();
 
-    // Two real Master Strikes capture two bystanders onto the mastermind.
+    // A real Master Strike captures the first bystander onto the mastermind.
     mastermindStrikeHandler(gameState, {}, { cardId: 'strike-1' });
-    mastermindStrikeHandler(gameState, {}, { cardId: 'strike-2' });
     assert.equal(
       gameState.mastermind.attachedBystanders.length,
-      2,
-      'two bystanders must be captured onto the mastermind',
+      1,
+      'one bystander must be captured onto the mastermind by the first strike',
     );
 
     const moveContext = createMockMoveContext(gameState);
 
-    // First attack: defeats tactic-1 — mastermind NOT yet vanquished, no award.
+    // First attack: defeats tactic-1 (NON-final) — must rescue the held
+    // bystander immediately, not wait for the vanquish.
     fightMastermind(moveContext);
     assert.equal(
-      moveContext.G.mastermind.attachedBystanders.length,
-      2,
-      'bystanders are still held after only the first tactic falls',
+      moveContext.G.counters[ENDGAME_CONDITIONS.MASTERMIND_DEFEATED],
+      undefined,
+      'mastermind is NOT yet vanquished after only the first tactic falls',
     );
     assert.deepStrictEqual(
       moveContext.G.playerZones['0']!.victory,
-      ['tactic-1'],
-      'only the first defeated tactic is in victory after the first attack',
+      ['tactic-1', 'bystander-001'],
+      'the first defeated tactic and the held bystander are both rescued on the non-final fight',
+    );
+    assert.equal(
+      moveContext.G.mastermind.attachedBystanders.length,
+      0,
+      'mastermind bystander store is cleared after the non-final rescue',
     );
 
-    // Second attack: defeats tactic-2 (last) — vanquish — award all captures.
+    // A second Master Strike captures another bystander BETWEEN fights.
+    mastermindStrikeHandler(moveContext.G, {}, { cardId: 'strike-2' });
+    assert.equal(
+      moveContext.G.mastermind.attachedBystanders.length,
+      1,
+      'the second strike captures a fresh bystander before the final fight',
+    );
+
+    // Second attack: defeats tactic-2 (last) — vanquish — rescues the freshly
+    // captured bystander (not the one already rescued on the first fight).
     fightMastermind(moveContext);
     assert.equal(
       moveContext.G.counters[ENDGAME_CONDITIONS.MASTERMIND_DEFEATED],
@@ -453,13 +512,24 @@ describe('fightMastermind — integration: Master Strike capture then vanquish',
     );
     assert.deepStrictEqual(
       moveContext.G.playerZones['0']!.victory,
-      ['tactic-1', 'tactic-2', 'bystander-001', 'bystander-002'],
-      'both tactics and both rescued bystanders must be in victory after vanquish',
+      ['tactic-1', 'bystander-001', 'tactic-2', 'bystander-002'],
+      'each tactic rescued the bystander the mastermind held at the moment of its defeat',
     );
     assert.equal(
       moveContext.G.mastermind.attachedBystanders.length,
       0,
-      'mastermind bystander store must be cleared after the award',
+      'mastermind bystander store must be cleared after the final rescue',
+    );
+
+    // The vanquish event reports only the bystander rescued on the FINAL fight.
+    const defeatEvent = moveContext.G.notableEvents.find(
+      (event) => event.type === 'mastermindDefeated',
+    );
+    assert.ok(defeatEvent, 'a mastermindDefeated event must be emitted on vanquish');
+    assert.equal(
+      defeatEvent.type === 'mastermindDefeated' && defeatEvent.bystandersRescued,
+      1,
+      'the vanquish event reports the single bystander rescued on the final fight',
     );
   });
 });

@@ -20,6 +20,8 @@ import { getAvailableAttack, spendAttack } from '../economy/economy.logic.js';
 import { resolveFightCost } from '../economy/economy.resolve.js';
 import { isGuardBlocking, getPatrolModifier } from '../board/boardKeywords.logic.js';
 import { executeVillainAbilities } from '../villain/villainEffects.execute.js';
+import { hasPendingKoHeroChoice } from './koHeroChoice.resolve.js';
+import { hasPendingOptionalKoReward } from './optionalKoReward.resolve.js';
 import { composeFightNarrative } from '../events/notableEvents.compose.js';
 
 /** Move context provided by boardgame.io 0.50.x to every move function. */
@@ -85,6 +87,15 @@ export function fightVillain(
   // why: fighting happens during the main action window; non-core moves
   // gate internally per the WP-014A precedent
   if (G.currentStage !== 'main') return;
+
+  // why: block-all guard (D-24008) — while a KO-a-Hero choice is pending the
+  // board is frozen; fightVillain returns with no side effects so the player
+  // resolves the Fight effect before fighting again. Placed immediately after
+  // the stage gate, before any G/zone write.
+  if (hasPendingKoHeroChoice(G)) return;
+  // why: block-all guard (D-24019) — optional-KO-reward choice pending; the
+  // board is frozen until resolved (beside the D-24008 KO-hero check above).
+  if (hasPendingOptionalKoReward(G)) return;
 
   // Step 3: Mutate G
   // why: MVP has no attack point check; WP-018 adds the economy. Any player

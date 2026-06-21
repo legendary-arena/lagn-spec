@@ -39,6 +39,8 @@ import type {
   UIDisplayEntry,
   UIState,
   UIPendingHeroChoice,
+  UIPendingKoHeroChoice,
+  UIEligibleKoHeroCard,
 } from './uiState.types.js';
 import type { NotableGameEvent } from '../events/notableEvents.types.js';
 import { buildUIState } from './uiState.build.js';
@@ -708,6 +710,92 @@ describe('UIState type drift (WP-222 / EC-254) — UIPendingHeroChoice', () => {
       'display',
       'playerID',
     ]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-243 / EC-274 — UIPendingKoHeroChoice + UIEligibleKoHeroCard +
+// discardCards/discardDisplay drift pins
+// ---------------------------------------------------------------------------
+
+describe('UIState type drift (WP-243 / EC-274) — KO-a-Hero choice projection', () => {
+  it('UIEligibleKoHeroCard has exactly the three locked fields', () => {
+    const fixture = {
+      zone: 'discard' as const,
+      cardId: 'core/black-widow/strike#0',
+      display: {
+        extId: 'core/black-widow/strike#0',
+        name: 'Mission Accomplished',
+        imageUrl: '',
+        cost: 2,
+      },
+    } satisfies UIEligibleKoHeroCard;
+
+    assert.deepStrictEqual(Object.keys(fixture).sort(), ['cardId', 'display', 'zone']);
+  });
+
+  it('UIPendingKoHeroChoice has exactly the four locked fields', () => {
+    const fixture = {
+      choiceType: 'ko-hero' as const,
+      playerID: '0',
+      eligible: [
+        {
+          zone: 'hand' as const,
+          cardId: 'hero-a',
+          display: { extId: 'hero-a', name: 'Hero A', imageUrl: '', cost: 1 },
+        },
+      ],
+      remaining: 1,
+    } satisfies UIPendingKoHeroChoice;
+
+    assert.deepStrictEqual(Object.keys(fixture).sort(), [
+      'choiceType',
+      'eligible',
+      'playerID',
+      'remaining',
+    ]);
+  });
+
+  it('UIPlayerState carries optional discardCards / discardDisplay (redacted-form omits both)', () => {
+    const withDiscard = {
+      playerId: '0',
+      deckCount: 4,
+      handCount: 0,
+      discardCount: 2,
+      inPlayCount: 0,
+      victoryCount: 0,
+      woundCount: 0,
+      discardCards: ['hero-a', 'hero-b'],
+      discardDisplay: [
+        { extId: 'hero-a', name: 'Hero A', imageUrl: '', cost: 1 },
+        { extId: 'hero-b', name: 'Hero B', imageUrl: '', cost: 2 },
+      ],
+    } satisfies UIPlayerState;
+
+    const redacted = {
+      playerId: '1',
+      deckCount: 4,
+      handCount: 0,
+      discardCount: 2,
+      inPlayCount: 0,
+      victoryCount: 0,
+      woundCount: 0,
+    } satisfies UIPlayerState;
+
+    assert.equal(withDiscard.discardCards.length, withDiscard.discardDisplay.length);
+    assert.equal(redacted.discardCount, 2);
+  });
+
+  it('UIState carries an optional pendingKoHeroChoice field', () => {
+    const fixture = {
+      pendingKoHeroChoice: {
+        choiceType: 'ko-hero' as const,
+        playerID: '0',
+        eligible: [],
+        remaining: 1,
+      },
+    } satisfies Pick<UIState, 'pendingKoHeroChoice'>;
+    assert.equal(fixture.pendingKoHeroChoice!.remaining, 1);
   });
 });
 

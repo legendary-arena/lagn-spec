@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, type PropType } from 'vue';
+import { defineComponent, ref, watch, type PropType } from 'vue';
 import type { UIPendingHeroChoice } from '@legendary-arena/game-engine';
 import type { SubmitMove } from './uiMoveName.types';
 
@@ -40,11 +40,21 @@ export default defineComponent({
     },
   },
   setup(props) {
-    // why: double-submit prevention — set true on first button click; both
-    // buttons remain disabled until the component unmounts (the engine clears
-    // pendingHeroChoice on the next server frame, unmounting the prompt).
-    // Only one resolveHeroChoice move per prompt instance (EC-254).
+    // why: isSubmitting debounces a same-frame double-click ONLY; it must be
+    // cleared on every new server frame. The parent page keeps this component
+    // mounted for the whole match (only its inner `v-if` content toggles, not
+    // the component), so a persistent latch would leave both buttons disabled
+    // for the rest of the match after the first submission — the SECOND hero
+    // reveal choice would render frozen. Each server frame delivers a fresh
+    // pendingHeroChoice object; resetting on its identity change re-enables the
+    // buttons for the next choice and recovers from a no-op resubmit.
     const isSubmitting = ref(false);
+    watch(
+      () => props.pendingHeroChoice,
+      () => {
+        isSubmitting.value = false;
+      },
+    );
 
     function shouldRender(): boolean {
       return (

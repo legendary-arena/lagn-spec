@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, type PropType } from "vue";
+import { defineComponent, ref, watch, type PropType } from "vue";
 import type { UIPendingKoHeroChoice } from "@legendary-arena/game-engine";
 import type { SubmitMove } from "./uiMoveName.types";
 
@@ -39,7 +39,23 @@ export default defineComponent({
     },
   },
   setup(props) {
+    // why: isSubmitting debounces a same-frame double-click ONLY; it must be
+    // cleared on every new server frame. The parent page keeps this component
+    // mounted for the whole match (only its inner `v-if` content toggles, not
+    // the component), so a persistent latch would leave every button disabled
+    // for the rest of the match after the first submission — and freeze the
+    // next entry in a multi-KO queue (remaining > 1). Each server frame
+    // delivers a fresh pendingKoHeroChoice object; resetting on its identity
+    // change re-enables the buttons for the next choice and recovers from a
+    // no-op resubmit. Without this the board stays frozen by the block-all
+    // guard (D-24012) with no way to act.
     const isSubmitting = ref(false);
+    watch(
+      () => props.pendingKoHeroChoice,
+      () => {
+        isSubmitting.value = false;
+      },
+    );
 
     function shouldRender(): boolean {
       return (

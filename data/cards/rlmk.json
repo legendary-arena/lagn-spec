@@ -10,7 +10,7 @@
       "team": "inhumans",
       "cardCounts": {
         "Break the Silence": 5,
-        "Declaration of War": 3,
+        "Declaration of War": 5,
         "The King's Speech": 1
       },
       "cards": [
@@ -32,19 +32,6 @@
           ]
         },
         {
-          "name": "Worldess Murmur",
-          "displayName": "Worldess Murmur",
-          "slug": "worldess-murmur",
-          "rarity": 1,
-          "rarityLabel": "Common 2",
-          "slot": 2,
-          "hc": "ranged",
-          "cost": 5,
-          "attack": "3",
-          "recruit": "1",
-          "abilities": []
-        },
-        {
           "name": "Declaration of War",
           "displayName": "Declaration of War",
           "slug": "declaration-of-war",
@@ -60,10 +47,17 @@
           ]
         },
         {
+          "name": "Wordless Murmur",
+          "displayName": "Wordless Murmur",
           "slug": "wordless-murmur",
-          "abilities": [],
+          "rarity": 1,
           "rarityLabel": "Uncommon",
-          "slot": 3
+          "slot": 3,
+          "hc": "ranged",
+          "cost": 5,
+          "attack": "3",
+          "recruit": "1",
+          "abilities": []
         },
         {
           "name": "The King's Speech",
@@ -96,21 +90,13 @@
         {
           "id": "p2",
           "count": 5,
-          "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-worldess-murmur.webp",
-          "sides": [
-            "worldess-murmur"
-          ]
-        },
-        {
-          "id": "p3",
-          "count": 3,
           "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-declaration-of-war.webp",
           "sides": [
             "declaration-of-war"
           ]
         },
         {
-          "id": "p4",
+          "id": "p3",
           "count": 3,
           "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-wordless-murmur.webp",
           "sides": [
@@ -118,7 +104,7 @@
           ]
         },
         {
-          "id": "p5",
+          "id": "p4",
           "count": 1,
           "imageUrl": "https://images.legendary-arena.com/rlmk/rlmk-hr-black-bolt-the-kings-speech.webp",
           "sides": [

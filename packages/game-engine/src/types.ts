@@ -180,6 +180,24 @@ export {
   VILLAIN_EFFECT_KEYWORDS,
 } from './rules/villainAbility.types.js';
 
+// why: WP-257 / D-24033 + D-24034 — hollow-effect detection contracts are
+// defined canonically in src/diagnostics/hollowEffect.types.ts. Re-exported here
+// so consumers importing from './types.js' have access. EFFECT_EXECUTION_REASONS
+// + DEFERRED_BY_DESIGN_MECHANICS + HOLLOW_EFFECTS_CAP are value exports, so they
+// use a separate export statement.
+export type {
+  EffectExecutionReason,
+  EffectExecutionOutcome,
+  HollowEffectRecord,
+  GameDiagnostics,
+} from './diagnostics/hollowEffect.types.js';
+export {
+  EFFECT_EXECUTION_REASONS,
+  isHollowReason,
+  HOLLOW_EFFECTS_CAP,
+  DEFERRED_BY_DESIGN_MECHANICS,
+} from './diagnostics/hollowEffect.types.js';
+
 // why: WP-200 — notable game event contracts (NotableGameEvent,
 // NotableGameEventType, SchemeTwistResolverKey, FightResolvedEvent,
 // AmbushResolvedEvent, SchemeTwistResolvedEvent, MastermindStrikeResolvedEvent)
@@ -364,8 +382,14 @@ import type { MastermindState } from './mastermind/mastermind.types.js';
 import type { SchemeState } from './scheme/schemeState.types.js';
 import type { HookDefinition } from './rules/ruleHooks.types.js';
 import type { HeroAbilityHook } from './rules/heroAbility.types.js';
+// why: D-24019 — PendingOptionalKoReward.rewardType is a value of the closed
+// HeroKeyword union (the reward dispatched on KO).
+import type { HeroKeyword } from './rules/heroKeywords.js';
 import type { VillainAbilityHook } from './rules/villainAbility.types.js';
 import type { NotableGameEvent } from './events/notableEvents.types.js';
+// why: WP-257 / D-24034 — GameDiagnostics is the runtime-only hollow-effect
+// channel shape (plain JSON; never persisted, never gameplay input).
+import type { GameDiagnostics } from './diagnostics/hollowEffect.types.js';
 import type { LobbyState } from './lobby/lobby.types.js';
 import type { VillainDeckState, RevealedCardType } from './villainDeck/villainDeck.types.js';
 import type { CityZone, HqZone } from './board/city.types.js';
@@ -435,6 +459,32 @@ export interface PendingKoHeroChoice {
   choiceType: 'ko-hero';
   /** The player who must select a hero to KO. */
   playerID: string;
+}
+
+/**
+ * Pending optional-KO-then-reward player choice state (WP-248 / D-24019).
+ *
+ * Created when an optional-ko-reward hero effect is played (`onPlay`) and the
+ * player has at least one card in hand or discard. Appended to
+ * G.pendingOptionalKoRewards[] (FIFO queue). Removed (front-popped) by
+ * resolveOptionalKoReward after the player declines or KOs a chosen card. Must
+ * be undefined or empty at every turn-end (enforced by the block-all guards).
+ *
+ * // why: D-24019 — the choice is "decline, or KO one of your hand/discard
+ * cards (→ reward)". The pending entry records the choosing player, the reward
+ * to grant on KO, the reward magnitude, and the source card; eligible cards are
+ * recomputed fresh from current G by the move validation and the bot
+ * auto-resolver (no snapshot, mirrors WP-242's PendingKoHeroChoice).
+ */
+export interface PendingOptionalKoReward {
+  /** The player who must decline or choose a card to KO. */
+  playerID: string;
+  /** The reward granted iff the player KOs a card (dispatched to the existing executor). */
+  rewardType: HeroKeyword;
+  /** The reward magnitude passed to the reward executor. */
+  rewardMagnitude: number;
+  /** The hero card whose ability parked this choice (passed to the reward executor). */
+  sourceCardId: CardExtId;
 }
 
 /**
@@ -536,6 +586,17 @@ export interface LegendaryGameState {
   // empty [] both mean "no pending choice" (guards test `.length`).
   /** FIFO queue of pending KO-a-Hero choices awaiting player resolution (WP-242). */
   pendingKoHeroChoices?: PendingKoHeroChoice[] | undefined;
+
+  // why: WP-248 / D-24019 — FIFO queue of pending optional-KO-then-reward
+  // choices (one per played optional-ko-reward hero ability with ≥1 eligible
+  // card). Entries are appended by the executor park case; front-popped by
+  // resolveOptionalKoReward after the player declines or KOs a card. Must be
+  // undefined or empty at every turn-end. Optional so existing test state
+  // literals do not need updating; **lazily initialized at the park site, never
+  // in Game.setup** (mirrors villainEffects.execute.ts:190). Absent (undefined)
+  // or empty [] both mean "no pending choice" (guards test `.length`).
+  /** FIFO queue of pending optional-KO-then-reward choices awaiting resolution (WP-248). */
+  pendingOptionalKoRewards?: PendingOptionalKoReward[] | undefined;
 
   // why: playerZones is keyed by player ID string (boardgame.io uses "0", "1",
   // etc.). Each player has exactly 5 zone arrays. Only deck is non-empty after
@@ -734,6 +795,16 @@ export interface LegendaryGameState {
   // explicitly deferred it per D-4802.
   /** Optional setup-time scoring config; presence marks the match as PAR-scored. */
   readonly activeScoringConfig?: ScenarioScoringConfig;
+
+  // why: WP-257 / D-24034 — runtime-only hollow-effect diagnostics channel.
+  // Seeded empty at buildInitialGameState; written ONLY by recordHollowEffect
+  // (lazy-init there too, for older snapshots / narrow test mocks). Plain JSON,
+  // bounded by HOLLOW_EFFECTS_CAP, never persisted as a save-game, and NEVER
+  // read as gameplay input (no move/rule/endIf may consume it — observation,
+  // not state). Optional so existing full-state literals across the test suite
+  // need no edit (absent is treated as not-yet-written). Not projected to
+  // UIState here — that is WP-258.
+  diagnostics?: GameDiagnostics;
 }
 
 // why: PAR artifact storage types (WP-050) ship the immutable artifact +

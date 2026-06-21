@@ -15,6 +15,10 @@ import type { CardExtId } from '../state/zones.types.js';
 import type { LegalMove } from './ai.types.js';
 import { getAvailableAttack, getAvailableRecruit } from '../economy/economy.logic.js';
 import { isGuardBlocking, getPatrolModifier } from '../board/boardKeywords.logic.js';
+import { hasPendingKoHeroChoice } from '../moves/koHeroChoice.resolve.js';
+import { selectDefaultKoTarget } from '../villain/villainEffects.execute.js';
+import { hasPendingOptionalKoReward } from '../moves/optionalKoReward.resolve.js';
+import { selectDefaultOptionalKoTarget } from '../hero/heroEffects.execute.js';
 
 // why: simulation covers the play-phase only; lobby moves (setPlayerReady,
 // startMatchIfReady) are excluded because runSimulation starts the per-game
@@ -31,6 +35,8 @@ const SIMULATION_MOVE_NAMES = [
   'fightVillain',
   'recruitHero',
   'fightMastermind',
+  'resolveKoHeroChoice',
+  'resolveOptionalKoReward',
 ] as const;
 
 // why: type is exported implicitly via the const array above; external
@@ -99,6 +105,45 @@ export function getLegalMoves(
     return legalMoves;
   }
 
+  // why: pending optional-KO-reward short-circuit (D-24019) — inserted BEFORE
+  // the KO-hero short-circuit per the fixed precedence lock. While an
+  // optional-KO-reward choice is pending the engine block-all guard freezes
+  // every other move, so the bot must resolve it first. The single legal move
+  // is resolveOptionalKoReward with the deterministic default target
+  // (selectDefaultOptionalKoTarget: lowest cost, discard-before-hand, lowest
+  // index) — the bot KOs and takes the reward and NEVER declines (decline is
+  // human-only). defaultTarget is non-null here because the park requires ≥1
+  // eligible card and the board is frozen. Returns a list of length EXACTLY 1.
+  if (hasPendingOptionalKoReward(gameState)) {
+    const defaultTarget = selectDefaultOptionalKoTarget(zones, gameState.cardStats);
+    if (defaultTarget !== null) {
+      return [{ name: 'resolveOptionalKoReward', args: defaultTarget }];
+    }
+    // why: defensive — if no target exists (engine-invariant violation), fail
+    // closed with an empty list rather than emit an unresolvable move.
+    return legalMoves;
+  }
+
+  // why: pending-KO short-circuit (D-24009) — when a KO-a-Hero choice is
+  // pending the engine block-all guard freezes every other move, so the bot
+  // must resolve it before anything else. The single legal move is
+  // resolveKoHeroChoice with the legacy auto-resolution target
+  // (selectDefaultKoTarget reuses selectKoHeroTarget over discard → hand →
+  // inPlay), keeping the bot KO target byte-identical to the prior
+  // auto-resolution for replay determinism. selectDefaultKoTarget is non-null
+  // here because a choice is appended only when ≥2 eligible targets exist and
+  // the board is frozen. Returns a list of length EXACTLY 1 — no other move
+  // is appended or merged.
+  if (hasPendingKoHeroChoice(gameState)) {
+    const defaultTarget = selectDefaultKoTarget(zones);
+    if (defaultTarget !== null) {
+      return [{ name: 'resolveKoHeroChoice', args: defaultTarget }];
+    }
+    // why: defensive — if no target exists (engine-invariant violation), fail
+    // closed with an empty list rather than emit an unresolvable move.
+    return legalMoves;
+  }
+
   const stage = gameState.currentStage;
   const availableAttack = getAvailableAttack(gameState.turnEconomy);
   const availableRecruit = getAvailableRecruit(gameState.turnEconomy);
@@ -152,8 +197,12 @@ export function getLegalMoves(
     }
   }
 
-  // 5. revealVillainCard — one entry if stage === 'start'.
-  if (stage === 'start') {
+  // 5. revealVillainCard — one entry if stage === 'start' AND the once-per-turn
+  //    reveal allowance has not been consumed. The !villainRevealedThisTurn
+  //    guard mirrors the move-level guard in villainDeck.reveal.ts so a bot
+  //    policy that scores reveal highly cannot re-pick a guaranteed no-op reveal
+  //    every move-step and spin the turn forever (never advancing to 'main').
+  if (stage === 'start' && !gameState.villainRevealedThisTurn) {
     legalMoves.push({ name: 'revealVillainCard', args: {} });
   }
 

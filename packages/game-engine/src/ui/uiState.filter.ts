@@ -30,6 +30,9 @@ import type {
   UIKoPileState,
 } from './uiState.types.js';
 import type { UIAudience } from './uiAudience.types.js';
+// why: WP-258 — the filtered hollow-effect records are the engine's canonical
+// HollowEffectRecord (WP-257); the public pass-through copies them value-for-value.
+import type { HollowEffectRecord } from '../diagnostics/hollowEffect.types.js';
 
 // why: non-active players and spectators must not see the active player's
 // remaining resources (attack/recruit/piercing/woundsDrawn). Zeroed
@@ -162,8 +165,8 @@ function deepCopyKoPile(koPile: UIKoPileState): UIKoPileState {
  * Builds a redacted copy of a UIPlayerState with private fields removed.
  *
  * Redacted fields (omitted): handCards, handDisplay, inPlayCards,
- * inPlayDisplay. Preserved fields (public information): all counts,
- * discardTopCard, victoryCards, victoryVP.
+ * inPlayDisplay, discardCards, discardDisplay. Preserved fields (public
+ * information): all counts, discardTopCard, victoryCards, victoryVP.
  *
  * @param player - The source player state. Not mutated.
  * @returns A new UIPlayerState with private fields omitted.
@@ -187,6 +190,11 @@ function redactHandCards(player: UIPlayerState): UIPlayerState {
     // why: WP-128 / D-12803 — inPlayCards / inPlayDisplay redacted
     // for non-self / spectator audiences. Same omit-don't-assign
     // pattern as handCards for `exactOptionalPropertyTypes` discipline.
+    // why: WP-243 / D-24010 — discardCards / discardDisplay redacted for
+    // non-self / spectator audiences (same handCards privacy posture). The
+    // full discard list carries card identities the owning player may act on
+    // (KO-a-Hero); opponents and spectators see discardCount + discardTopCard
+    // only. Omit-don't-assign, both fields together.
   };
 
   // why: WP-128 / D-12803 — discardTopCard is public information (face-up
@@ -270,6 +278,22 @@ function preserveHandCards(player: UIPlayerState): UIPlayerState {
       copiedInPlayDisplay.push({ ...display });
     }
     base.inPlayDisplay = copiedInPlayDisplay;
+  }
+
+  // why: WP-243 / D-24010 — active player sees own full discard contents
+  // (needed for the KO-a-Hero prompt + the "View all" discard view); same
+  // conditional-assignment pattern as handCards. discardCards + discardDisplay
+  // are preserved together (both or neither) and spread/per-entry copied to
+  // prevent aliasing with the input UIState.
+  if (player.discardCards !== undefined) {
+    base.discardCards = [...player.discardCards];
+  }
+  if (player.discardDisplay !== undefined) {
+    const copiedDiscardDisplay = [];
+    for (const display of player.discardDisplay) {
+      copiedDiscardDisplay.push({ ...display });
+    }
+    base.discardDisplay = copiedDiscardDisplay;
   }
 
   // why: WP-128 / D-12803 — discardTopCard is public information; same
@@ -437,6 +461,96 @@ export function filterUIStateForAudience(
       ...uiState.pendingHeroChoice,
       display: { ...uiState.pendingHeroChoice.display },
     };
+  }
+
+  // why: D-24011 — pendingKoHeroChoice is redacted for EVERY audience except
+  // the choosing player. Unlike the public pendingHeroChoice (the revealed
+  // card is face-up on the table), the KO eligible list carries the chooser's
+  // HAND identities; passing it through to opponents or spectators would leak
+  // the hand. Present only when audience is a player whose playerId equals the
+  // chooser's playerID; omitted (conditional assignment, never an `undefined`
+  // literal) for opponents AND spectators. Per-entry display spread prevents
+  // aliasing with the input UIState.
+  if (
+    uiState.pendingKoHeroChoice !== undefined &&
+    audience.kind === 'player' &&
+    audience.playerId === uiState.pendingKoHeroChoice.playerID
+  ) {
+    const eligibleCopy = [];
+    for (const entry of uiState.pendingKoHeroChoice.eligible) {
+      eligibleCopy.push({
+        zone: entry.zone,
+        cardId: entry.cardId,
+        display: { ...entry.display },
+      });
+    }
+    result.pendingKoHeroChoice = {
+      choiceType: uiState.pendingKoHeroChoice.choiceType,
+      playerID: uiState.pendingKoHeroChoice.playerID,
+      eligible: eligibleCopy,
+      remaining: uiState.pendingKoHeroChoice.remaining,
+    };
+  }
+
+  // why: D-24020 — hand/discard are private to the chooser. pendingOptionalKoReward
+  // is redacted for EVERY audience except the choosing player (the D-24011
+  // hand-privacy analog). Its eligibleHand and eligibleDiscard lists carry the
+  // chooser's PRIVATE hand and discard identities; passing them through to
+  // opponents or spectators would leak both zones. Present only when the audience
+  // is a player whose playerId equals the chooser's playerID; omitted (conditional
+  // assignment, never an `undefined` literal) for opponents AND spectators.
+  // Per-entry display spread prevents aliasing with the input UIState.
+  if (
+    uiState.pendingOptionalKoReward !== undefined &&
+    audience.kind === 'player' &&
+    audience.playerId === uiState.pendingOptionalKoReward.playerID
+  ) {
+    const eligibleHandCopy = [];
+    for (const entry of uiState.pendingOptionalKoReward.eligibleHand) {
+      eligibleHandCopy.push({
+        zone: entry.zone,
+        cardId: entry.cardId,
+        display: { ...entry.display },
+      });
+    }
+    const eligibleDiscardCopy = [];
+    for (const entry of uiState.pendingOptionalKoReward.eligibleDiscard) {
+      eligibleDiscardCopy.push({
+        zone: entry.zone,
+        cardId: entry.cardId,
+        display: { ...entry.display },
+      });
+    }
+    result.pendingOptionalKoReward = {
+      playerID: uiState.pendingOptionalKoReward.playerID,
+      rewardLabel: uiState.pendingOptionalKoReward.rewardLabel,
+      eligibleHand: eligibleHandCopy,
+      eligibleDiscard: eligibleDiscardCopy,
+    };
+  }
+
+  // why: WP-258 / D-12803 — hollowEffects is PUBLIC card/mechanic data, not
+  // hidden info. The filter passes it through value-unchanged for EVERY
+  // audience (own-player AND other-player AND spectator) — it redacts /
+  // reorders / rewrites / drops NOTHING. A per-record fresh-object copy
+  // (aliasing defense, mirroring the notableEvents / victoryCards posture)
+  // prevents the audience-filtered UIState from aliasing the input array, while
+  // every field value is preserved so both audiences deep-equal the source.
+  // Conditional assignment (never a `hollowEffects: undefined` literal) keeps
+  // the absent-channel case omitting the field under exactOptionalPropertyTypes.
+  if (uiState.hollowEffects !== undefined) {
+    const hollowEffectsCopy: HollowEffectRecord[] = [];
+    for (const record of uiState.hollowEffects) {
+      hollowEffectsCopy.push({
+        cardId: record.cardId,
+        cardType: record.cardType,
+        timing: record.timing,
+        mechanic: record.mechanic,
+        reason: record.reason,
+        turn: record.turn,
+      });
+    }
+    result.hollowEffects = hollowEffectsCopy;
   }
 
   return result;

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "_comment": "Mechanic -> {wp, decision} provenance for the card mechanic ledgers (scripts/hero-mechanic-ledger.mjs and future villain/mastermind/scheme ledgers). Incrementally backfilled: a new mechanic-implementing WP adds its entry here. A missing key (or empty string) means 'not yet attributed' -- the ledger shows it blank rather than guessing. The handler column is auto-derived by the generator for executable mechanics; this file only carries wp/decision. Only mappings confirmed from WORK_INDEX / STATUS are seeded below; the rest await backfill.",
+  "mechanics": {
+    "reveal": { "wp": "WP-253", "decision": "D-24024" },
+    "reveal-ko": { "wp": "WP-253", "decision": "D-24024" },
+    "reveal-min": { "wp": "WP-253", "decision": "D-24024" },
+    "reveal-ko-or-draw": { "wp": "WP-253", "decision": "D-24024" },
+    "reveal-cost-attack": { "wp": "WP-253", "decision": "D-24024" },
+    "reveal-odd-draw": { "wp": "WP-253", "decision": "D-24024" },
+    "reveal-attack-choose": { "wp": "WP-253", "decision": "D-24024" },
+    "reveal-ko-attack": { "wp": "WP-253", "decision": "D-24024" },
+    "attack-per-count": { "wp": "WP-247", "decision": "" },
+    "optional-ko-reward": { "wp": "WP-248", "decision": "" },
+    "berserk": { "wp": "WP-256", "decision": "D-24031" },
+    "empowered": { "wp": "WP-267", "decision": "D-24044" }
+  }
+}

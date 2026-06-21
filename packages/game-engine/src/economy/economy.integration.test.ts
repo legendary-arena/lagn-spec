@@ -405,7 +405,9 @@ describe('economy integration', () => {
         cardId: 'ambush-villain',
         timing: 'onAmbush',
         keywords: ['gainWoundEachPlayer'],
-        effects: ['gainWoundEachPlayer'],
+        // why: WP-252 — effects is now the descriptor array (keywords stays the
+        // legacy keyword array); both parallel, mirroring the parser output.
+        effects: [{ primitive: 'gain-wound', target: 'each' }],
       },
     ];
 

@@ -32,6 +32,11 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
     for (const card of hero.cards) {
       cards.push({
         key:          `${abbr}-hero-${hero.slug}-${card.slot}`,
+        // why: D-24018 — canonical set-qualified ext_id for match-setup
+        // composition. Mirrors the engine's extractHeroSlug derivation
+        // (hero.slug), so a loadout built from this card is accepted by
+        // Game.setup() instead of being rejected as a flat-card key (D-10014).
+        extId:        `${abbr}/${hero.slug}`,
         cardType:     "hero",
         setAbbr:      abbr,
         setName,
@@ -57,6 +62,8 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
     for (const card of mm.cards) {
       cards.push({
         key:       `${abbr}-mastermind-${mm.slug}-${card.slug}`,
+        // why: D-24018 — canonical set-qualified ext_id (mastermind group slug).
+        extId:     `${abbr}/${mm.slug}`,
         cardType:  "mastermind",
         setAbbr:   abbr,
         setName,
@@ -73,6 +80,9 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
     for (const card of group.cards) {
       cards.push({
         key:       `${abbr}-villain-${group.slug}-${card.slug}`,
+        // why: D-24018 — canonical set-qualified ext_id (villain group slug).
+        // Mirrors the engine's extractVillainGroupSlug derivation.
+        extId:     `${abbr}/${group.slug}`,
         cardType:  "villain",
         setAbbr:   abbr,
         setName,
@@ -88,6 +98,8 @@ export function flattenSet(set: SetData, setName: string): FlatCard[] {
   for (const scheme of set.schemes) {
     cards.push({
       key:       `${abbr}-scheme-${scheme.slug}`,
+      // why: D-24018 — canonical set-qualified ext_id (scheme slug).
+      extId:     `${abbr}/${scheme.slug}`,
       cardType:  "scheme",
       setAbbr:   abbr,
       setName,

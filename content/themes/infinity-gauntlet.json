@@ -4,7 +4,7 @@
   "name": "Infinity Gauntlet",
   "description": "Thanos has assembled the six Infinity Gems into a single gauntlet of godlike power, erasing half of all life in the universe with a snap of his fingers. The Guardians of the Galaxy and cosmic heroes must challenge the Mad Titan before existence itself unravels.",
   "setupIntent": {
-    "mastermindId": "thanos",
+    "mastermindId": "gotg/thanos",
     "schemeId": "forge-the-infinity-gauntlet",
     "villainGroupIds": [
       "infinity-gems",
@@ -12,10 +12,10 @@
     ],
     "heroDeckIds": [
       "drax-the-destroyer",
-      "gamora",
+      "gotg/gamora",
       "groot",
       "rocket-raccoon",
-      "star-lord"
+      "gotg/star-lord"
     ]
   },
   "playerCount": {

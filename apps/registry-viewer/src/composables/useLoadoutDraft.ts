@@ -26,6 +26,10 @@ import {
 } from "@legendary-arena/registry/setupContract";
 
 import type { ThemeDefinition } from "../lib/themeClient";
+// why: D-24018 — surface ambiguous theme-slug substitutions (a deterministic
+// pick among mechanically-different printings) so the guess is discoverable
+// under `?debug` rather than fully silent. Gated, prod-stripped (EC-104).
+import { devLog } from "../lib/devLog";
 
 // why: Six DEFAULT_* constants exported additively per WP-114 PS-1
 // (D-114XX). The URL-preview composable `useSetupFromUrl` (WP-114 §B)
@@ -53,6 +57,195 @@ export const DEFAULT_EXPANSIONS = ["base"] as const;
  */
 function generateSeed(): string {
   return crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+}
+
+/**
+ * Resolves a bare theme slug to the set-qualified ext_id
+ * ("{setAbbr}/{slug}") the engine's match-setup validator requires
+ * (D-10014 / D-24018).
+ *
+ * Theme JSONs (content/themes/*.json, served from R2) store BARE entity
+ * slugs with no set prefix (e.g. "magneto", "four-horsemen"). Copying them
+ * verbatim into a loadout composition fails the qualified-form pattern and
+ * makes Game.setup() throw an HTTP 500 at match creation. This function
+ * bridges the two id spaces.
+ *
+ * Matching is on the slug portion of FlatCard.extId, NOT FlatCard.slug: for
+ * heroes / masterminds / villains / henchmen the engine derives the ext_id
+ * from the ENTITY slug (hero slug, group slug, mastermind slug), while
+ * FlatCard.slug is the individual *card* slug — the two differ (hero
+ * "wolverine" has extId "core/wolverine" but FlatCard.slug "keen-senses").
+ * The entity slug is only recoverable from extId.
+ *
+ * The `cardType` filter is mandatory: the same bare slug can map to
+ * different ext_ids per entity type — "magneto" is a hero in the Villains
+ * set (extId "vill/magneto") AND a mastermind in core (extId "core/magneto").
+ * Resolving a heroDeckId without the cardType guard could yield the
+ * mastermind's ext_id, which the engine's per-field hero validator rejects.
+ *
+ * Returns the qualified ext_id, or null ONLY when the slug matches no card
+ * of that type. A slug reprinted across multiple sets resolves
+ * deterministically (the core printing preferred, else the
+ * lexicographically-first ext_id): every "{set}/{slug}" printing of the
+ * same entity is an ext_id the engine accepts for that field, so declining
+ * would needlessly 500 the match over a card-art/printing difference that
+ * does not affect match creation. Callers keep the original bare slug on
+ * null so the live validation error list surfaces a genuine data gap (an
+ * actionable red error beats a silent drop or an HTTP 500).
+ *
+ * @param bareSlug - The unqualified theme slug (e.g. "magneto").
+ * @param cardType - The composition entity type to match within
+ *                   ("scheme" | "mastermind" | "villain" | "henchman" | "hero").
+ * @param cards - The registry's flat card list (extId + cardType per card).
+ */
+function resolveThemeSlugToExtId(
+  bareSlug: string,
+  cardType: string,
+  cards: Array<{ extId: string; cardType: string }>,
+): string | null {
+  const trimmedSlug = bareSlug.trim();
+  if (trimmedSlug === "") {
+    return null;
+  }
+  // why: a slug that already contains "/" is treated as an already-qualified
+  // ext_id and passed through untouched, so a future theme authored against
+  // qualified ids is never double-resolved. Bare theme slugs are [a-z0-9-]
+  // only, so a slash unambiguously means "already qualified".
+  if (trimmedSlug.includes("/")) {
+    return trimmedSlug;
+  }
+  const candidateExtIds: string[] = [];
+  for (const card of cards) {
+    if (card.cardType !== cardType) {
+      continue;
+    }
+    const slashIndex = card.extId.indexOf("/");
+    if (slashIndex < 0) {
+      continue;
+    }
+    const entitySlug = card.extId.slice(slashIndex + 1);
+    if (entitySlug !== trimmedSlug) {
+      continue;
+    }
+    if (!candidateExtIds.includes(card.extId)) {
+      candidateExtIds.push(card.extId);
+    }
+  }
+  if (candidateExtIds.length === 0) {
+    return null;
+  }
+  // why: prefer the core set's printing when the slug exists there — core is
+  // the canonical home for shared entities and themes are core-oriented.
+  const corePreferredExtId = `core/${trimmedSlug}`;
+  if (candidateExtIds.includes(corePreferredExtId)) {
+    return corePreferredExtId;
+  }
+  // why: the slug lives only in non-core set(s). Every printing is a valid
+  // ext_id for this field, so resolve to a stable pick instead of declining;
+  // declining would keep the bare slug and 500 the match. Sort first so a
+  // given theme always yields the same ext_id regardless of registry
+  // iteration order (a fresh prefill must be reproducible).
+  const sortedCandidateExtIds = [...candidateExtIds].sort();
+  const chosenExtId = sortedCandidateExtIds[0] ?? null;
+  // why: D-24018 — when 2+ non-core printings exist the pick is genuinely
+  // ambiguous AND (verified across all 16 such heroes) the printings are
+  // MECHANICALLY DIFFERENT decks, not cosmetic reprints — e.g.
+  // dstr/doctor-strange is a 4-card Artifact deck, msis/doctor-strange a
+  // 6-card Phasing deck. We keep the theme playable by picking
+  // deterministically, but the chosen deck may not be the author's intent, so
+  // surface the substitution (not silent) for discoverability. The real fix is
+  // qualifying the slug in the theme JSON at source. devLog is `?debug`-gated
+  // and prod-stripped, and per EC-104 logs only counts + 3-sample ids.
+  if (chosenExtId !== null && sortedCandidateExtIds.length > 1) {
+    devLog(
+      "theme",
+      `Ambiguous ${cardType} slug "${trimmedSlug}" has no core printing; resolved to a deterministic pick. Qualify the slug in the theme JSON to choose a specific printing.`,
+      {
+        chosen: chosenExtId,
+        alternatives: sortedCandidateExtIds.slice(1, 4).join(", "),
+        candidateCount: sortedCandidateExtIds.length,
+      },
+    );
+  }
+  return chosenExtId;
+}
+
+/**
+ * Resolves the villain group ext_ids a mastermind "Always Leads".
+ *
+ * A mastermind with an Always-Leads clause (e.g. Magneto Always Leads the
+ * Brotherhood) makes that villain group mandatory in the match deck — the
+ * printed rule is "you must include these villains." The mastermind card
+ * carries the requirement as bare group slugs in `alwaysLeads` (e.g.
+ * `["brotherhood"]`); this resolves each to the set-qualified villain group
+ * ext_id the loadout composition stores (e.g. "core/brotherhood").
+ *
+ * Resolution prefers the mastermind's OWN set printing of the led group
+ * (a `{mastermindSetAbbr}/{ledSlug}` villain that exists), so a non-core
+ * mastermind leads its own set's group rather than a core reprint. When no
+ * same-set printing exists it falls back to `resolveThemeSlugToExtId`'s
+ * core-preferred-else-lexicographic pick — the same id-space bridge the theme
+ * prefill uses (D-24018). An already-qualified slug (contains "/") passes
+ * through untouched. A slug that resolves to no villain group is dropped (the
+ * requirement is unenforceable without the group in the registry).
+ *
+ * @param mastermindExtId - The selected mastermind's set-qualified ext_id.
+ * @param cards - The registry's flat card list (extId + cardType + alwaysLeads).
+ */
+function resolveAlwaysLeadsGroupIds(
+  mastermindExtId: string,
+  cards: Array<{ extId: string; cardType: string; alwaysLeads?: readonly string[] }>,
+): string[] {
+  const trimmedMastermindId = mastermindExtId.trim();
+  if (trimmedMastermindId === "") {
+    return [];
+  }
+  let leadSlugs: readonly string[] = [];
+  for (const card of cards) {
+    if (card.cardType === "mastermind" && card.extId === trimmedMastermindId) {
+      leadSlugs = card.alwaysLeads ?? [];
+      break;
+    }
+  }
+  if (leadSlugs.length === 0) {
+    return [];
+  }
+  const slashIndex = trimmedMastermindId.indexOf("/");
+  const mastermindSetAbbr = slashIndex > 0 ? trimmedMastermindId.slice(0, slashIndex) : "";
+  const resolvedGroupIds: string[] = [];
+  for (const rawLeadSlug of leadSlugs) {
+    const ledSlug = rawLeadSlug.trim();
+    if (ledSlug === "") {
+      continue;
+    }
+    // why: an already-qualified slug ("{set}/{slug}") is passed through, mirroring
+    // resolveThemeSlugToExtId — future card data may qualify alwaysLeads at source.
+    if (ledSlug.includes("/")) {
+      if (!resolvedGroupIds.includes(ledSlug)) {
+        resolvedGroupIds.push(ledSlug);
+      }
+      continue;
+    }
+    // why: prefer the mastermind's own set printing of the led group so a
+    // non-core mastermind requires its own set's villains, not a core reprint.
+    let chosenGroupId: string | null = null;
+    if (mastermindSetAbbr !== "") {
+      const sameSetGroupId = `${mastermindSetAbbr}/${ledSlug}`;
+      for (const card of cards) {
+        if (card.cardType === "villain" && card.extId === sameSetGroupId) {
+          chosenGroupId = sameSetGroupId;
+          break;
+        }
+      }
+    }
+    if (chosenGroupId === null) {
+      chosenGroupId = resolveThemeSlugToExtId(ledSlug, "villain", cards);
+    }
+    if (chosenGroupId !== null && !resolvedGroupIds.includes(chosenGroupId)) {
+      resolvedGroupIds.push(chosenGroupId);
+    }
+  }
+  return resolvedGroupIds;
 }
 
 /**
@@ -94,6 +287,19 @@ export interface UseLoadoutDraftApi {
   draft: Ref<MatchSetupDocument>;
   errors: ComputedRef<MatchSetupValidationError[]>;
   isValid: ComputedRef<boolean>;
+  /**
+   * Villain group ext_ids the selected mastermind "Always Leads" — mandatory
+   * villains the match deck must include (e.g. Magneto → "core/brotherhood").
+   * Empty when no mastermind is selected or it has no Always-Leads clause.
+   */
+  requiredVillainGroupIds: ComputedRef<string[]>;
+  /**
+   * The subset of `requiredVillainGroupIds` not currently in the draft's
+   * `villainGroupIds` — non-empty only when a required group was removed or an
+   * imported loadout omits it. The builder warns and blocks export while this
+   * is non-empty.
+   */
+  missingRequiredVillainGroupIds: ComputedRef<string[]>;
   setScheme: (schemeId: string) => void;
   setMastermind: (mastermindId: string) => void;
   addVillainGroup: (groupId: string) => void;
@@ -121,14 +327,36 @@ export interface UseLoadoutDraftApi {
 }
 
 /**
+ * The composable's registry surface. Widens the validator's extId-only
+ * CardRegistryReader with `cardType`, which `prefillFromTheme` needs to
+ * resolve a bare theme slug within the correct composition entity type
+ * (see resolveThemeSlugToExtId — the same bare slug can map to different
+ * ext_ids per type). The real CardRegistry (FlatCard[]) supplies both
+ * fields, so every existing call site (LoadoutBuilder, LoadoutPreview)
+ * satisfies this without change and the call signature is preserved.
+ */
+interface LoadoutRegistryReader extends CardRegistryReader {
+  listCards(): Array<{
+    extId: string;
+    cardType: string;
+    // why: mastermind-only "Always Leads" villain group slugs — the builder
+    // resolves these to villain group ext_ids to auto-include and require them.
+    // Optional so non-mastermind cards and the lean test fixtures satisfy the
+    // shape without change (the real FlatCard always carries it on masterminds).
+    alwaysLeads?: readonly string[];
+  }>;
+}
+
+/**
  * Builds a loadout-draft composable bound to the supplied card registry.
  * Each invocation returns an independent draft (no module-level state,
  * no singletons).
  *
- * @param registry - A CardRegistryReader whose `listCards()` surface
- *                   supplies the ext_id universe for validation.
+ * @param registry - A LoadoutRegistryReader whose `listCards()` surface
+ *                   supplies the ext_id + cardType universe for validation
+ *                   and theme-slug resolution.
  */
-export function useLoadoutDraft(registry: CardRegistryReader): UseLoadoutDraftApi {
+export function useLoadoutDraft(registry: LoadoutRegistryReader): UseLoadoutDraftApi {
   const draft = ref<MatchSetupDocument>(createBlankDraft());
 
   const validationResult = computed<ValidateMatchSetupDocumentResult>(() => {
@@ -145,12 +373,35 @@ export function useLoadoutDraft(registry: CardRegistryReader): UseLoadoutDraftAp
 
   const isValid = computed<boolean>(() => validationResult.value.ok);
 
+  const requiredVillainGroupIds = computed<string[]>(() =>
+    resolveAlwaysLeadsGroupIds(draft.value.composition.mastermindId, registry.listCards()),
+  );
+
+  const missingRequiredVillainGroupIds = computed<string[]>(() => {
+    const present = draft.value.composition.villainGroupIds;
+    return requiredVillainGroupIds.value.filter((groupId) => !present.includes(groupId));
+  });
+
   function setScheme(schemeId: string): void {
     draft.value.composition.schemeId = schemeId.trim();
   }
 
   function setMastermind(mastermindId: string): void {
-    draft.value.composition.mastermindId = mastermindId.trim();
+    const trimmedMastermindId = mastermindId.trim();
+    draft.value.composition.mastermindId = trimmedMastermindId;
+    // why: "Always Leads" — a mastermind that always leads a villain group
+    // (e.g. Magneto → Brotherhood) makes that group mandatory in the match
+    // deck. Auto-include the led group(s) on selection so the loadout carries
+    // the villains the printed rule requires instead of silently omitting them.
+    // addUniqueId no-ops on a group already present, so this never duplicates a
+    // chip the user (or a theme prefill) already added.
+    const requiredGroupIds = resolveAlwaysLeadsGroupIds(
+      trimmedMastermindId,
+      registry.listCards(),
+    );
+    for (const requiredGroupId of requiredGroupIds) {
+      addUniqueId(draft.value.composition.villainGroupIds, requiredGroupId);
+    }
   }
 
   function addUniqueId(list: string[], groupId: string): void {
@@ -230,19 +481,35 @@ export function useLoadoutDraft(registry: CardRegistryReader): UseLoadoutDraftAp
   }
 
   function prefillFromTheme(theme: ThemeDefinition): void {
-    // why: Spread-copy every array field from the theme before assigning
-    // to the draft (L10 / A-091-04 / copilot Issue 17 FIX). Direct
-    // reference assignment would alias the registry-loaded theme
-    // singleton and let subsequent draft edits corrupt every consumer
-    // holding that reference. Precedent: WP-028 projection-aliasing
-    // post-mortem. Scalar fields (schemeId, mastermindId) are immutable
-    // strings so no spread is needed.
+    // why: Theme setupIntent fields hold BARE entity slugs (e.g. "magneto",
+    // "four-horsemen") with no set prefix, but the engine's match-setup
+    // validator requires set-qualified ext_ids ("{setAbbr}/{slug}", D-10014)
+    // and throws an HTTP 500 at match creation otherwise (D-24018). Resolve
+    // each bare slug to its qualified ext_id via the registry before
+    // assigning. An unresolvable slug is kept verbatim so the live `errors`
+    // list flags it (see resolveThemeSlugToExtId).
+    //
+    // why: `.map(...)` returns fresh arrays, so the draft never aliases the
+    // registry-loaded theme singleton — this preserves the L10 / A-091-04
+    // anti-aliasing guarantee that the prior spread-copy provided. Scalar
+    // fields (schemeId, mastermindId) are immutable strings.
+    const cards = registry.listCards();
     const composition = draft.value.composition;
-    composition.schemeId = theme.setupIntent.schemeId;
-    composition.mastermindId = theme.setupIntent.mastermindId;
-    composition.villainGroupIds = [...theme.setupIntent.villainGroupIds];
-    composition.henchmanGroupIds = [...theme.setupIntent.henchmanGroupIds];
-    composition.heroDeckIds = [...theme.setupIntent.heroDeckIds];
+    composition.schemeId =
+      resolveThemeSlugToExtId(theme.setupIntent.schemeId, "scheme", cards) ??
+      theme.setupIntent.schemeId;
+    composition.mastermindId =
+      resolveThemeSlugToExtId(theme.setupIntent.mastermindId, "mastermind", cards) ??
+      theme.setupIntent.mastermindId;
+    composition.villainGroupIds = theme.setupIntent.villainGroupIds.map(
+      (slug) => resolveThemeSlugToExtId(slug, "villain", cards) ?? slug,
+    );
+    composition.henchmanGroupIds = theme.setupIntent.henchmanGroupIds.map(
+      (slug) => resolveThemeSlugToExtId(slug, "henchman", cards) ?? slug,
+    );
+    composition.heroDeckIds = theme.setupIntent.heroDeckIds.map(
+      (slug) => resolveThemeSlugToExtId(slug, "hero", cards) ?? slug,
+    );
     draft.value.themeId = theme.themeId;
   }
 
@@ -327,6 +594,8 @@ export function useLoadoutDraft(registry: CardRegistryReader): UseLoadoutDraftAp
     draft,
     errors,
     isValid,
+    requiredVillainGroupIds,
+    missingRequiredVillainGroupIds,
     setScheme,
     setMastermind,
     addVillainGroup,

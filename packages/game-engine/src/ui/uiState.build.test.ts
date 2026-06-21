@@ -19,6 +19,7 @@ import type { MatchSetupConfig } from '../matchSetup.types.js';
 import type { CardRegistryReader } from '../matchSetup.validate.js';
 import type { LegendaryGameState, CardExtId, PendingHeroChoice } from '../types.js';
 import type { UICardDisplay } from './uiState.types.js';
+import type { HollowEffectRecord } from '../diagnostics/hollowEffect.types.js';
 import { ENDGAME_CONDITIONS } from '../endgame/endgame.types.js';
 
 /**
@@ -828,6 +829,410 @@ describe('buildUIState — pendingHeroChoice projection (WP-222 / EC-254)', () =
       ui.pendingHeroChoice!.display,
       gameState.cardDisplayData[cardId],
       'display reference must not be the same object as G.cardDisplayData entry',
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-243 / EC-274 — discard projection + pendingKoHeroChoice projection
+// ---------------------------------------------------------------------------
+
+const WOUND = 'pile-wound' as CardExtId;
+
+describe('buildUIState — discardCards / discardDisplay projection (WP-243)', () => {
+  it('projects the own player full discard contents, length-matched', () => {
+    const gameState = createTestGameState();
+    gameState.playerZones['0']!.discard = ['hero-a' as CardExtId, 'hero-b' as CardExtId, 'hero-a' as CardExtId];
+
+    const ui = buildUIState(gameState, mockCtx);
+    const player0 = ui.players.find((p) => p.playerId === '0')!;
+
+    assert.deepStrictEqual(player0.discardCards, ['hero-a', 'hero-b', 'hero-a'], 'verbatim discard ext_ids');
+    assert.ok(player0.discardDisplay !== undefined, 'discardDisplay present');
+    assert.equal(
+      player0.discardDisplay!.length,
+      player0.discardCards!.length,
+      'discardDisplay length matches discardCards',
+    );
+  });
+
+  it('discardCards is present iff discardDisplay is present (symmetry)', () => {
+    const gameState = createTestGameState();
+    gameState.playerZones['0']!.discard = [];
+    const ui = buildUIState(gameState, mockCtx);
+    const player0 = ui.players.find((p) => p.playerId === '0')!;
+    assert.equal(player0.discardCards !== undefined, player0.discardDisplay !== undefined, 'both present or both absent');
+    assert.deepStrictEqual(player0.discardCards, [], 'empty discard projects an empty array');
+  });
+
+  it('discardCards is a defensive copy — mutating it does not affect G', () => {
+    const gameState = createTestGameState();
+    gameState.playerZones['0']!.discard = ['hero-a' as CardExtId];
+    const ui = buildUIState(gameState, mockCtx);
+    const player0 = ui.players.find((p) => p.playerId === '0')!;
+    player0.discardCards!.push('injected' as string);
+    assert.deepStrictEqual(gameState.playerZones['0']!.discard, ['hero-a'], 'G discard untouched');
+  });
+
+  it('mutating a projected discardDisplay entry does not affect G (defensive copy)', () => {
+    const gameState = makeGameStateWithDisplayData();
+    const cardId = 'core/black-widow/strike#0' as CardExtId;
+    gameState.playerZones['0']!.discard = [cardId];
+    const originalName = gameState.cardDisplayData[cardId]!.name;
+    const ui = buildUIState(gameState, mockCtx);
+    const player0 = ui.players.find((p) => p.playerId === '0')!;
+    player0.discardDisplay![0]!.name = 'mutated';
+    assert.equal(gameState.cardDisplayData[cardId]!.name, originalName, 'G display untouched');
+  });
+});
+
+describe('buildUIState — pendingKoHeroChoice projection (WP-243 / D-24010)', () => {
+  function withKoChoice(): LegendaryGameState {
+    const gameState = makeGameStateWithDisplayData();
+    // why: reset the helper's hand so the eligible-order assertions are precise.
+    gameState.playerZones['0']!.discard = ['hero-d1' as CardExtId, WOUND, 'hero-d2' as CardExtId];
+    gameState.playerZones['0']!.hand = ['hero-h1' as CardExtId];
+    gameState.playerZones['0']!.inPlay = ['hero-p1' as CardExtId];
+    gameState.pendingKoHeroChoices = [{ choiceType: 'ko-hero', playerID: '0' }];
+    return gameState;
+  }
+
+  it('is undefined when the engine queue is empty', () => {
+    const gameState = createTestGameState();
+    assert.equal(gameState.pendingKoHeroChoices, undefined);
+    const ui = buildUIState(gameState, mockCtx);
+    assert.equal(ui.pendingKoHeroChoice, undefined, 'absent when no pending KO choice');
+  });
+
+  it('projects the FRONT entry with eligible spanning discard → hand → inPlay (wounds excluded)', () => {
+    const ui = buildUIState(withKoChoice(), mockCtx);
+    assert.ok(ui.pendingKoHeroChoice !== undefined, 'present when queue non-empty');
+    assert.equal(ui.pendingKoHeroChoice!.choiceType, 'ko-hero');
+    assert.equal(ui.pendingKoHeroChoice!.playerID, '0');
+    assert.deepStrictEqual(
+      ui.pendingKoHeroChoice!.eligible.map((e) => ({ zone: e.zone, cardId: e.cardId })),
+      [
+        { zone: 'discard', cardId: 'hero-d1' },
+        { zone: 'discard', cardId: 'hero-d2' },
+        { zone: 'hand', cardId: 'hero-h1' },
+        { zone: 'inPlay', cardId: 'hero-p1' },
+      ],
+      'eligible scanned in discard → hand → inPlay array index order, wounds excluded',
+    );
+  });
+
+  it('remaining equals the queue length', () => {
+    const gameState = withKoChoice();
+    gameState.pendingKoHeroChoices = [
+      { choiceType: 'ko-hero', playerID: '0' },
+      { choiceType: 'ko-hero', playerID: '0' },
+    ];
+    const ui = buildUIState(gameState, mockCtx);
+    assert.equal(ui.pendingKoHeroChoice!.remaining, 2, 'remaining = queue length');
+  });
+
+  it('eligible order is byte-identical across repeated calls on the same G', () => {
+    const gameState = withKoChoice();
+    const a = buildUIState(gameState, mockCtx);
+    const b = buildUIState(gameState, mockCtx);
+    assert.deepStrictEqual(a.pendingKoHeroChoice!.eligible, b.pendingKoHeroChoice!.eligible);
+  });
+
+  it('eligible order is derived from array index, not Object.keys (reversed-array pin)', () => {
+    const gameState = withKoChoice();
+    // Reverse each zone array; eligible must follow the NEW index order exactly.
+    gameState.playerZones['0']!.discard = [...gameState.playerZones['0']!.discard].reverse();
+    const ui = buildUIState(gameState, mockCtx);
+    assert.deepStrictEqual(
+      ui.pendingKoHeroChoice!.eligible
+        .filter((e) => e.zone === 'discard')
+        .map((e) => e.cardId),
+      ['hero-d2', 'hero-d1'],
+      'discard eligible follows the reversed array index order',
+    );
+  });
+
+  it('within-zone dedupe: same ext_id twice in one zone → one entry; same ext_id in two zones → two entries', () => {
+    const gameState = makeGameStateWithDisplayData();
+    gameState.playerZones['0']!.discard = ['dup' as CardExtId, 'dup' as CardExtId];
+    gameState.playerZones['0']!.hand = ['dup' as CardExtId];
+    gameState.playerZones['0']!.inPlay = [];
+    gameState.pendingKoHeroChoices = [{ choiceType: 'ko-hero', playerID: '0' }];
+    const ui = buildUIState(gameState, mockCtx);
+    assert.deepStrictEqual(
+      ui.pendingKoHeroChoice!.eligible.map((e) => ({ zone: e.zone, cardId: e.cardId })),
+      [
+        { zone: 'discard', cardId: 'dup' },
+        { zone: 'hand', cardId: 'dup' },
+      ],
+    );
+  });
+
+  it('mutating a projected eligible display does not affect G (defensive copy)', () => {
+    const gameState = makeGameStateWithDisplayData();
+    const cardId = 'core/black-widow/strike#0' as CardExtId;
+    gameState.playerZones['0']!.discard = [cardId, 'other' as CardExtId];
+    gameState.playerZones['0']!.hand = [];
+    gameState.playerZones['0']!.inPlay = [];
+    gameState.pendingKoHeroChoices = [{ choiceType: 'ko-hero', playerID: '0' }];
+    const originalName = gameState.cardDisplayData[cardId]!.name;
+    const ui = buildUIState(gameState, mockCtx);
+    const entry = ui.pendingKoHeroChoice!.eligible.find((e) => e.cardId === cardId)!;
+    entry.display.name = 'mutated';
+    assert.equal(gameState.cardDisplayData[cardId]!.name, originalName, 'G display untouched');
+  });
+
+  it('buildUIState does not mutate G (purity)', () => {
+    const gameState = withKoChoice();
+    const before = JSON.stringify(gameState);
+    buildUIState(gameState, mockCtx);
+    assert.equal(JSON.stringify(gameState), before, 'G byte-identical after projection');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-249 / EC-280 — pendingOptionalKoReward projection (D-24020)
+// ---------------------------------------------------------------------------
+
+describe('buildUIState — pendingOptionalKoReward projection (WP-249 / D-24020)', () => {
+  /**
+   * Builds a game state with one front optional-KO-reward choice for player 0
+   * and a deterministic hand/discard so the eligible-order assertions are precise.
+   */
+  function withOptionalReward(
+    rewardType: 'rescue' | 'draw' | 'attack' | 'recruit',
+    rewardMagnitude: number,
+  ): LegendaryGameState {
+    const gameState = makeGameStateWithDisplayData();
+    // why: include a WOUND in discard to prove the projection does NOT pre-filter
+    // (the round-trip rule — unlike the KO-hero projection which excludes wounds).
+    gameState.playerZones['0']!.hand = ['hero-h1' as CardExtId, 'hero-h2' as CardExtId];
+    gameState.playerZones['0']!.discard = ['hero-d1' as CardExtId, WOUND, 'hero-d2' as CardExtId];
+    gameState.pendingOptionalKoRewards = [
+      {
+        playerID: '0',
+        rewardType,
+        rewardMagnitude,
+        sourceCardId: 'core/black-widow/strike#0' as CardExtId,
+      },
+    ];
+    return gameState;
+  }
+
+  it('is undefined when the engine queue is empty', () => {
+    const gameState = createTestGameState();
+    assert.equal(gameState.pendingOptionalKoRewards, undefined);
+    const ui = buildUIState(gameState, mockCtx);
+    assert.equal(ui.pendingOptionalKoReward, undefined, 'absent when no pending optional-KO-reward');
+  });
+
+  it('projects the FRONT entry with playerID + eligibleHand/eligibleDiscard in zone + index order, NO pre-filter', () => {
+    const ui = buildUIState(withOptionalReward('rescue', 1), mockCtx);
+    assert.ok(ui.pendingOptionalKoReward !== undefined, 'present when queue non-empty');
+    assert.equal(ui.pendingOptionalKoReward!.playerID, '0');
+    assert.deepStrictEqual(
+      ui.pendingOptionalKoReward!.eligibleHand.map((e) => ({ zone: e.zone, cardId: e.cardId })),
+      [
+        { zone: 'hand', cardId: 'hero-h1' },
+        { zone: 'hand', cardId: 'hero-h2' },
+      ],
+      'eligibleHand mirrors G hand in index order, every entry zone:"hand"',
+    );
+    assert.deepStrictEqual(
+      ui.pendingOptionalKoReward!.eligibleDiscard.map((e) => ({ zone: e.zone, cardId: e.cardId })),
+      [
+        { zone: 'discard', cardId: 'hero-d1' },
+        { zone: 'discard', cardId: WOUND },
+        { zone: 'discard', cardId: 'hero-d2' },
+      ],
+      'eligibleDiscard mirrors G discard in index order INCLUDING the wound (no pre-filter)',
+    );
+  });
+
+  it('derives rewardLabel from the single rewardType + magnitude mapping', () => {
+    assert.equal(buildUIState(withOptionalReward('rescue', 1), mockCtx).pendingOptionalKoReward!.rewardLabel, 'Rescue a Bystander');
+    assert.equal(buildUIState(withOptionalReward('draw', 1), mockCtx).pendingOptionalKoReward!.rewardLabel, 'Draw a card');
+    assert.equal(buildUIState(withOptionalReward('draw', 2), mockCtx).pendingOptionalKoReward!.rewardLabel, 'Draw 2 cards');
+    assert.equal(buildUIState(withOptionalReward('attack', 3), mockCtx).pendingOptionalKoReward!.rewardLabel, '+3 Attack');
+    assert.equal(buildUIState(withOptionalReward('recruit', 2), mockCtx).pendingOptionalKoReward!.rewardLabel, '+2 Recruit');
+  });
+
+  it('projects only the FRONT entry when the queue holds more than one', () => {
+    const gameState = withOptionalReward('attack', 1);
+    gameState.pendingOptionalKoRewards = [
+      { playerID: '0', rewardType: 'rescue', rewardMagnitude: 1, sourceCardId: 'src-a' as CardExtId },
+      { playerID: '0', rewardType: 'draw', rewardMagnitude: 1, sourceCardId: 'src-b' as CardExtId },
+    ];
+    const ui = buildUIState(gameState, mockCtx);
+    assert.equal(ui.pendingOptionalKoReward!.rewardLabel, 'Rescue a Bystander', 'front entry projected, not the second');
+  });
+
+  it('eligible order follows array index, not Object.keys (reversed-array pin)', () => {
+    const gameState = withOptionalReward('draw', 1);
+    gameState.playerZones['0']!.discard = [...gameState.playerZones['0']!.discard].reverse();
+    const ui = buildUIState(gameState, mockCtx);
+    assert.deepStrictEqual(
+      ui.pendingOptionalKoReward!.eligibleDiscard.map((e) => e.cardId),
+      ['hero-d2', WOUND, 'hero-d1'],
+      'eligibleDiscard follows the reversed array index order',
+    );
+  });
+
+  it('eligible lists are defensive copies — mutating them does not affect G', () => {
+    const gameState = makeGameStateWithDisplayData();
+    const cardId = 'core/black-widow/strike#0' as CardExtId;
+    gameState.playerZones['0']!.hand = [cardId];
+    gameState.playerZones['0']!.discard = [];
+    gameState.pendingOptionalKoRewards = [
+      { playerID: '0', rewardType: 'rescue', rewardMagnitude: 1, sourceCardId: cardId },
+    ];
+    const originalName = gameState.cardDisplayData[cardId]!.name;
+    const ui = buildUIState(gameState, mockCtx);
+    // mutate both the list and a projected entry's display
+    ui.pendingOptionalKoReward!.eligibleHand.push({
+      zone: 'hand',
+      cardId: 'injected' as CardExtId,
+      display: { ...UNKNOWN_DISPLAY_PLACEHOLDER },
+    });
+    ui.pendingOptionalKoReward!.eligibleHand[0]!.display.name = 'mutated';
+    assert.deepStrictEqual(gameState.playerZones['0']!.hand, [cardId], 'G hand untouched by list push');
+    assert.equal(gameState.cardDisplayData[cardId]!.name, originalName, 'G display untouched by entry mutation');
+  });
+
+  it('buildUIState does not mutate G (purity)', () => {
+    const gameState = withOptionalReward('attack', 2);
+    const before = JSON.stringify(gameState);
+    buildUIState(gameState, mockCtx);
+    assert.equal(JSON.stringify(gameState), before, 'G byte-identical after projection');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-258 / EC-289 — hollowEffects projection (WP-257 G.diagnostics channel)
+// ---------------------------------------------------------------------------
+
+/**
+ * Builds two sample HollowEffectRecord values for the projection tests. Plain
+ * JSON shape (cardId, cardType, timing, mechanic, reason, turn) per WP-257.
+ */
+function sampleHollowEffectRecords(): HollowEffectRecord[] {
+  return [
+    {
+      cardId: 'core/black-widow/covert-operation#0' as CardExtId,
+      cardType: 'hero',
+      timing: 'onPlay',
+      mechanic: 'covert-operation',
+      reason: 'no-handler',
+      turn: 3,
+    },
+    {
+      cardId: 'core/doombot-legion#1' as CardExtId,
+      cardType: 'villain',
+      timing: 'onAmbush',
+      mechanic: 'ambush-discard',
+      reason: 'unsupported-keyword',
+      turn: 5,
+    },
+  ];
+}
+
+describe('buildUIState — hollowEffects projection (WP-258 / EC-289)', () => {
+  it('omits hollowEffects when G has no diagnostics channel', () => {
+    // why: an absent channel must project as an absent UIState field — no
+    // empty-array injection that would dirty optional-field fixtures (EC-289).
+    const gameState = createTestGameState();
+    assert.equal(gameState.diagnostics, undefined);
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.equal(
+      ui.hollowEffects,
+      undefined,
+      'hollowEffects must be absent from UIState when G has no diagnostics channel',
+    );
+    assert.equal(
+      'hollowEffects' in ui,
+      false,
+      'the field key must not appear at all when the channel is absent',
+    );
+  });
+
+  it('omits hollowEffects when the channel exists but is empty', () => {
+    // why: an empty channel is the no-hollow-effects case; omit rather than
+    // ship an empty array (keeps the absent-vs-present contract clean).
+    const gameState = createTestGameState();
+    gameState.diagnostics = { hollowEffects: [], hollowEffectsDropped: 0 };
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.equal(ui.hollowEffects, undefined);
+    assert.equal('hollowEffects' in ui, false);
+  });
+
+  it('projects the exact record values when the channel carries records', () => {
+    // why: the projection surfaces the WP-257 channel value-for-value (EC-289).
+    const gameState = createTestGameState();
+    const records = sampleHollowEffectRecords();
+    gameState.diagnostics = {
+      hollowEffects: records,
+      hollowEffectsDropped: 0,
+    };
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.ok(ui.hollowEffects !== undefined, 'hollowEffects must be present');
+    assert.deepStrictEqual(
+      ui.hollowEffects,
+      records,
+      'projected hollowEffects must deep-equal the source records',
+    );
+  });
+
+  it('does not alias G.diagnostics.hollowEffects (per-record fresh objects)', () => {
+    // why: aliasing defense (WP-111 D-11105) — mutating the projection must not
+    // reach back into G; the projected entries must be fresh objects.
+    const gameState = createTestGameState();
+    const records = sampleHollowEffectRecords();
+    gameState.diagnostics = {
+      hollowEffects: records,
+      hollowEffectsDropped: 0,
+    };
+
+    const ui = buildUIState(gameState, mockCtx);
+
+    assert.notStrictEqual(
+      ui.hollowEffects,
+      gameState.diagnostics.hollowEffects,
+      'projected array must not be the same reference as G.diagnostics.hollowEffects',
+    );
+    assert.notStrictEqual(
+      ui.hollowEffects![0],
+      gameState.diagnostics.hollowEffects[0],
+      'each projected record must be a fresh object',
+    );
+    ui.hollowEffects![0]!.mechanic = 'mutated-by-aliasing-test';
+    assert.equal(
+      gameState.diagnostics.hollowEffects[0]!.mechanic,
+      records[0]!.mechanic,
+      'G.diagnostics must NOT be aliased by the projected hollowEffects',
+    );
+  });
+
+  it('buildUIState does not mutate G when projecting hollowEffects', () => {
+    // why: read-only projection contract — G must be byte-identical afterward.
+    const gameState = createTestGameState();
+    gameState.diagnostics = {
+      hollowEffects: sampleHollowEffectRecords(),
+      hollowEffectsDropped: 0,
+    };
+    const before = JSON.stringify(gameState);
+
+    buildUIState(gameState, mockCtx);
+
+    assert.equal(
+      JSON.stringify(gameState),
+      before,
+      'G byte-identical after hollowEffects projection',
     );
   });
 });

@@ -108,10 +108,18 @@ export function flattenSet(
         // survived filtering, making those cards appear to match every
         // search term.
         key:         `${abbr}-${resolvedCardType}-${hero.slug}-${card.slug}`,
+        // why: D-24018 — set-qualified ext_id (hero slug) for loadout
+        // composition, mirroring the engine's extractHeroSlug derivation.
+        extId:       `${abbr}/${hero.slug}`,
         cardType:    resolvedCardType,
         setAbbr:     abbr,
         setName,
         name:        card.name ?? "",
+        // why: group/entity display name for the loadout picker — the hero
+        // ("Black Widow"), not the member card's name ("Mission Accomplished").
+        // The picker collapses a hero's cards by extId; labeling by groupName
+        // makes one click add the whole hero group.
+        groupName:   hero.name,
         slug:        card.slug,
         imageUrl:    sideToImageUrl.get(card.slug) ?? "",
         physicalCardImageUrl: sideToImageUrl.get(card.slug),
@@ -144,10 +152,20 @@ export function flattenSet(
     for (const card of mm.cards) {
       cards.push({
         key:       `${abbr}-mastermind-${mm.slug}-${card.slug}`,
+        // why: D-24018 — set-qualified ext_id (mastermind group slug).
+        extId:     `${abbr}/${mm.slug}`,
         cardType:  "mastermind",
         setAbbr:   abbr,
         setName,
         name:      card.name,
+        // why: group name for the loadout picker — the mastermind ("Dr. Doom"),
+        // not whichever tactic/main card lands first in the collapsed entry.
+        groupName: mm.name,
+        // why: surface the mastermind's "Always Leads" villain group slugs so
+        // the loadout builder can auto-include and require them (Magneto Always
+        // Leads the Brotherhood). Carried on every mastermind card (group-level
+        // value, like groupName); the builder reads it off the collapsed entry.
+        alwaysLeads: mm.alwaysLeads,
         slug:      card.slug,
         imageUrl:  card.imageUrl ?? "",
         abilities: card.abilities ?? [],
@@ -177,10 +195,16 @@ export function flattenSet(
       const villainMechanicalPattern = villainPatternMap?.get(`${abbr}/${group.slug}/${card.slug}`);
       cards.push({
         key:       `${abbr}-villain-${group.slug}-${card.slug}`,
+        // why: D-24018 — set-qualified ext_id (villain GROUP slug; every member
+        // card shares it), mirroring the engine's extractVillainGroupSlug.
+        extId:     `${abbr}/${group.slug}`,
         cardType:  "villain",
         setAbbr:   abbr,
         setName,
         name:      card.name,
+        // why: group name for the loadout picker — the villain group
+        // ("Brotherhood"), not a member card ("Blob"). One click adds the group.
+        groupName: group.name,
         slug:      card.slug,
         imageUrl:  card.imageUrl ?? "",
         abilities: card.abilities ?? [],
@@ -240,10 +264,16 @@ export function flattenSet(
         const cardSlug = String(cardRecord["slug"] ?? cardRecord["name"] ?? groupSlug);
         cards.push({
           key:       `${abbr}-henchman-${groupSlug}-${cardSlug}`,
+          // why: D-24018 — set-qualified ext_id (henchman GROUP slug; every
+          // sub-card shares it), matching the engine's henchman group lookup.
+          extId:     `${abbr}/${groupSlug}`,
           cardType:  "henchman",
           setAbbr:   abbr,
           setName,
           name:      String(cardRecord["name"] ?? groupName),
+          // why: group name for the loadout picker — the henchman group, not a
+          // per-variant sub-card (e.g. one of Mandarin's Rings).
+          groupName,
           slug:      cardSlug,
           imageUrl:  String(cardRecord["imageUrl"] ?? henchmanRecord["imageUrl"] ?? ""),
           abilities: Array.isArray(cardRecord["abilities"]) ? cardRecord["abilities"] as string[] : [],
@@ -255,10 +285,14 @@ export function flattenSet(
 
     cards.push({
       key:       `${abbr}-henchman-${groupSlug}`,
+      // why: D-24018 — set-qualified ext_id (henchman group slug).
+      extId:     `${abbr}/${groupSlug}`,
       cardType:  "henchman",
       setAbbr:   abbr,
       setName,
       name:      groupName,
+      // why: group name for the loadout picker (single-card henchman group).
+      groupName,
       slug:      groupSlug,
       imageUrl:  String(henchmanRecord["imageUrl"] ?? ""),
       abilities: Array.isArray(henchmanRecord["abilities"]) ? henchmanRecord["abilities"] as string[] : [],
@@ -273,10 +307,15 @@ export function flattenSet(
     const twistPattern = schemeTwistAssignments?.get(`${abbr}/${scheme.slug}`);
     cards.push({
       key:       `${abbr}-scheme-${scheme.slug}`,
+      // why: D-24018 — set-qualified ext_id (scheme slug).
+      extId:     `${abbr}/${scheme.slug}`,
       cardType:  "scheme",
       setAbbr:   abbr,
       setName,
       name:      scheme.name,
+      // why: schemes are a single entity, so groupName mirrors name — set
+      // explicitly so the picker's groupName label path is uniform across slots.
+      groupName: scheme.name,
       slug:      scheme.slug,
       imageUrl:  scheme.imageUrl ?? "",
       abilities: scheme.cards?.flatMap((c) => c.abilities ?? []) ?? [],
@@ -291,6 +330,10 @@ export function flattenSet(
     const slug = String(by["slug"] ?? by["name"] ?? "bystander");
     cards.push({
       key:       `${abbr}-bystander-${slug}`,
+      // why: D-24018 — bystanders are not a composition entity (they are a
+      // count, not an ext_id), but FlatCard.extId is required; the qualified
+      // form keeps the field consistent across every card type.
+      extId:     `${abbr}/${slug}`,
       cardType:  "bystander",
       setAbbr:   abbr,
       setName,
@@ -308,6 +351,9 @@ export function flattenSet(
     const slug = String(wd["slug"] ?? wd["name"] ?? "wound");
     cards.push({
       key:       `${abbr}-wound-${slug}`,
+      // why: D-24018 — wounds are a count, not a composition ext_id; the
+      // qualified form keeps the required FlatCard.extId field consistent.
+      extId:     `${abbr}/${slug}`,
       cardType:  "wound",
       setAbbr:   abbr,
       setName,
@@ -344,6 +390,9 @@ export function flattenSet(
     const slug = String(entryRecord["slug"] ?? entryRecord["name"] ?? "other");
     cards.push({
       key:       `${abbr}-${cardType}-${slug}`,
+      // why: D-24018 — generic bucket; the qualified form keeps the required
+      // FlatCard.extId field consistent for any future taxonomy slug.
+      extId:     `${abbr}/${slug}`,
       cardType,
       setAbbr:   abbr,
       setName,

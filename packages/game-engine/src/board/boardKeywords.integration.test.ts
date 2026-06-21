@@ -231,7 +231,9 @@ describe('Board keywords integration', () => {
           cardId: ambushCardId,
           timing: 'onAmbush',
           keywords: ['gainWoundEachPlayer'],
-          effects: ['gainWoundEachPlayer'],
+          // why: WP-252 — effects is the descriptor array (keywords stays the
+          // legacy keyword array); parallel, mirroring the parser output.
+          effects: [{ primitive: 'gain-wound', target: 'each' }],
         },
       ],
       playerCount: 2,

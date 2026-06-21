@@ -807,7 +807,7 @@ describe('revealVillainCard — onEscape fire site (WP-186 §Files #7a)', () => 
           cardId: escapedCardId,
           timing: 'onEscape',
           keywords: ['gainWoundEachPlayer'],
-          effects: ['gainWoundEachPlayer'],
+          effects: [{ primitive: 'gain-wound', target: 'each' }],
         },
       ],
     });
@@ -980,13 +980,13 @@ describe('revealVillainCard — escape-before-Ambush ordering lock (WP-186 §Fil
           cardId: escapedCardId,
           timing: 'onEscape',
           keywords: ['gainWoundCurrentPlayer'],
-          effects: ['gainWoundCurrentPlayer'],
+          effects: [{ primitive: 'gain-wound', target: 'current' }],
         },
         {
           cardId: enteringCardId,
           timing: 'onAmbush',
           keywords: ['gainWoundEachPlayer'],
-          effects: ['gainWoundEachPlayer'],
+          effects: [{ primitive: 'gain-wound', target: 'each' }],
         },
       ],
       // why: hasAmbush gates the entering card's onAmbush fire site —
@@ -1152,7 +1152,7 @@ describe('revealVillainCard — WP-200 ambushResolved emission', () => {
           cardId: villainExtId,
           timing: 'onAmbush',
           keywords: ['gainWoundEachPlayer'],
-          effects: ['gainWoundEachPlayer'],
+          effects: [{ primitive: 'gain-wound', target: 'each' }],
         },
       ],
     });
@@ -1286,9 +1286,9 @@ describe('revealVillainCard — real-registry villain end-to-end (WP-186 §Files
       "Venom-00 must have an onEscape hook keyed by the zone-instance ext_id (WP-191 grammar); if missing, the parser is not consuming WP-188's marker correctly",
     );
     assert.deepStrictEqual(
-      venomEscapeHook!.effects,
+      venomEscapeHook!.keywords,
       ['gainWoundEachPlayer'],
-      "Venom-00's onEscape hook must carry the gainWoundEachPlayer effect from WP-188's marker",
+      "Venom-00's onEscape hook must carry the gainWoundEachPlayer keyword from WP-188's marker",
     );
 
     // Force the city: occupy slots 0-3 with arbitrary villain placeholders

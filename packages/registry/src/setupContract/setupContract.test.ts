@@ -32,18 +32,21 @@ import { validateMatchSetupDocument } from "./setupContract.validate.js";
  */
 function buildStubRegistry(): CardRegistryReader {
   return {
+    // why: D-24018 — the validator reads `extId` (set-qualified ids), not the
+    // flat-card `key`. These stub ids use the locked "{setAbbr}/{slug}" form;
+    // the happy-path composition values below reference them verbatim.
     listCards: () => [
-      { key: "scheme-alpha" },
-      { key: "mastermind-beta" },
-      { key: "villain-group-one" },
-      { key: "villain-group-two" },
-      { key: "villain-group-three" },
-      { key: "henchman-group-one" },
-      { key: "hero-deck-alpha" },
-      { key: "hero-deck-beta" },
-      { key: "hero-deck-gamma" },
-      { key: "hero-deck-delta" },
-      { key: "hero-deck-epsilon" },
+      { extId: "core/scheme-alpha" },
+      { extId: "core/mastermind-beta" },
+      { extId: "core/villain-group-one" },
+      { extId: "core/villain-group-two" },
+      { extId: "core/villain-group-three" },
+      { extId: "core/henchman-group-one" },
+      { extId: "core/hero-deck-alpha" },
+      { extId: "core/hero-deck-beta" },
+      { extId: "core/hero-deck-gamma" },
+      { extId: "core/hero-deck-delta" },
+      { extId: "core/hero-deck-epsilon" },
     ],
   };
 }
@@ -60,11 +63,11 @@ function buildValidDocument(): MatchSetupDocument {
     expansions: ["base"],
     heroSelectionMode: "GROUP_STANDARD",
     composition: {
-      schemeId: "scheme-alpha",
-      mastermindId: "mastermind-beta",
-      villainGroupIds: ["villain-group-one"],
-      henchmanGroupIds: ["henchman-group-one"],
-      heroDeckIds: ["hero-deck-alpha"],
+      schemeId: "core/scheme-alpha",
+      mastermindId: "core/mastermind-beta",
+      villainGroupIds: ["core/villain-group-one"],
+      henchmanGroupIds: ["core/henchman-group-one"],
+      heroDeckIds: ["core/hero-deck-alpha"],
       bystandersCount: 30,
       woundsCount: 30,
       officersCount: 30,
@@ -148,7 +151,7 @@ describe("setupContract (WP-091)", () => {
     assert.equal(result.ok, true);
     if (result.ok) {
       assert.equal(result.value.heroSelectionMode, "GROUP_STANDARD");
-      assert.equal(result.value.composition.schemeId, "scheme-alpha");
+      assert.equal(result.value.composition.schemeId, "core/scheme-alpha");
     }
   });
 
@@ -305,7 +308,7 @@ describe("setupContract (WP-091)", () => {
       ...baseDocument,
       composition: {
         ...baseDocument.composition,
-        villainGroupIds: ["villain-group-one", "villain-group-one"],
+        villainGroupIds: ["core/villain-group-one", "core/villain-group-one"],
       },
     };
     const errors = errorsOf(validateMatchSetupDocument(document, registry));
@@ -320,7 +323,7 @@ describe("setupContract (WP-091)", () => {
     const baseDocument = buildValidDocument();
     const document: MatchSetupDocument = {
       ...baseDocument,
-      composition: { ...baseDocument.composition, schemeId: "scheme-nonexistent" },
+      composition: { ...baseDocument.composition, schemeId: "core/scheme-nonexistent" },
     };
     const errors = errorsOf(validateMatchSetupDocument(document, registry));
     const extIdError = errors.find(
@@ -338,7 +341,7 @@ describe("setupContract (WP-091)", () => {
       ...baseDocument,
       composition: {
         ...baseDocument.composition,
-        mastermindId: "mastermind-nonexistent",
+        mastermindId: "core/mastermind-nonexistent",
       },
     };
     const errors = errorsOf(validateMatchSetupDocument(document, registry));
@@ -358,9 +361,9 @@ describe("setupContract (WP-091)", () => {
       composition: {
         ...baseDocument.composition,
         villainGroupIds: [
-          "villain-group-one",
-          "villain-group-two",
-          "villain-group-missing",
+          "core/villain-group-one",
+          "core/villain-group-two",
+          "core/villain-group-missing",
         ],
       },
     };
@@ -414,9 +417,9 @@ describe("setupContract (WP-091)", () => {
       errors.some(
         (candidate) =>
           candidate.field === "composition.schemeId" &&
-          candidate.message.includes("^[a-z0-9-]+$"),
+          candidate.message.includes("^[a-z0-9-]+/[a-z0-9-]+$"),
       ),
-      "Expected a schemeId pattern error with the canonical ext_id regex in the full-sentence message.",
+      "Expected a schemeId pattern error with the qualified ext_id regex in the full-sentence message.",
     );
     assert.ok(
       errors.some(
@@ -441,5 +444,44 @@ describe("setupContract (WP-091)", () => {
     // draft: stringify should be deterministic given identical input.
     const reserialized = JSON.stringify(document);
     assert.strictEqual(reserialized, serialized);
+  });
+
+  // why: D-24018 regression guard. Before D-24018 the validator built its
+  // known-id set from each card's flat-card `key`, so a composition carrying
+  // flat-card keys (what the Registry Viewer loadout builder produced) passed
+  // here and was then rejected by the engine's Game.setup() with an HTTP 500.
+  // This test pins the fix: a flat-card key is now rejected (it isn't even
+  // qualified form), and the set-qualified ext_id is accepted.
+  test("#19 flat-card key is rejected; the set-qualified ext_id for the same card is accepted", () => {
+    const registry = buildStubRegistry();
+    const baseDocument = buildValidDocument();
+
+    // A flat-card key like the Registry Viewer used to emit. It fails the
+    // qualified-form pattern (no slash), so a pattern error fires in step 1.
+    const flatKeyDocument: MatchSetupDocument = {
+      ...baseDocument,
+      composition: {
+        ...baseDocument.composition,
+        mastermindId: "core-mastermind-beta-card",
+      },
+    };
+    const flatKeyErrors = errorsOf(
+      validateMatchSetupDocument(flatKeyDocument, registry),
+    );
+    assert.ok(
+      flatKeyErrors.some(
+        (candidate) => candidate.field === "composition.mastermindId",
+      ),
+      "Expected a flat-card key to be rejected on composition.mastermindId.",
+    );
+
+    // The set-qualified ext_id for the same card is present in the registry
+    // stub and validates cleanly.
+    const qualifiedResult = validateMatchSetupDocument(baseDocument, registry);
+    assert.equal(
+      qualifiedResult.ok,
+      true,
+      "Expected the set-qualified composition to pass validation.",
+    );
   });
 });

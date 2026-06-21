@@ -11,8 +11,8 @@
       "queens-vengeance"
     ],
     "heroDeckIds": [
-      "ant-man",
-      "wasp",
+      "amwp/ant-man",
+      "amwp/wasp",
       "jocasta",
       "black-knight",
       "wonder-man"

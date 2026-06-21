@@ -168,3 +168,34 @@ The Prompt Lint Gate:
 If a lint checklist item conflicts with ARCHITECTURE.md, Layer Boundary, or
 `.claude/rules/*.md`, the higher-authority document wins and the checklist
 item must be constrained or treated as non-applicable.
+
+## Multi-Step Workflow Integrity (No Skipped Steps, No False "Done")
+
+Some reference docs define multi-step workflows that produce real,
+checkable artifacts. The most drift-prone is the WP-drafting preflight
+`docs/ai/REFERENCE/01.0a-wp-drafting-phase.md` — Steps 1–7 plus a Phase 1
+Definition of Done. When asked to run that file (or any workflow like it)
+as a preflight, the following are **binding**:
+
+- **Read the whole file before acting.** It is long on purpose. Do not
+  complain about its length, skim it, or work from a summary. Length is
+  never a reason to skip content — read every step first.
+- **Execute every step, in order, to its artifact.** For `01.0a` this
+  means **Step 6 (write the session prompt) and Step 7 (commit) are not
+  optional.** Gates going green at Step 5 is *not* the finish line — the
+  most common failure here is stopping after the gates pass and calling
+  the WP "ready." It is not ready until the session prompt exists and the
+  drafting commit has landed per the Phase 1 Definition of Done.
+- **Never report "done" or "ready to execute" unless the workflow's own
+  Definition of Done is met and every required artifact actually exists** —
+  WP file, EC file, index rows, gate verdicts, session prompt, commit.
+  Re-check each artifact is present before claiming completion. If a step
+  was skipped or could not be finished, state exactly which one and why —
+  do not paper over the gap with an optimistic status.
+
+A premature "ready to execute" is a false-completion claim: it burns an
+unproductive execution cycle and hides that a step was skipped. Per the
+Operating Posture above, that cost lands on the business, not on Claude —
+treat it as a bug, not a rounding error. (Plain terms: this section exists
+to keep "Lazy Man" — the skip-the-tedious-steps-and-declare-victory reflex
+— out of the drafting workflow.)

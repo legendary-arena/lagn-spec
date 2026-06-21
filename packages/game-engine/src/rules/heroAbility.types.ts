@@ -13,6 +13,9 @@
 
 import type { CardExtId } from '../state/zones.types.js';
 import type { HeroKeyword, HeroAbilityTiming } from './heroKeywords.js';
+import type { HeroCountSource } from './heroCountSource.js';
+import type { RevealRule } from './revealRule.js';
+import type { EffectNode } from './effectPrimitive.types.js';
 
 // ---------------------------------------------------------------------------
 // HeroAbilityHook — data-only interface
@@ -46,6 +49,27 @@ export interface HeroAbilityHook {
   // why: effects are descriptors, not functions. They describe what an
   // effect would do; they do not do it. Execution is WP-022+.
   effects?: HeroEffectDescriptor[];
+  // why: D-24031 — the OPEN composition-marker mechanic space (additive optional). A
+  // composition marker (Berserk) attaches a DEEP COPY of its AST here, never to
+  // hook.keywords (`berserk` is not a HeroKeyword). Each element is a top-level effect
+  // the interpreter runs with its own fresh, never-persisted execution context.
+  primitiveEffects?: EffectNode[];
+  // why: WP-257 / D-24034 — raw `[keyword:X]`/`[effect:X]` marker tokens the parser
+  // SAW but resolved to no keyword, descriptor, composition, or modifier. Hooks
+  // otherwise carry parsed descriptors only, so an unresolved marker would leave an
+  // empty hook INDISTINGUISHABLE from a pure flavor-text line — and flavor text must
+  // NOT flag while an unresolved marker MUST. Surfacing the raw token here is what
+  // makes `parse-unrecognized` detectable at runtime. Additive optional: absent or
+  // empty means "no unresolved marker" (flavor text yields neither).
+  unresolvedMarkers?: string[];
+  // why: D-24045 — the positive symmetric record of `unresolvedMarkers`: the
+  // composition markers (Berserk, Empowered) that RESOLVED on this hook (a primitive
+  // actually attached). The mechanic ledger reads it to classify composition-marker
+  // status by-hook (per-card) instead of by-name, so `/coverage` By-card stops
+  // over-claiming deferred-variant cards as Executable (resolves D-24044). Parse-time
+  // provenance only — never affects execution. Additive optional: absent or empty
+  // means "no composition resolved here" (legacy keywords + deferred markers yield neither).
+  resolvedMarkers?: string[];
 }
 
 // ---------------------------------------------------------------------------
@@ -75,6 +99,24 @@ export interface HeroCondition {
 export interface HeroEffectDescriptor {
   type: HeroKeyword;
   magnitude?: number;
+  // why: D-24016 — for an 'attack-per-count' effect, countSource names the
+  // quantity the per-unit magnitude scales by (resolved by resolveCountSource).
+  // Other keywords ignore it; an 'attack-per-count' effect with no/invalid
+  // countSource is a skipped no-op.
+  countSource?: HeroCountSource;
+  // why: D-24019 — for an 'optional-ko-reward' effect, rewardType is the reward
+  // granted iff the player KOs a card (dispatched to the existing reward
+  // executor: rescue / draw / attack / recruit). The existing magnitude field
+  // carries the reward magnitude. Other keywords ignore it.
+  rewardType?: HeroKeyword;
+  // why: D-24024 — for a collapsed 'reveal' effect, revealCount is the number of
+  // deck-top cards peeked (default 1; every legacy reveal peeks one) and revealRules
+  // is the ordered branch-list the single reveal handler evaluates. Other keywords
+  // ignore them. Top-level `magnitude` is NOT used by 'reveal': a cost threshold
+  // lives in a predicate (RevealPredicate.threshold) and a fixed-attack grant in an
+  // action (RevealAction.amount).
+  revealCount?: number;
+  revealRules?: RevealRule[];
 }
 
 // ---------------------------------------------------------------------------

@@ -7,13 +7,13 @@
  * and drift test against the six DEFAULT_* constants exported by
  * useLoadoutDraft.ts (PS-1 export gate).
  *
- * Note: ext_ids in test fixtures use bare-hyphenated form (e.g.,
- * "scheme-midtown-bank-robbery") to match the registry-side schema regex
- * `^[a-z0-9-]+$` that the WP-091 validator enforces. The WP-113
- * `<setAbbr>/<slug>` format applies to the engine-side validator and to URL
- * encoding; the registry-side validator's regex is a documented gap that
- * WP-114 does not change. The parser preserves forward slashes regardless
- * (covered separately in setupUrlParams.test.ts).
+ * Note: ext_ids in test fixtures use the set-qualified `<setAbbr>/<slug>`
+ * form (e.g., "core/midtown-bank-robbery"). D-24018 closed the prior gap
+ * where the registry-side validator accepted bare-hyphenated ids that the
+ * engine-side validator then rejected (D-10014) — both validators now share
+ * the qualified ext_id space, so a setup URL that validates here is accepted
+ * at match creation. The parser preserves forward slashes through URL
+ * encoding (covered separately in setupUrlParams.test.ts).
  *
  * Runner: node:test (native Node.js)
  * Invoke: pnpm --filter registry-viewer test
@@ -54,9 +54,11 @@ function restoreWindow(): void {
   }
 }
 
-function makeRegistry(knownKeys: string[]): CardRegistryReader {
+function makeRegistry(knownExtIds: string[]): CardRegistryReader {
+  // why: D-24018 — the validator looks up set-qualified ext_ids via the
+  // `extId` field (not the flat-card `key`).
   return {
-    listCards: () => knownKeys.map((key) => ({ key })),
+    listCards: () => knownExtIds.map((extId) => ({ extId })),
   };
 }
 
@@ -70,23 +72,23 @@ describe("useSetupFromUrl (WP-114)", () => {
   });
 
   it("synthesizes a valid MatchSetupDocument when all five entity arrays are registry-known", () => {
-    const knownKeys = [
-      "scheme-midtown-bank-robbery",
-      "mastermind-loki-god-of-mischief",
-      "villain-hydra",
-      "henchman-sentinel",
-      "hero-spider-man",
+    const knownExtIds = [
+      "core/midtown-bank-robbery",
+      "core/loki",
+      "core/hydra",
+      "core/sentinel",
+      "core/spider-man",
     ];
     setSearch(
-      "?schemeId=scheme-midtown-bank-robbery" +
-        "&mastermindId=mastermind-loki-god-of-mischief" +
-        "&villainGroupIds=villain-hydra" +
-        "&henchmanGroupIds=henchman-sentinel" +
-        "&heroDeckIds=hero-spider-man",
+      "?schemeId=core/midtown-bank-robbery" +
+        "&mastermindId=core/loki" +
+        "&villainGroupIds=core/hydra" +
+        "&henchmanGroupIds=core/sentinel" +
+        "&heroDeckIds=core/spider-man",
     );
 
     const { hasUrlParams, previewDocument, validationErrors, matchedCount } =
-      useSetupFromUrl(makeRegistry(knownKeys));
+      useSetupFromUrl(makeRegistry(knownExtIds));
 
     assert.equal(hasUrlParams.value, true);
     assert.notEqual(previewDocument.value, null);
@@ -107,21 +109,21 @@ describe("useSetupFromUrl (WP-114)", () => {
     // registry-known; the villain ID is deliberately absent so a single
     // unknown_extid surfaces with the canonical path
     // "composition.villainGroupIds[0]".
-    const knownKeys = [
-      "scheme-known",
-      "mastermind-known",
-      "henchman-known",
-      "hero-known",
+    const knownExtIds = [
+      "core/scheme-known",
+      "core/mastermind-known",
+      "core/henchman-known",
+      "core/hero-known",
     ];
     setSearch(
-      "?schemeId=scheme-known" +
-        "&mastermindId=mastermind-known" +
-        "&villainGroupIds=villain-not-in-registry" +
-        "&henchmanGroupIds=henchman-known" +
-        "&heroDeckIds=hero-known",
+      "?schemeId=core/scheme-known" +
+        "&mastermindId=core/mastermind-known" +
+        "&villainGroupIds=core/villain-not-in-registry" +
+        "&henchmanGroupIds=core/henchman-known" +
+        "&heroDeckIds=core/hero-known",
     );
 
-    const { validationErrors, matchedCount } = useSetupFromUrl(makeRegistry(knownKeys));
+    const { validationErrors, matchedCount } = useSetupFromUrl(makeRegistry(knownExtIds));
 
     const unknownExtIdErrors = validationErrors.value.filter(
       (entry) => entry.code === "unknown_extid",
@@ -156,8 +158,8 @@ describe("useSetupFromUrl (WP-114)", () => {
     // breaking round-trip consistency between "Edit this loadout" and the
     // original URL. The six constants are imported live from the editor
     // composable and compared against the preview's synthesized document.
-    setSearch("?schemeId=scheme-foo");
-    const { previewDocument } = useSetupFromUrl(makeRegistry(["scheme-foo"]));
+    setSearch("?schemeId=core/scheme-foo");
+    const { previewDocument } = useSetupFromUrl(makeRegistry(["core/scheme-foo"]));
     const document = previewDocument.value;
     assert.notEqual(document, null);
     if (document === null) {
@@ -173,8 +175,8 @@ describe("useSetupFromUrl (WP-114)", () => {
   });
 
   it("synthetic envelope uses fixed-string defaults that satisfy the determinism contract", () => {
-    setSearch("?schemeId=scheme-foo");
-    const { previewDocument } = useSetupFromUrl(makeRegistry(["scheme-foo"]));
+    setSearch("?schemeId=core/scheme-foo");
+    const { previewDocument } = useSetupFromUrl(makeRegistry(["core/scheme-foo"]));
     const document = previewDocument.value;
     assert.notEqual(document, null);
     if (document === null) {

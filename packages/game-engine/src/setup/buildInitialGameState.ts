@@ -467,6 +467,18 @@ export function buildInitialGameState(
       ready: {},
       started: false,
     } satisfies LobbyState,
+    // why: WP-257 / D-24034 — the hollow-effect diagnostics channel (G.diagnostics)
+    // resets EMPTY at this match-creation boundary. "Empty" is the ABSENT optional
+    // field (lazy-init at the writer recordHollowEffect, mirroring
+    // pendingOptionalKoRewards), deliberately NOT a seeded
+    // `{ hollowEffects: [], hollowEffectsDropped: 0 }` literal: a fresh match starts
+    // with zero records either way, but an always-present empty literal would change
+    // the canonical-JSON finalStateHash (hashGameState serializes the whole G),
+    // which AC-E forbids — EMPTY_REGISTRY fixtures must hash byte-identically. So a
+    // fresh match has `G.diagnostics === undefined` (≡ empty, omitted by
+    // JSON.stringify); the first hollow event materializes the channel. There is no
+    // mid-match reset — each match calls buildInitialGameState fresh. Hence the
+    // field is intentionally NOT assigned in this literal.
     // why: conditional spread per WP-029 exactOptionalPropertyTypes pattern —
     // the field is included only when scoringConfig was supplied; never written
     // as `activeScoringConfig: undefined` literally (D-6703).

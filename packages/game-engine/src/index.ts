@@ -321,8 +321,18 @@ export type {
   UIKoPileState,
   UIPendingHeroChoice,
   UIPendingKoHeroChoice,
+  UIPendingOptionalKoReward,
   UIEligibleKoHeroCard,
 } from "./ui/uiState.types.js";
+// why: WP-258 / D-16502 — the arena-client HollowEffectsPanel imports BOTH
+// HollowEffectRecord (UIState.hollowEffects element type) AND EffectExecutionReason
+// (the panel renders the `reason` field). Both MUST be re-exported from this
+// barrel by name or vue-tsc goes red (the barrel-publish gap, same class as the
+// WP-166 UI sub-types above). Additive, type-only re-export — no value export.
+export type {
+  HollowEffectRecord,
+  EffectExecutionReason,
+} from "./diagnostics/hollowEffect.types.js";
 export { buildUIState } from "./ui/uiState.build.js";
 
 // Audience & filter (WP-029)

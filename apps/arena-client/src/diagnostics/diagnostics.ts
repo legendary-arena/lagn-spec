@@ -58,11 +58,30 @@ export interface DiagnosticContext {
   viewportHeight: number;
   /** The current dropped-entry count, sourced from {@link getDroppedEntryCount}. */
   entryDroppedCount: number;
+  // why: typed `unknown`, not the engine UIState type — this is the already-
+  // audience-filtered projection the caller supplies from the client store; the
+  // builder only serializes it and never inspects it, which keeps this module
+  // free of any engine import.
+  /**
+   * The player's own audience-filtered UIState snapshot the caller read from the
+   * client store at export click, or `null` when no match is active. Opaque
+   * here: it is serialized into the report, never inspected.
+   */
+  uiStateSnapshot: unknown;
+  // why: the INPUT match-setup composition (scheme / mastermind / groups / heroes
+  // + the four supply-pile counts) the caller read back from sessionStorage via
+  // matchSetupSession at export click, or `null` when none was persisted (a join
+  // the client did not create, or a non-browser context). It pairs the *input*
+  // config with the snapshot's *live* pile counts so an under-provisioned supply
+  // (the Web-Shooters rescue bug class) is one read instead of a code hunt.
+  // Opaque here for the same reason as uiStateSnapshot: serialized, never inspected.
+  matchSetup: unknown;
 }
 
 /**
  * The serializable report envelope: the scalar context fields plus the derived
- * `entryCount` / `truncated` plus the captured `entries`.
+ * `entryCount` / `truncated`, the current UIState snapshot, plus the captured
+ * `entries`.
  */
 export interface DiagnosticReport {
   appVersion: string;
@@ -78,6 +97,17 @@ export interface DiagnosticReport {
   entryCount: number;
   entryDroppedCount: number;
   truncated: boolean;
+  /**
+   * The player's own audience-filtered UIState snapshot at export click, or
+   * `null` when no match was active. Carried through opaque — see the typing
+   * rationale on {@link DiagnosticContext.uiStateSnapshot}.
+   */
+  uiStateSnapshot: unknown;
+  /**
+   * The INPUT match-setup composition at export click, or `null` when none was
+   * persisted. Carried through opaque — see {@link DiagnosticContext.matchSetup}.
+   */
+  matchSetup: unknown;
   entries: DiagnosticEntry[];
 }
 
@@ -447,6 +477,8 @@ export function buildDiagnosticReport(
     entryCount: entries.length,
     entryDroppedCount: context.entryDroppedCount,
     truncated: context.entryDroppedCount > 0,
+    uiStateSnapshot: context.uiStateSnapshot,
+    matchSetup: context.matchSetup,
     entries,
   };
 }

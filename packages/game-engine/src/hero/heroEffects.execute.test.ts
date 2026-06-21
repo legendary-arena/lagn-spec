@@ -10,10 +10,70 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { executeHeroEffects } from './heroEffects.execute.js';
+import { executeHeroEffects, selectDefaultOptionalKoTarget, MVP_KEYWORDS, HANDLED_KEYWORDS, HERO_EFFECT_HANDLERS } from './heroEffects.execute.js';
 import { makeMockCtx } from '../test/mockCtx.js';
 import type { LegendaryGameState, PendingHeroChoice } from '../types.js';
-import type { HeroAbilityHook } from '../rules/heroAbility.types.js';
+import type { HeroAbilityHook, HeroEffectDescriptor } from '../rules/heroAbility.types.js';
+import type { HeroKeyword } from '../rules/heroKeywords.js';
+import { revealRulesForLegacyKeyword } from '../rules/revealRule.js';
+import { HERO_COMPOSITION_MARKERS, buildEmpoweredComposition } from '../rules/heroCompositions.js';
+
+// why: WP-253 Amendment-A — the pre-existing reveal fixtures hand-built legacy
+// `{ type: 'reveal-ko' }` descriptors; once those keywords lose their handlers
+// (folded into the single 'reveal' handler, D-24024) the executor reads
+// `effect.revealRules`, so every reveal fixture migrates its INPUT shape to the
+// collapsed descriptor. This is a fixture-shape migration, NOT a behavior change:
+// revealRulesForLegacyKeyword translates the legacy keyword's magnitude into the
+// exact branch-list its former handler hard-coded, so every assertion OUTPUT stays
+// byte-identical. The hook's `keywords` field keeps the legacy keyword (narrative).
+function legacyRevealEffect(keyword: HeroKeyword, magnitude: number | undefined): HeroEffectDescriptor {
+  return { type: 'reveal', revealCount: 1, revealRules: revealRulesForLegacyKeyword(keyword, magnitude) };
+}
+
+// ---------------------------------------------------------------------------
+// Registry drift (WP-251 / D-24022)
+// ---------------------------------------------------------------------------
+
+describe('HERO_EFFECT_HANDLERS registry drift (WP-251 / D-24022; re-spec WP-253 / D-24024)', () => {
+  // why: replacing the exhaustive `switch` with a map removes TypeScript's
+  // exhaustiveness check, so this runtime guard takes its place. WP-253 splits the
+  // single concern into two: HANDLED_KEYWORDS pins handler completeness (a handler
+  // key not in it, or a HANDLED keyword with no handler, fails); MVP_KEYWORDS pins
+  // executable-keyword coverage (a keyword with neither a handler NOR a reveal
+  // translation fails). The hard count drops 15 → 8 because the 7 legacy reveal-*
+  // keywords lost their dedicated handlers (folded into the one 'reveal' handler).
+  it('keys equal HANDLED_KEYWORDS exactly (bidirectional)', () => {
+    const handlerKeys = Object.keys(HERO_EFFECT_HANDLERS).sort();
+    const handledKeys = [...HANDLED_KEYWORDS].sort();
+    assert.deepStrictEqual(
+      handlerKeys,
+      handledKeys,
+      'HERO_EFFECT_HANDLERS keys must equal HANDLED_KEYWORDS exactly',
+    );
+  });
+
+  it('has exactly 8 handlers and none for the deferred keywords', () => {
+    assert.equal(Object.keys(HERO_EFFECT_HANDLERS).length, 8);
+    assert.equal(HERO_EFFECT_HANDLERS['wound'], undefined);
+    assert.equal(HERO_EFFECT_HANDLERS['conditional'], undefined);
+  });
+
+  // why: every executable keyword must be reachable — EITHER it has a handler, OR
+  // it is a frozen legacy reveal keyword that translates to a non-empty reveal
+  // branch-list for a valid magnitude (M=1 is valid for every magnitude-requiring
+  // reveal keyword and ignored by the no-magnitude ones). A keyword with neither
+  // fails here, so the reveal collapse cannot silently drop an executable keyword.
+  it('every MVP_KEYWORD is handled directly or via reveal translation (D-24024)', () => {
+    for (const keyword of MVP_KEYWORDS) {
+      const hasHandler = HERO_EFFECT_HANDLERS[keyword as HeroKeyword] !== undefined;
+      const translates = revealRulesForLegacyKeyword(keyword as HeroKeyword, 1).length > 0;
+      assert.ok(
+        hasHandler || translates,
+        `MVP keyword "${keyword}" must be handled directly or via reveal translation`,
+      );
+    }
+  });
+});
 
 // ---------------------------------------------------------------------------
 // Test helper
@@ -352,7 +412,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal'],
-          effects: [{ type: 'reveal', magnitude: 2 }],
+          effects: [legacyRevealEffect('reveal', 2)],
         },
       ],
     });
@@ -380,7 +440,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal'],
-          effects: [{ type: 'reveal', magnitude: 2 }],
+          effects: [legacyRevealEffect('reveal', 2)],
         },
       ],
     });
@@ -405,7 +465,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal'],
-          effects: [{ type: 'reveal', magnitude: 2 }],
+          effects: [legacyRevealEffect('reveal', 2)],
         },
       ],
     });
@@ -431,7 +491,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal'],
-          effects: [{ type: 'reveal', magnitude: 2 }],
+          effects: [legacyRevealEffect('reveal', 2)],
         },
       ],
     });
@@ -459,7 +519,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal'],
-          effects: [{ type: 'reveal' }],
+          effects: [legacyRevealEffect('reveal', undefined)],
         },
       ],
     });
@@ -610,7 +670,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko'],
-          effects: [{ type: 'reveal-ko' }],
+          effects: [legacyRevealEffect('reveal-ko', undefined)],
         },
       ],
     });
@@ -642,7 +702,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko'],
-          effects: [{ type: 'reveal-ko' }],
+          effects: [legacyRevealEffect('reveal-ko', undefined)],
         },
       ],
     });
@@ -667,7 +727,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko'],
-          effects: [{ type: 'reveal-ko' }],
+          effects: [legacyRevealEffect('reveal-ko', undefined)],
         },
       ],
     });
@@ -693,7 +753,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko'],
-          effects: [{ type: 'reveal-ko' }],
+          effects: [legacyRevealEffect('reveal-ko', undefined)],
         },
       ],
     });
@@ -721,7 +781,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-min'],
-          effects: [{ type: 'reveal-min', magnitude: 3 }],
+          effects: [legacyRevealEffect('reveal-min', 3)],
         },
       ],
     });
@@ -749,7 +809,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-min'],
-          effects: [{ type: 'reveal-min', magnitude: 3 }],
+          effects: [legacyRevealEffect('reveal-min', 3)],
         },
       ],
     });
@@ -774,7 +834,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-min'],
-          effects: [{ type: 'reveal-min', magnitude: 2 }],
+          effects: [legacyRevealEffect('reveal-min', 2)],
         },
       ],
     });
@@ -800,7 +860,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-min'],
-          effects: [{ type: 'reveal-min', magnitude: 2 }],
+          effects: [legacyRevealEffect('reveal-min', 2)],
         },
       ],
     });
@@ -828,7 +888,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-min'],
-          effects: [{ type: 'reveal-min' }],
+          effects: [legacyRevealEffect('reveal-min', undefined)],
         },
       ],
     });
@@ -857,7 +917,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko-or-draw'],
-          effects: [{ type: 'reveal-ko-or-draw', magnitude: 2 }],
+          effects: [legacyRevealEffect('reveal-ko-or-draw', 2)],
         },
       ],
     });
@@ -892,7 +952,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko-or-draw'],
-          effects: [{ type: 'reveal-ko-or-draw', magnitude: 2 }],
+          effects: [legacyRevealEffect('reveal-ko-or-draw', 2)],
         },
       ],
     });
@@ -925,7 +985,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko-or-draw'],
-          effects: [{ type: 'reveal-ko-or-draw', magnitude: 2 }],
+          effects: [legacyRevealEffect('reveal-ko-or-draw', 2)],
         },
       ],
     });
@@ -956,7 +1016,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko-or-draw'],
-          effects: [{ type: 'reveal-ko-or-draw', magnitude: 2 }],
+          effects: [legacyRevealEffect('reveal-ko-or-draw', 2)],
         },
       ],
     });
@@ -986,7 +1046,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko-or-draw'],
-          effects: [{ type: 'reveal-ko-or-draw' }],
+          effects: [legacyRevealEffect('reveal-ko-or-draw', undefined)],
         },
       ],
     });
@@ -1016,7 +1076,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko-or-draw'],
-          effects: [{ type: 'reveal-ko-or-draw', magnitude: 0 }],
+          effects: [legacyRevealEffect('reveal-ko-or-draw', 0)],
         },
       ],
     });
@@ -1043,7 +1103,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko-or-draw'],
-          effects: [{ type: 'reveal-ko-or-draw', magnitude: 2 }],
+          effects: [legacyRevealEffect('reveal-ko-or-draw', 2)],
         },
       ],
     });
@@ -1071,7 +1131,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko-or-draw'],
-          effects: [{ type: 'reveal-ko-or-draw', magnitude: 2 }],
+          effects: [legacyRevealEffect('reveal-ko-or-draw', 2)],
         },
       ],
     });
@@ -1103,7 +1163,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-cost-attack'],
-          effects: [{ type: 'reveal-cost-attack' }],
+          effects: [legacyRevealEffect('reveal-cost-attack', undefined)],
         },
       ],
     });
@@ -1135,7 +1195,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-cost-attack'],
-          effects: [{ type: 'reveal-cost-attack' }],
+          effects: [legacyRevealEffect('reveal-cost-attack', undefined)],
         },
       ],
     });
@@ -1163,7 +1223,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-cost-attack'],
-          effects: [{ type: 'reveal-cost-attack' }],
+          effects: [legacyRevealEffect('reveal-cost-attack', undefined)],
         },
       ],
     });
@@ -1188,7 +1248,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-cost-attack'],
-          effects: [{ type: 'reveal-cost-attack' }],
+          effects: [legacyRevealEffect('reveal-cost-attack', undefined)],
         },
       ],
     });
@@ -1216,7 +1276,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-cost-attack'],
-          effects: [{ type: 'reveal-cost-attack' }],
+          effects: [legacyRevealEffect('reveal-cost-attack', undefined)],
         },
       ],
     });
@@ -1248,7 +1308,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-odd-draw'],
-          effects: [{ type: 'reveal-odd-draw' }],
+          effects: [legacyRevealEffect('reveal-odd-draw', undefined)],
         },
       ],
     });
@@ -1279,7 +1339,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-odd-draw'],
-          effects: [{ type: 'reveal-odd-draw' }],
+          effects: [legacyRevealEffect('reveal-odd-draw', undefined)],
         },
       ],
     });
@@ -1308,7 +1368,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-odd-draw'],
-          effects: [{ type: 'reveal-odd-draw' }],
+          effects: [legacyRevealEffect('reveal-odd-draw', undefined)],
         },
       ],
     });
@@ -1337,7 +1397,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-odd-draw'],
-          effects: [{ type: 'reveal-odd-draw' }],
+          effects: [legacyRevealEffect('reveal-odd-draw', undefined)],
         },
       ],
     });
@@ -1363,7 +1423,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-odd-draw'],
-          effects: [{ type: 'reveal-odd-draw' }],
+          effects: [legacyRevealEffect('reveal-odd-draw', undefined)],
         },
       ],
     });
@@ -1390,7 +1450,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-odd-draw'],
-          effects: [{ type: 'reveal-odd-draw' }],
+          effects: [legacyRevealEffect('reveal-odd-draw', undefined)],
         },
       ],
     });
@@ -1420,7 +1480,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-attack-choose'],
-          effects: [{ type: 'reveal-attack-choose', magnitude: 4 }],
+          effects: [legacyRevealEffect('reveal-attack-choose', 4)],
         },
       ],
     });
@@ -1460,7 +1520,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-attack-choose'],
-          effects: [{ type: 'reveal-attack-choose', magnitude: 4 }],
+          effects: [legacyRevealEffect('reveal-attack-choose', 4)],
         },
       ],
     });
@@ -1492,7 +1552,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-attack-choose'],
-          effects: [{ type: 'reveal-attack-choose', magnitude: 4 }],
+          effects: [legacyRevealEffect('reveal-attack-choose', 4)],
         },
       ],
     });
@@ -1518,7 +1578,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-attack-choose'],
-          effects: [{ type: 'reveal-attack-choose', magnitude: 4 }],
+          effects: [legacyRevealEffect('reveal-attack-choose', 4)],
         },
       ],
     });
@@ -1545,7 +1605,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-attack-choose'],
-          effects: [{ type: 'reveal-attack-choose', magnitude: 4 }],
+          effects: [legacyRevealEffect('reveal-attack-choose', 4)],
         },
       ],
     });
@@ -1573,7 +1633,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-attack-choose'],
-          effects: [{ type: 'reveal-attack-choose', magnitude: 4 }],
+          effects: [legacyRevealEffect('reveal-attack-choose', 4)],
         },
       ],
     });
@@ -1610,7 +1670,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-attack-choose'],
-          effects: [{ type: 'reveal-attack-choose', magnitude: 4 }],
+          effects: [legacyRevealEffect('reveal-attack-choose', 4)],
         },
       ],
       pendingHeroChoice: existingPending,
@@ -1641,7 +1701,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-attack-choose'],
-          effects: [{ type: 'reveal-attack-choose' }],
+          effects: [legacyRevealEffect('reveal-attack-choose', undefined)],
         },
       ],
     });
@@ -1669,7 +1729,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-attack-choose'],
-          effects: [{ type: 'reveal-attack-choose', magnitude: 0 }],
+          effects: [legacyRevealEffect('reveal-attack-choose', 0)],
         },
       ],
     });
@@ -1729,7 +1789,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko-attack'],
-          effects: [{ type: 'reveal-ko-attack', magnitude: 1 }],
+          effects: [legacyRevealEffect('reveal-ko-attack', 1)],
         },
       ],
     });
@@ -1760,7 +1820,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko-attack'],
-          effects: [{ type: 'reveal-ko-attack', magnitude: 1 }],
+          effects: [legacyRevealEffect('reveal-ko-attack', 1)],
         },
       ],
     });
@@ -1789,7 +1849,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko-attack'],
-          effects: [{ type: 'reveal-ko-attack', magnitude: 1 }],
+          effects: [legacyRevealEffect('reveal-ko-attack', 1)],
         },
       ],
     });
@@ -1820,7 +1880,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko-attack'],
-          effects: [{ type: 'reveal-ko-attack', magnitude: 1 }],
+          effects: [legacyRevealEffect('reveal-ko-attack', 1)],
         },
       ],
     });
@@ -1845,7 +1905,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko-attack'],
-          effects: [{ type: 'reveal-ko-attack', magnitude: 1 }],
+          effects: [legacyRevealEffect('reveal-ko-attack', 1)],
         },
       ],
     });
@@ -1873,7 +1933,7 @@ describe('executeHeroEffects', () => {
           cardId: 'hero-x' as string,
           timing: 'onPlay',
           keywords: ['reveal-ko-attack'],
-          effects: [{ type: 'reveal-ko-attack', magnitude: 1 }],
+          effects: [legacyRevealEffect('reveal-ko-attack', 1)],
         },
       ],
     });
@@ -1908,7 +1968,7 @@ describe('executeHeroEffects', () => {
             cardId: 'hero-x' as string,
             timing: 'onPlay',
             keywords: ['reveal-ko-attack'],
-            effects: [{ type: 'reveal-ko-attack', magnitude: magnitude as number }],
+            effects: [legacyRevealEffect('reveal-ko-attack', magnitude as number)],
           },
         ],
       });
@@ -1922,5 +1982,948 @@ describe('executeHeroEffects', () => {
       assert.deepEqual(gameState.ko, [],
         `KO pile must remain empty for invalid magnitude: ${String(magnitude)}.`);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-253 — parameterized reveal collapse (D-24024)
+//
+// Valid-magnitude-tier M=0 byte-identity (reveal / reveal-min must NOT no-op at
+// M=0) and the multi-peek revealCount loop. The per-keyword legacy-equivalence of
+// the 8 reveal handlers is proven by the migrated reveal fixtures above (Amendment-A).
+// ---------------------------------------------------------------------------
+
+describe('executeHeroEffects reveal collapse (WP-253 / D-24024)', () => {
+  const mockCtx = makeMockCtx();
+
+  it('reveal M=0 draws a cost-0 card (valid tier — M=0 builds cost-lte 0, must NOT no-op)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['cost-zero-card'],
+      hand: [],
+      cardStats: {
+        'cost-zero-card': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [legacyRevealEffect('reveal', 0)],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].hand, ['cost-zero-card'],
+      'reveal M=0 must draw the cost-0 card (cost-lte 0 matches a cost-0 top).');
+    assert.deepEqual(gameState.playerZones['0'].deck, [],
+      'deck should be empty after the cost-0 card is drawn.');
+  });
+
+  it('reveal M=0 leaves a cost-1 card on deck (cost-lte 0 does not match cost 1)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['cost-one-card'],
+      hand: [],
+      cardStats: {
+        'cost-one-card': { attack: 0, recruit: 0, cost: 1, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [legacyRevealEffect('reveal', 0)],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['cost-one-card'],
+      'reveal M=0 must leave a cost-1 card on deck (cost-lte 0 fails for cost 1).');
+    assert.deepEqual(gameState.playerZones['0'].hand, [],
+      'hand should remain empty when the top card cost exceeds 0.');
+  });
+
+  it('reveal-min M=0 draws every card (valid tier — M=0 builds cost-gte 0, draws even a high-cost top)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['pricey-card'],
+      hand: [],
+      cardStats: {
+        'pricey-card': { attack: 0, recruit: 0, cost: 5, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-min'],
+          effects: [legacyRevealEffect('reveal-min', 0)],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].hand, ['pricey-card'],
+      'reveal-min M=0 must draw any card (cost-gte 0 matches every non-negative cost).');
+    assert.deepEqual(gameState.playerZones['0'].deck, [],
+      'deck should be empty after the card is drawn.');
+  });
+
+  it('reveal-ko-or-draw M=0 is a whole no-op (positive tier — < 1 returns empty rules)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['cost-zero-card'],
+      hand: [],
+      cardStats: {
+        'cost-zero-card': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal-ko-or-draw'],
+          effects: [legacyRevealEffect('reveal-ko-or-draw', 0)],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['cost-zero-card'],
+      'reveal-ko-or-draw M=0 must NOT KO the cost-0 card (positive tier — empty rules).');
+    assert.deepEqual(gameState.ko, [],
+      'KO pile must remain empty at reveal-ko-or-draw M=0.');
+  });
+
+  it('revealCount=2 peeks twice, re-reading deck[0] after the first deck-mutating draw', () => {
+    // why: the count>1 loop re-reads deck[0] each iteration; a deck-mutating action
+    // (draw) shifts the top so the second peek sees a genuinely new card. count=1 is
+    // byte-identical for all 8 legacy reveals; this exercises the loop mechanism only.
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['top-card', 'next-card', 'bottom-card'],
+      hand: [],
+      cardStats: {
+        'top-card': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        'next-card': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        'bottom-card': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          // why: revealCount 2 with a draw rule that always matches (cost-lte 5) —
+          // each iteration draws the new top, so two cards move to hand in deck order.
+          effects: [{ type: 'reveal', revealCount: 2, revealRules: revealRulesForLegacyKeyword('reveal', 5) }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].hand, ['top-card', 'next-card'],
+      'both top cards must be drawn in deck order (loop re-reads deck[0] after each draw).');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['bottom-card'],
+      'only the third card remains on deck after two peeks.');
+  });
+
+  it('revealCount=2 stops early when the deck empties mid-loop (no throw)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['only-card'],
+      hand: [],
+      cardStats: {
+        'only-card': { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [{ type: 'reveal', revealCount: 2, revealRules: revealRulesForLegacyKeyword('reveal', 5) }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].hand, ['only-card'],
+      'the single card is drawn on the first peek; the second peek finds an empty deck and stops.');
+    assert.deepEqual(gameState.playerZones['0'].deck, [],
+      'deck is empty after the only card is drawn.');
+  });
+
+  // -------------------------------------------------------------------------
+  // WP-255 / D-24027 — reveal-top-N peek-advance (the multi-peek WP-253 deferred)
+  // -------------------------------------------------------------------------
+
+  it('reveal-top-3 draws every cost-≤-2 card and advances the peek past the rest in exact deck order (D-24027)', () => {
+    // why: the peek-offset advances past a card a rule leaves on the deck so the reveal
+    // reaches the cards beneath it; the remaining deck order is asserted EXACTLY (not
+    // membership) to pin the advance — this is "The Amazing Spider-Man" in miniature.
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['cost-1', 'cost-5', 'cost-2', 'cost-9'],
+      hand: [],
+      cardStats: {
+        'cost-1': { attack: 0, recruit: 0, cost: 1, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        'cost-5': { attack: 0, recruit: 0, cost: 5, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        'cost-2': { attack: 0, recruit: 0, cost: 2, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        'cost-9': { attack: 0, recruit: 0, cost: 9, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [{ type: 'reveal', revealCount: 3, revealRules: revealRulesForLegacyKeyword('reveal', 2) }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].hand, ['cost-1', 'cost-2'],
+      'reveal-top-3 draws the two cost-≤-2 cards (cost-1, then cost-2) in reveal order.');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['cost-5', 'cost-9'],
+      'cost-5 (peeked, over threshold → offset advanced past it) and cost-9 (never reached — only 3 peeks) stay on deck in exact order.');
+    assert.ok(JSON.stringify(gameState).length > 0,
+      'JSON.stringify(G) must succeed after a reveal-top-N effect (the descriptor is plain data).');
+  });
+
+  it('reveal-top-3 skips an unstatted S.H.I.E.L.D. starter in the window and does NOT abort the reveal (copilot #22)', () => {
+    // why: a peeked card with no cardStats entry is SKIPPED-AND-ADVANCED, not a whole-effect
+    // abort — the cards beneath it still reveal. The starter is left on the deck (a cost-0
+    // starter is revealed-but-not-drawn, the accepted D-21502 limitation).
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['cost-1', 'shield-starter', 'cost-2', 'cost-9'],
+      hand: [],
+      cardStats: {
+        'cost-1': { attack: 0, recruit: 0, cost: 1, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        'cost-2': { attack: 0, recruit: 0, cost: 2, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        'cost-9': { attack: 0, recruit: 0, cost: 9, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [{ type: 'reveal', revealCount: 3, revealRules: revealRulesForLegacyKeyword('reveal', 2) }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].hand, ['cost-1', 'cost-2'],
+      'the eligible cards around the unstatted starter are still drawn — the missing-stats peek did not abort the reveal.');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['shield-starter', 'cost-9'],
+      'the unstatted shield-starter is left in place (skipped, not drawn, not KOd); cost-9 was never reached.');
+  });
+
+  it('reveal-top-3 over a short deck stops cleanly at the deck end (no throw)', () => {
+    // why: revealCount (3) exceeds the deck size (2). The loop draws the eligible card,
+    // advances past the over-threshold one, then stops at peekOffset >= deck.length — the
+    // only whole-loop exit — without throwing or indexing past the array.
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: ['cost-1', 'cost-5'],
+      hand: [],
+      cardStats: {
+        'cost-1': { attack: 0, recruit: 0, cost: 1, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+        'cost-5': { attack: 0, recruit: 0, cost: 5, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 },
+      },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [{ type: 'reveal', revealCount: 3, revealRules: revealRulesForLegacyKeyword('reveal', 2) }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].hand, ['cost-1'],
+      'the single cost-≤-2 card is drawn; the short deck does not loop forever or throw.');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['cost-5'],
+      'cost-5 (over threshold) stays on deck; the loop stops once the offset overruns the deck end.');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-247 — attack-per-count executor (D-24016)
+// ---------------------------------------------------------------------------
+
+describe('executeHeroEffects attack-per-count (WP-247)', () => {
+  // why: makeMockCtx provides ShuffleProvider-compatible context; attack-per-count
+  // does not draw, but executeHeroEffects requires a ctx argument.
+  const mockCtx = makeMockCtx();
+
+  it('grants magnitude × victory-pile bystander count (m=2, N=3 → +6 attack)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      victory: ['pile-bystander', 'bystander-villain-deck-02', 'pile-bystander'],
+      turnEconomyAttack: 0,
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['attack-per-count'],
+          effects: [{ type: 'attack-per-count', magnitude: 2, countSource: 'victory-bystanders' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 6,
+      'attack should increase by magnitude (2) × bystander count (3) = 6.');
+  });
+
+  it('grants 0 attack when the victory pile holds no bystanders', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      victory: [],
+      turnEconomyAttack: 1,
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['attack-per-count'],
+          effects: [{ type: 'attack-per-count', magnitude: 3, countSource: 'victory-bystanders' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 1,
+      'attack should be unchanged (grant of 3 × 0 = 0) when there are no bystanders.');
+  });
+
+  it('is a skipped no-op when the effect carries no countSource', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      victory: ['pile-bystander', 'pile-bystander'],
+      turnEconomyAttack: 4,
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['attack-per-count'],
+          effects: [{ type: 'attack-per-count', magnitude: 2 }],
+        },
+      ],
+    });
+
+    const messageCountBefore = gameState.messages.length;
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 4,
+      'attack should be unchanged when countSource is missing (skipped no-op).');
+    assert.equal(gameState.messages.length, messageCountBefore,
+      'no message should be appended for a missing-countSource no-op.');
+  });
+
+  it('leaves G JSON-serializable after a count-scaled attack grant', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      victory: ['pile-bystander', 'bystander-villain-deck-01'],
+      turnEconomyAttack: 0,
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['attack-per-count'],
+          effects: [{ type: 'attack-per-count', magnitude: 1, countSource: 'victory-bystanders' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 2,
+      'attack should increase by 1 × 2 = 2.');
+    const serialized = JSON.stringify(gameState);
+    assert.ok(serialized.length > 0, 'JSON.stringify(G) must succeed after a count-scaled grant.');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// D-24017 — hero-ability rescue observability (game-log feedback)
+// ---------------------------------------------------------------------------
+
+describe('executeHeroEffects rescue logging (D-24017)', () => {
+  const mockCtx = makeMockCtx();
+
+  it('appends a game-log line naming the rescued count on a successful rescue', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      bystanders: ['b-1', 'b-2'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['rescue'],
+          effects: [{ type: 'rescue', magnitude: 1 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    // The rescue still happens (behavior unchanged) ...
+    assert.deepEqual(gameState.playerZones['0'].victory, ['b-1'],
+      'b-1 should be rescued to the victory zone.');
+    // ... and is now observable in the game log.
+    assert.ok(
+      gameState.messages.some((line) => line.includes('rescued 1 bystander(s) via a hero ability')),
+      'a successful hero rescue must append a game-log line naming the count.',
+    );
+  });
+
+  it('appends a supply-empty game-log line when the Bystander supply is empty', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      bystanders: [],
+      victory: [],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['rescue'],
+          effects: [{ type: 'rescue', magnitude: 1 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    // The no-op behavior is unchanged ...
+    assert.deepEqual(gameState.playerZones['0'].victory, [],
+      'victory zone stays empty when the supply is empty.');
+    // ... but the player now sees WHY nothing was rescued.
+    assert.ok(
+      gameState.messages.some((line) => line.includes('Bystander supply is empty')),
+      'an empty-supply hero rescue must append a game-log line explaining the no-op.',
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-248 — optional-KO-reward park case (D-24019)
+// ---------------------------------------------------------------------------
+
+describe('executeHeroEffects optional-ko-reward park (WP-248)', () => {
+  const mockCtx = makeMockCtx();
+
+  it('playing the effect with ≥1 card in hand/discard parks a choice (no auto-KO, no reward)', () => {
+    const gameState = makeTestState({
+      hand: ['card-h'],
+      discard: ['card-d'],
+      inPlay: ['hero-x'],
+      bystanders: ['bystander-0'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['optional-ko-reward'],
+          effects: [{ type: 'optional-ko-reward', magnitude: 1, rewardType: 'rescue' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.pendingOptionalKoRewards?.length, 1, 'exactly one choice parked');
+    assert.deepStrictEqual(
+      gameState.pendingOptionalKoRewards![0],
+      { playerID: '0', rewardType: 'rescue', rewardMagnitude: 1, sourceCardId: 'hero-x' },
+      'parked entry records player, reward, magnitude, and source card',
+    );
+    // No KO and no reward at play time.
+    assert.deepStrictEqual(gameState.ko, [], 'no card KOd at play time');
+    assert.deepStrictEqual(gameState.playerZones['0'].victory, [], 'no bystander rescued at play time');
+    assert.deepStrictEqual(gameState.piles.bystanders, ['bystander-0'], 'bystander supply untouched at play time');
+    // The park is SILENT (mirrors WP-242).
+    assert.equal(gameState.messages.length, 0, 'the park appends no game-log line');
+  });
+
+  it('with 0 eligible cards (hand + discard both empty) it is a no-op plus a game-log line', () => {
+    const gameState = makeTestState({
+      hand: [],
+      discard: [],
+      inPlay: ['hero-x'],
+      bystanders: ['bystander-0'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['optional-ko-reward'],
+          effects: [{ type: 'optional-ko-reward', magnitude: 1, rewardType: 'rescue' }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.pendingOptionalKoRewards?.length ?? 0, 0, 'no choice parked when nothing is eligible');
+    assert.ok(
+      gameState.messages.some((line) => line.includes('both hand and discard pile are empty')),
+      'a 0-eligible optional-KO-reward must append a game-log line explaining the no-op',
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-248 — selectDefaultOptionalKoTarget tie-break (D-24019)
+// ---------------------------------------------------------------------------
+
+describe('selectDefaultOptionalKoTarget tie-break (WP-248)', () => {
+  /** Minimal PlayerZones for the selector (only discard + hand are scanned). */
+  function zonesOf(hand: string[], discard: string[]) {
+    return {
+      deck: [],
+      hand,
+      discard,
+      inPlay: [],
+      victory: [],
+    } as unknown as Parameters<typeof selectDefaultOptionalKoTarget>[0];
+  }
+
+  /** Minimal cardStats with only the cost field the selector reads. */
+  function statsOf(costs: Record<string, number>) {
+    const result: Record<string, { attack: number; recruit: number; cost: number; fightCost: number }> = {};
+    for (const cardId of Object.keys(costs)) {
+      result[cardId] = { attack: 0, recruit: 0, cost: costs[cardId]!, fightCost: 0 };
+    }
+    return result as unknown as Parameters<typeof selectDefaultOptionalKoTarget>[1];
+  }
+
+  it('picks the lowest-cost card across both zones (cost beats zone)', () => {
+    const target = selectDefaultOptionalKoTarget(
+      zonesOf(['cheap-hand'], ['pricey-discard']),
+      statsOf({ 'cheap-hand': 1, 'pricey-discard': 3 }),
+    );
+    assert.deepStrictEqual(target, { zone: 'hand', cardId: 'cheap-hand' });
+  });
+
+  it('breaks a cost tie by preferring discard over hand', () => {
+    const target = selectDefaultOptionalKoTarget(
+      zonesOf(['hand-card'], ['discard-card']),
+      statsOf({ 'hand-card': 2, 'discard-card': 2 }),
+    );
+    assert.deepStrictEqual(target, { zone: 'discard', cardId: 'discard-card' });
+  });
+
+  it('breaks a cost+zone tie by lowest array index', () => {
+    const target = selectDefaultOptionalKoTarget(
+      zonesOf([], ['first', 'second']),
+      statsOf({ first: 2, second: 2 }),
+    );
+    assert.deepStrictEqual(target, { zone: 'discard', cardId: 'first' });
+  });
+
+  it('treats a card with no cardStats entry as cost 0', () => {
+    const target = selectDefaultOptionalKoTarget(
+      zonesOf(['unknown-card'], ['known-cost-1']),
+      statsOf({ 'known-cost-1': 1 }),
+    );
+    assert.deepStrictEqual(target, { zone: 'hand', cardId: 'unknown-card' });
+  });
+
+  it('returns null when both zones are empty', () => {
+    const target = selectDefaultOptionalKoTarget(zonesOf([], []), statsOf({}));
+    assert.equal(target, null);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Primitive-effect path (WP-256 / D-24031)
+// ---------------------------------------------------------------------------
+
+describe('executeHeroEffects primitiveEffects path (WP-256 / D-24031)', () => {
+  const mockCtx = makeMockCtx();
+
+  const berserkStat = {
+    attack: 4,
+    recruit: 0,
+    cost: 0,
+    fightCost: 0,
+    fightCostMode: 'static' as const,
+    fightCostBase: 0,
+  };
+
+  it('a hook with primitiveEffects fires Berserk — deck-top discards and grants attack', () => {
+    const gameState = makeTestState({
+      deck: ['top', 'b', 'c'],
+      inPlay: ['hero-x'],
+      cardStats: { top: berserkStat },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+          primitiveEffects: [HERO_COMPOSITION_MARKERS['berserk']!],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].discard, ['top'], 'top card discarded by Berserk');
+    assert.deepEqual(gameState.playerZones['0'].deck, ['b', 'c'], 'top card left the deck');
+    assert.equal(gameState.turnEconomy.attack, 4, '+Attack equals the discarded card printed attack');
+  });
+
+  it('a hook whose conditions fail does NOT fire primitiveEffects', () => {
+    const gameState = makeTestState({
+      deck: ['top', 'b'],
+      inPlay: ['hero-x'],
+      cardStats: { top: berserkStat },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+          conditions: [{ type: 'heroClassMatch', value: 'strength' }],
+          primitiveEffects: [HERO_COMPOSITION_MARKERS['berserk']!],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.deepEqual(gameState.playerZones['0'].deck, ['top', 'b'], 'deck unchanged when conditions fail');
+    assert.deepEqual(gameState.playerZones['0'].discard, [], 'nothing discarded when conditions fail');
+    assert.equal(gameState.turnEconomy.attack, 0, 'no attack granted when conditions fail');
+  });
+
+  it('legacy effects run before primitiveEffects (legacy-then-primitive order)', () => {
+    // why: RISK-2 — a hook carrying BOTH a legacy effect (recruit) and the Berserk
+    // composition applies them in a fixed order; both fire inside the conditions gate.
+    const gameState = makeTestState({
+      deck: ['top', 'b'],
+      inPlay: ['hero-x'],
+      cardStats: { top: berserkStat },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['recruit'],
+          effects: [{ type: 'recruit', magnitude: 2 }],
+          primitiveEffects: [HERO_COMPOSITION_MARKERS['berserk']!],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.recruit, 2, 'the legacy recruit effect fired');
+    assert.equal(gameState.turnEconomy.attack, 4, 'the Berserk composition also fired');
+    assert.deepEqual(gameState.playerZones['0'].discard, ['top'], 'Berserk discarded the deck-top card');
+  });
+
+  it('a hook with the Empowered composition grants +Attack equal to the HQ class count (WP-267)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+          primitiveEffects: [buildEmpoweredComposition('strength')],
+        },
+      ],
+    });
+    // Populate the shared HQ + card traits the count reads (makeTestState defaults HQ empty).
+    gameState.hq = ['s1', 't1', 's2', null, 's3'] as unknown as LegendaryGameState['hq'];
+    gameState.cardTraits = {
+      s1: { heroClass: 'strength', team: null },
+      t1: { heroClass: 'tech', team: null },
+      s2: { heroClass: 'strength', team: null },
+      s3: { heroClass: 'strength', team: null },
+    };
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(gameState.turnEconomy.attack, 3, '+Attack equals the 3 strength cards in the HQ');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Conditional-prefix Empowered (WP-272 / D-24047)
+//
+// A conditional-prefix Empowered hook carries the retained prefix gate
+// (heroClassMatch X) as a CONDITION and the count composition (color Y) as a
+// primitiveEffect. The WP-256 executor runs primitiveEffects only INSIDE the
+// conditions-passed gate, so retaining the gate IS the conditional behavior —
+// no executor edit. X (strength) ≠ Y (tech) keeps the gate and the count distinct.
+// ---------------------------------------------------------------------------
+
+describe('executeHeroEffects conditional-prefix Empowered (WP-272 / D-24047)', () => {
+  const mockCtx = makeMockCtx();
+
+  /** Builds state for a conditional-prefix hook: gate heroClassMatch('strength') + count tech. */
+  function conditionalPrefixState(otherInPlay: string[]) {
+    const gameState = makeTestState({
+      inPlay: ['hero-x', ...otherInPlay],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['conditional'],
+          conditions: [{ type: 'heroClassMatch', value: 'strength' }],
+          primitiveEffects: [buildEmpoweredComposition('tech')],
+        },
+      ],
+    });
+    // Three tech HQ cards (the count color Y) + one strength to prove the count is class-scoped.
+    gameState.hq = ['t1', 't2', 's1', null, 't3'] as unknown as LegendaryGameState['hq'];
+    gameState.cardTraits = {
+      t1: { heroClass: 'tech', team: null },
+      t2: { heroClass: 'tech', team: null },
+      s1: { heroClass: 'strength', team: null },
+      t3: { heroClass: 'tech', team: null },
+      // why: 'gate-hero' is a separate in-play strength card that satisfies the
+      // heroClassMatch('strength') gate (self-exclusion excludes the triggering hero-x).
+      'gate-hero': { heroClass: 'strength', team: null },
+    };
+    return gameState;
+  }
+
+  it('gate passes (a strength card in play) → +Attack equals the HQ tech count', () => {
+    const gameState = conditionalPrefixState(['gate-hero']);
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+    assert.equal(gameState.turnEconomy.attack, 3, '+Attack equals the 3 tech HQ cards when the strength gate passes');
+  });
+
+  it('gate fails (no strength card in play) → nothing granted, no hollow', () => {
+    const gameState = conditionalPrefixState([]);
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+    assert.equal(gameState.turnEconomy.attack, 0, 'no attack granted when the strength gate fails');
+    // why: a gated effect that legitimately did not trigger is NOT a hollow — it resolved at
+    // parse time (primitiveEffects, not unresolvedMarkers) and was skipped by the conditions gate.
+    assert.equal(
+      (gameState.diagnostics?.hollowEffects ?? []).length,
+      0,
+      'a gate-failed conditional effect records no hollow',
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WP-257 — hollow-effect detection (D-24033 + D-24034)
+//
+// The detector classifies on handler REACHABILITY, never by diffing G. These
+// tests pin: an unknown/unsupported keyword flags hollow; an empty-supply rescue
+// / failed condition / deferred mechanic / empty-deck reveal record NO hollow;
+// a mixed hook (≥1 reachable + 1 unhandled) records NO hollow; an unresolved
+// marker flags parse-unrecognized; the record turn defaults to 0 under a mock ctx.
+// ---------------------------------------------------------------------------
+
+describe('executeHeroEffects — hollow-effect detection (WP-257)', () => {
+  const mockCtx = makeMockCtx();
+
+  /** Reads the lazy-init diagnostics records (empty array when never written). */
+  function records(gameState: LegendaryGameState) {
+    return gameState.diagnostics?.hollowEffects ?? [];
+  }
+
+  it('unknown keyword (not a HeroKeyword) records ONE hollow record (unsupported-keyword)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+          // why: an invented keyword cast as HeroKeyword simulates a token that is
+          // not even a recognized keyword — dispatch cannot execute it.
+          effects: [{ type: 'totally-made-up' as HeroKeyword }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 1, 'exactly one hollow record');
+    assert.equal(records(gameState)[0]!.reason, 'unsupported-keyword');
+    assert.equal(records(gameState)[0]!.cardType, 'hero');
+    assert.equal(records(gameState)[0]!.mechanic, 'totally-made-up');
+    assert.equal(records(gameState)[0]!.turn, 0, 'turn defaults to 0 under the mock ctx');
+  });
+
+  it('unsupported keyword (recognized HeroKeyword with no handler) is NOT hollow when deferred (wound)', () => {
+    // why: `wound` is on DEFERRED_BY_DESIGN_MECHANICS — a recognized keyword with
+    // no handler today, classified `deferred` (reachable), NOT hollow.
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['wound'],
+          effects: [{ type: 'wound', magnitude: 1 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 0, 'a deferred mechanic records NO hollow event');
+  });
+
+  it('empty-bystander-supply rescue records NO hollow event (reachable handler, intentional no-op)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      bystanders: [],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['rescue'],
+          effects: [{ type: 'rescue', magnitude: 1 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 0, 'empty supply is a reachable no-op, not hollow');
+  });
+
+  it('failed condition records NO hollow event (condition-failed reachable outcome)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['attack'],
+          // why: heroClassMatch with no other in-play card of that class fails.
+          conditions: [{ type: 'heroClassMatch', value: 'strength' }],
+          effects: [{ type: 'attack', magnitude: 5 }],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 0, 'a failed condition is reachable, not hollow');
+  });
+
+  it('empty-deck reveal records NO hollow event (reachable handler, empty source)', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      deck: [],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: ['reveal'],
+          effects: [legacyRevealEffect('reveal', 2)],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 0, 'an empty deck is a reachable no-op, not hollow');
+  });
+
+  it('mixed hook (one reachable effect + one unhandled) records NO hollow event', () => {
+    // why: per-hook rule — a hook flags hollow only when NONE of its declared
+    // effects reached a handler. A reachable draw alongside an unknown keyword on
+    // the same hook means the hook is NOT hollow.
+    const gameState = makeTestState({
+      deck: ['card-a', 'card-b'],
+      inPlay: ['hero-x'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+          effects: [
+            { type: 'draw', magnitude: 1 },
+            { type: 'totally-made-up' as HeroKeyword },
+          ],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 0, 'a mixed hook with ≥1 reachable effect is not hollow');
+    assert.equal(gameState.playerZones['0'].hand.length, 1, 'the reachable draw still fired');
+  });
+
+  it('unresolved marker on the hook records a parse-unrecognized hollow event', () => {
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+          unresolvedMarkers: ['mind-swap'],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 1, 'exactly one hollow record');
+    assert.equal(records(gameState)[0]!.reason, 'parse-unrecognized');
+    assert.equal(records(gameState)[0]!.mechanic, 'mind-swap');
+  });
+
+  it('a flavor-text-only hook (no effects, no markers) records NO hollow event', () => {
+    // why: a hook that declares nothing executable can never be hollow — a pure
+    // flavor-text line surfaces no effects and an empty/absent unresolvedMarkers.
+    const gameState = makeTestState({
+      inPlay: ['hero-x'],
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 0, 'no declared effect → never hollow');
+  });
+
+  it('a primitive-only (Berserk) hook records NO hollow event (composition is reachable)', () => {
+    const gameState = makeTestState({
+      deck: ['top', 'b'],
+      inPlay: ['hero-x'],
+      cardStats: { top: { attack: 0, recruit: 0, cost: 0, fightCost: 0, fightCostMode: 'static', fightCostBase: 0 } },
+      heroAbilityHooks: [
+        {
+          cardId: 'hero-x' as string,
+          timing: 'onPlay',
+          keywords: [],
+          primitiveEffects: [HERO_COMPOSITION_MARKERS['berserk']!],
+        },
+      ],
+    });
+
+    executeHeroEffects(gameState, mockCtx, '0', 'hero-x' as string);
+
+    assert.equal(records(gameState).length, 0, 'a recognized composition reaches the interpreter');
   });
 });

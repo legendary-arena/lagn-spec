@@ -54,8 +54,25 @@ export interface FlatCard {
    *   mastermind: "{setAbbr}-mastermind-{groupSlug}-{cardSlug}"
    *   villain:    "{setAbbr}-villain-{groupSlug}-{cardSlug}"
    *   scheme:     "{setAbbr}-scheme-{schemeSlug}"
+   *
+   * This key is a display/grid identity, NOT a match-setup ext_id. Do not
+   * use it in a MatchSetupConfig — the engine rejects flat-card keys
+   * (D-10014). Use `extId` for match-setup composition fields.
    */
   key:       string;
+  /**
+   * Set-qualified ext_id in the locked "{setAbbr}/{slug}" form that the
+   * game engine's match-setup validator requires (D-10014). The slug is the
+   * entity slug the engine derives for each field:
+   *   hero:       "{setAbbr}/{heroSlug}"      (engine: extractHeroSlug)
+   *   mastermind: "{setAbbr}/{mastermindSlug}"
+   *   villain:    "{setAbbr}/{villainGroupSlug}" (engine: extractVillainGroupSlug)
+   *   scheme:     "{setAbbr}/{schemeSlug}"
+   * This is the canonical identifier for loadout composition fields so a
+   * loadout authored against the registry is accepted by Game.setup() rather
+   * than throwing an HTTP 500 (D-24018).
+   */
+  extId:     string;
   cardType:  "hero" | "mastermind" | "villain" | "scheme";
   setAbbr:   string;
   setName:   string;

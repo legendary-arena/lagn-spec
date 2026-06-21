@@ -20,6 +20,13 @@
 **Status:** Ready
 **Primary Layer:** [Game Engine / Contracts | Game Engine / Implementation | Server | etc.]
 **Dependencies:** WP-[NNN], WP-[NNN]
+**User-Visible Surface:** [play.legendary-arena.com | cards.legendary-arena.com | dashboard | wiki | **none — infrastructure** (refactor / tooling / contract / behavior-identical change; no user-observable difference)]
+
+> Pick exactly one. This is not cosmetic — it determines the Definition of Done
+> (see `## User-Visible Impact` and the conditional gate in `## Definition of Done`).
+> A behavior-identical refactor, a coverage gate, an internal contract, or an
+> engine change a player cannot perceive is **`none — infrastructure`**; say so
+> plainly rather than implying visible progress. (D-24026)
 
 ---
 
@@ -43,6 +50,24 @@ describe this packet's own goal here — that belongs in ## Goal.]
 [One paragraph. Describe what `@legendary-arena/game-engine` (or the relevant
 package) can do after this session that it could not do before. Be concrete:
 name the specific exports, behaviors, or states that will exist.]
+
+---
+
+## User-Visible Impact
+
+> One short paragraph, written for the operator (not the engineer). After this
+> packet ships and deploys, what does a **player** (play.legendary-arena.com), a
+> **visitor** (cards.legendary-arena.com), or an **operator** (dashboard) see or
+> experience differently? Name the concrete surface and interaction.
+>
+> If the honest answer is "nothing a human can observe," write exactly:
+> **"None — infrastructure. No user-observable change; this packet's payoff is
+> [cheaper future work / a regression gate / a contract other packets build on]."**
+> That is a legitimate and common answer — but it MUST be stated, so a run of
+> infrastructure packets is never mistaken for visible progress. (D-24026)
+
+[What a player / visitor / operator sees differently — or the explicit
+"None — infrastructure" statement above.]
 
 ---
 
@@ -340,8 +365,25 @@ git diff --name-only
 > Every item must be true before this packet is considered complete.
 > The last three items (STATUS.md, DECISIONS.md, WORK_INDEX.md) are mandatory
 > for every packet without exception.
+>
+> **"Done" means observable, not merged.** Green tests + a merged PR are
+> NECESSARY but, for any packet whose `## User-Visible Surface` is NOT
+> `none — infrastructure`, NOT SUFFICIENT. A user-facing packet is done only
+> when the change is confirmed **live on its named surface** — see the
+> conditional gate below. (D-24026)
 
 This packet is complete when ALL of the following are true:
+
+- [ ] **User-visible verification (CONDITIONAL on `## User-Visible Surface`):**
+  - If the surface is **not** `none — infrastructure`: the change is confirmed
+    **live on the named deployed surface** — a real match on
+    play.legendary-arena.com, the deployed cards/dashboard page, etc. — with
+    observable evidence captured (a screenshot, an observed behavior, or a
+    deploy-confirmed commit SHA serving the change). Tests that prove behavior
+    identity or correctness are necessary but do NOT satisfy this item.
+  - If the surface **is** `none — infrastructure`: the `docs/ai/STATUS.md` entry
+    states plainly **"No user-observable change — infrastructure only"** (with
+    the payoff named), so a run of such packets is never read as visible progress.
 
 - [ ] All acceptance criteria above pass
 - [ ] `pnpm --filter @legendary-arena/game-engine build` exits 0

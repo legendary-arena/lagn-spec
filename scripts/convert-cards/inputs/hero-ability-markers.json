@@ -31,6 +31,8 @@
   ],
   "core": [
     { "heroSlug": "black-widow", "cardSlug": "mission-accomplished", "abilityIndex": 1, "markupToken": "[keyword:rescue:1]" },
+    { "heroSlug": "black-widow", "cardSlug": "covert-operation", "abilityIndex": 0, "markupToken": "[keyword:attack-per-count:victory-bystanders:1]" },
+    { "heroSlug": "black-widow", "cardSlug": "dangerous-rescue", "abilityIndex": 0, "markupToken": "[keyword:optional-ko-reward:rescue:1]" },
     { "heroSlug": "gambit", "cardSlug": "high-stakes-jackpot", "abilityIndex": 0, "markupToken": "[keyword:reveal-cost-attack]" },
     { "heroSlug": "spider-man", "cardSlug": "astonishing-strength", "abilityIndex": 0, "markupToken": "[keyword:reveal]" },
     { "heroSlug": "spider-man", "cardSlug": "great-responsibility", "abilityIndex": 0, "markupToken": "[keyword:reveal]" },

@@ -20,6 +20,8 @@ import {
   type InspectionTriageFetchState,
   type HandoffChainFetchState,
 } from '../../composables/useTriageStatus.js';
+import { useCoverageLedger } from '../../composables/useCoverageLedger.js';
+import { useArchitectGapIntake } from '../../composables/useArchitectGapIntake.js';
 import { useDateRange } from '../../composables/useDateRange.js';
 import {
   fetchSweepHealth,
@@ -75,9 +77,20 @@ const triage = useTriageStatus(
   nowMs,
 );
 
-// The projection is sampled once (like `sweepData`) and injected as the third
-// argument; the existing lane rendering consumes the `triage-`-prefixed items.
-const pipeline = useAgentPipeline(undefined, sweepData, triage.value);
+// Architect gap intake (WP-260): the runtime-confirmed hollow-effect overlay the
+// Coverage page already exposes (`useCoverageLedger().runtimeObservedByMechanic`)
+// is projected into draft-WP backlog candidates and folded into the Architect
+// lane only. Same sample-once / dependency-injection shape as `sweepData` and
+// `triage`; introduces no new fetch or data source. When the overlay carries no
+// runtime-confirmed gaps (the committed zero-state), the projection is empty and
+// the Architect lane renders its existing items unchanged.
+const coverage = useCoverageLedger();
+const architectGap = useArchitectGapIntake(coverage.runtimeObservedByMechanic);
+
+// The projections are sampled once (like `sweepData`) and injected as the third
+// and fourth arguments; the existing lane rendering consumes the `triage-`- and
+// `architect-gap-`-prefixed items.
+const pipeline = useAgentPipeline(undefined, sweepData, triage.value, architectGap.value);
 
 const lanes = computed<readonly PipelineLane[]>(() => [
   pipeline.architect,

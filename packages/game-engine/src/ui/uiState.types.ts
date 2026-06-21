@@ -22,6 +22,10 @@
 
 import type { FinalScoreSummary } from "../scoring/scoring.types.js";
 import type { NotableGameEvent } from "../events/notableEvents.types.js";
+// why: WP-258 — reuse the engine's canonical HollowEffectRecord rather than
+// declaring a parallel UI type. The projection surfaces the WP-257 runtime
+// channel (G.diagnostics.hollowEffects) to the client unchanged.
+import type { HollowEffectRecord } from "../diagnostics/hollowEffect.types.js";
 
 // why: UIState is the only data the UI sees. All items in the canonical
 // forbidden internals list (hookRegistry, ImplementationMap, cardStats,
@@ -73,6 +77,29 @@ export interface UIState {
   // render the "Discard / Put it back" prompt. Absent (undefined) means no
   // pending choice; the client must not render the prompt in that case.
   pendingHeroChoice?: UIPendingHeroChoice;
+  // why: D-24010 + WP-243 — projects the FRONT of G.pendingKoHeroChoices with
+  // the freshly-computed eligible targets so the choosing player can render the
+  // "Choose a Hero to KO" prompt. Redacted (omitted) for every audience except
+  // the chooser — the eligible list carries the chooser's hand identities
+  // (D-24011 hand-leak). Absent (undefined) means no pending KO choice.
+  pendingKoHeroChoice?: UIPendingKoHeroChoice;
+  // why: D-24020 + WP-249 — projects the FRONT of G.pendingOptionalKoRewards
+  // with the derived reward label + the chooser's eligible hand/discard cards so
+  // the choosing player can render the "KO a card for a reward, or Decline"
+  // prompt. Redacted (omitted) for every audience except the chooser — the
+  // eligible lists carry the chooser's private hand/discard identities (D-24011
+  // hand-privacy analog). Absent (undefined) means no pending optional-KO-reward
+  // choice.
+  pendingOptionalKoReward?: UIPendingOptionalKoReward;
+  // why: WP-258 — projects the WP-257 runtime hollow-effect channel
+  // (G.diagnostics.hollowEffects) so the client can render a structured debug
+  // panel + carry the records on the Download-diagnostics export. OPTIONAL on
+  // purpose: an absent channel omits the field entirely, so existing client
+  // UIState fixtures need no backfill (the WP-166/207/227 required-field
+  // recurrence). The records are PUBLIC (card/mechanic identities, never hidden
+  // state) and pass through the audience filter value-unchanged for every
+  // audience (D-12803 public-projection posture — like `log`/`piles`).
+  hollowEffects?: HollowEffectRecord[];
 }
 
 /**
@@ -191,6 +218,30 @@ export interface UIPlayerState {
    * face-up at the physical table — public to all audiences.
    */
   discardTopCard?: UIDisplayEntry | null;
+  /**
+   * Full discard-pile card ext_ids for this player.
+   *
+   * // why: WP-243 / D-24010 — present for the viewing player's own discard
+   * (so the KO-a-Hero prompt and the "View all" discard view can render the
+   * full contents); undefined (redacted) for other players and spectators,
+   * the exact `handCards` privacy posture. Length matches `discardDisplay`
+   * exactly when both are present. buildUIState always populates this for the
+   * own player; filterUIStateForAudience redacts it (together with
+   * `discardDisplay`) based on audience.
+   */
+  discardCards?: string[];
+  /**
+   * Per-discard-card display data, parallel-aligned with `discardCards` by
+   * index.
+   *
+   * // why: WP-243 / D-24010 — privacy-symmetric with `discardCards`; leaking
+   * display data is identical to leaking the CardExtId. Assigned in the SAME
+   * conditional block as `discardCards` (both or neither, length-matched) and
+   * redacted alongside it by the audience filter. Mirrors the WP-029 D-2902
+   * exactOptionalPropertyTypes conditional-assignment pattern: never written
+   * as a literal `undefined`.
+   */
+  discardDisplay?: UICardDisplay[];
   /**
    * Full victory-pile contents for this player.
    *
@@ -461,6 +512,34 @@ export interface UIPendingKoHeroChoice {
   playerID: string;
   eligible: UIEligibleKoHeroCard[];
   remaining: number;
+}
+
+/**
+ * UI contract for resolving a pending optional-KO-then-reward choice
+ * (WP-249 / D-24020). Mirrors UIPendingKoHeroChoice; only visible to the
+ * choosing player, redacted for opponents and spectators.
+ *
+ * `playerID` is REQUIRED — `uiState.filter.ts` keys the chooser-only redaction
+ * on it (`audience.playerId === playerID`), exactly as the KO-hero filter does.
+ * `eligibleHand` / `eligibleDiscard` REUSE `UIEligibleKoHeroCard` so each entry
+ * carries its instance `cardId` separately from `display`: the client submits
+ * `{ zone, cardId }` and the zone instance id (NOT `display.extId`) is what the
+ * engine resolve matches (the round-trip rule). `eligibleHand` entries carry
+ * `zone:"hand"`, `eligibleDiscard` entries `zone:"discard"`.
+ *
+ * @see WP-249 §Locked Contract Values
+ * @see EC-280 Locked Values
+ * @see DECISIONS.md D-24020
+ */
+export interface UIPendingOptionalKoReward {
+  // why: D-24020 — the redaction key; the chooser-only filter compares
+  // audience.playerId against this, mirroring UIPendingKoHeroChoice.playerID.
+  playerID: string;
+  // why: D-24020 — derived once in uiState.build.ts by the single deterministic
+  // rewardType + magnitude mapping; never an ad-hoc or per-card string.
+  rewardLabel: string;
+  eligibleHand: UIEligibleKoHeroCard[];
+  eligibleDiscard: UIEligibleKoHeroCard[];
 }
 
 export type { UIAudience } from "./uiAudience.types.js";

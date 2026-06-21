@@ -94,6 +94,24 @@ This function:
 - Validates all ext_ids against the card registry
 - Accumulates all errors (does not fail on first)
 
+### Layer 1b: Lobby Pre-Check (Client — `apps/arena-client`)
+
+Before submission, `apps/arena-client`'s `parseLoadoutJson` (the lobby shape
+guard, WP-092) performs a client-side **envelope-grammar** pre-check of the
+five composition entity-id fields (`schemeId`, `mastermindId`, and each entry
+of `villainGroupIds` / `henchmanGroupIds` / `heroDeckIds`), rejecting any id
+not in the set-qualified `<setAbbr>/<slug>` form with error code
+`"unqualified_ext_id"` and a full-sentence "re-export your loadout" message.
+This catches a stale pre-D-24018 export (flat-card keys like
+`core-scheme-midtown-bank-robbery` or bare slugs like `black-widow`) in the
+lobby instead of as an opaque `Game.setup()` 500. It is **grammar-only** — the
+engine (Layer 2) remains the sole authority on ext_id existence and charset —
+and **layer-boundary-safe**: the grammar mirrors the engine's `parseQualifiedId`
+(D-10014) but is re-derived by hand, since arena-client may not import the
+registry or the engine setup surface at runtime (D-14401). Both the
+MATCH-SETUP and LAGN intake paths route through `parseLoadoutJson`, so both
+gain the guard. See WP-254 / D-24025.
+
 ### What Does Not Exist Yet
 
 Envelope validation (schemaVersion, setupId, seed, playerCount, themeId,
@@ -152,7 +170,12 @@ This stage ensures:
 - Unknown fields are rejected (`additionalProperties: false`)
 - Field types are correct
 - Arrays respect `minItems` and `uniqueItems`
-- ID patterns match `^[a-z0-9-]+$`
+- Composition entity-id patterns match `^[a-z0-9-]+/[a-z0-9-]+$` — the
+  set-qualified `<setAbbr>/<slug>` form (per `MATCH-SETUP-JSON-SCHEMA.json`
+  and D-10014), not the bare `^[a-z0-9-]+$`. (D-24018 widened the canonical
+  schema pattern to the qualified form when the Registry Viewer began
+  emitting set-qualified ids; D-24025 reconciled this prose, which had
+  retained the stale single-segment pattern.)
 
 `additionalProperties: false` enforces fail-closed behavior structurally.
 Per D-1246, no separate ban list is needed for specific field names.

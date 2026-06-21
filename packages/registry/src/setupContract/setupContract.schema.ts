@@ -9,13 +9,24 @@
 
 import { z } from "zod";
 
+// why: setupId and themeId are local document identifiers — bare lowercase
+// slugs, no set qualifier.
 const EXT_ID_PATTERN = /^[a-z0-9-]+$/;
+
+// why: D-24018 — composition ext_ids are the set-qualified "{setAbbr}/{slug}"
+// form the engine's match-setup validator requires (D-10014). Exactly one
+// slash separates a bare set abbreviation from a bare slug; both segments use
+// the same lowercase/digit/hyphen grammar as EXT_ID_PATTERN. This mirrors the
+// engine's parseQualifiedId grammar so a document accepted here is accepted at
+// match creation rather than throwing an HTTP 500. Bare slugs and flat-card
+// keys (no slash, or multiple slashes) are rejected.
+const QUALIFIED_EXT_ID_PATTERN = /^[a-z0-9-]+\/[a-z0-9-]+$/;
 
 const extIdString = z
   .string()
   .regex(
-    EXT_ID_PATTERN,
-    "Every ext_id must match the pattern ^[a-z0-9-]+$ (lowercase letters, digits, and hyphens only).",
+    QUALIFIED_EXT_ID_PATTERN,
+    'Every composition ext_id must match the set-qualified pattern ^[a-z0-9-]+/[a-z0-9-]+$ (for example "core/black-widow") — a set abbreviation, a slash, then a slug. Bare slugs and flat-card keys are rejected.',
   );
 
 // why: Refine for uniqueness so duplicate ext_ids in a composition array

@@ -13,9 +13,9 @@
     "heroDeckIds": [
       "captain-mar-vell",
       "drax-the-destroyer",
-      "gamora",
+      "gotg/gamora",
       "rocket-raccoon",
-      "star-lord"
+      "gotg/star-lord"
     ]
   },
   "playerCount": {

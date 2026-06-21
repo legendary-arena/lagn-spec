@@ -6,6 +6,7 @@ import {
   type PriorityRecommendation,
   type PriorityHorizon,
   type PipelineSweepData,
+  type ArchitectGapProjection,
 } from './useAgentPipeline.js';
 import { SWEEP_HEALTHY_ANOMALY_KEY } from './useSweepHealth.js';
 import type { GovernanceSnapshot } from './useGovernanceSnapshot.js';
@@ -903,6 +904,159 @@ describe('useAgentPipeline', () => {
         builderActiveIds.includes('kpi-wps-done-this-week'),
         'existing builder KPI item retained',
       );
+    });
+  });
+
+  describe('architect gap intake fold (WP-260)', () => {
+    /**
+     * A two-item architect-gap projection (already ordered by the producer). Its
+     * `backlog` items lead the Architect lane when injected.
+     */
+    function makeArchitectGapData(): ArchitectGapProjection {
+      return {
+        candidates: [
+          {
+            mechanic: 'stun',
+            exampleCardId: 'rlmk-black-bolt',
+            cardType: 'hero',
+            timing: 'on-fight',
+            reason: 'unsupported-keyword',
+            observedCount: 4,
+            sourceRow: 'stun',
+            proposedTargetLayer: 'game-engine-hero',
+          },
+          {
+            mechanic: 'ambush',
+            exampleCardId: 'core-bystander',
+            cardType: 'villain',
+            timing: 'on-ambush',
+            reason: 'no-handler',
+            observedCount: 2,
+            sourceRow: 'ambush',
+            proposedTargetLayer: 'game-engine-villain',
+          },
+        ],
+        backlog: [
+          {
+            id: 'architect-gap-stun',
+            label: 'stun — unsupported-keyword (4× in play)',
+            meta: 'Hollow gap',
+          },
+          {
+            id: 'architect-gap-ambush',
+            label: 'ambush — no-handler (2× in play)',
+            meta: 'Hollow gap',
+          },
+        ],
+      };
+    }
+
+    it('should_lead_architect_backlog_with_gap_items_when_injected', () => {
+      const snapshot = makeSnapshot({
+        throughput: {
+          byWeek: [],
+          byMonth: [],
+          byQuarter: [],
+          inFlight: [
+            { number: 50, title: 'Zone ops refactor', status: 'Draft' as const, dependencies: [] },
+          ],
+          blocked: [],
+          now: [],
+        },
+      });
+      const gap = makeArchitectGapData();
+      const result = useAgentPipeline(snapshot, undefined, undefined, gap);
+
+      // Gap items lead the backlog, in the projection's supplied order.
+      assert.equal(result.architect.backlog[0]!.id, 'architect-gap-stun');
+      assert.equal(result.architect.backlog[1]!.id, 'architect-gap-ambush');
+      assert.equal(result.architect.backlog[0]!.meta, 'Hollow gap');
+
+      // The pre-existing architect items remain, after the gap items.
+      const ids = result.architect.backlog.map((item) => item.id);
+      assert.ok(ids.includes('kpi-open-drafts'), 'existing open-drafts KPI retained');
+      assert.ok(ids.includes('draft-50'), 'existing draft WP retained');
+      const gapIndex = ids.indexOf('architect-gap-ambush');
+      const kpiIndex = ids.indexOf('kpi-open-drafts');
+      assert.ok(gapIndex < kpiIndex, 'gap items precede the existing items');
+    });
+
+    it('should_prepend_exactly_the_projection_backlog_to_the_no_injection_architect_backlog', () => {
+      const snapshot = makeSnapshot();
+      const gap = makeArchitectGapData();
+      const withoutGap = useAgentPipeline(snapshot);
+      const withGap = useAgentPipeline(snapshot, undefined, undefined, gap);
+
+      assert.deepEqual(withGap.architect.backlog, [
+        ...gap.backlog,
+        ...withoutGap.architect.backlog,
+      ]);
+    });
+
+    it('should_leave_other_three_lanes_deep_equal_to_the_no_injection_result', () => {
+      const snapshot = makeSnapshot({
+        throughput: {
+          byWeek: [],
+          byMonth: [],
+          byQuarter: [],
+          inFlight: [
+            { number: 50, title: 'Zone ops refactor', status: 'Draft' as const, dependencies: [] },
+          ],
+          blocked: [
+            {
+              number: 60,
+              title: 'Auth middleware',
+              status: 'Blocked' as const,
+              dependencies: [59],
+            },
+          ],
+          now: [{ number: 70, title: 'Pipeline page', status: 'Ready' as const, dependencies: [] }],
+        },
+      });
+      const sweepData = makeSweepData({
+        latestRun: {
+          runId: 'r1',
+          submittedAt: '2026-06-09T06:00:00Z',
+          startedAt: '2026-06-09T05:55:00Z',
+          cellCount: 100,
+          anomalyCounts: { 'engine-fatal': 1, 'soft-stall': 2 },
+        },
+      });
+      const withoutGap = useAgentPipeline(snapshot, sweepData);
+      const withGap = useAgentPipeline(snapshot, sweepData, undefined, makeArchitectGapData());
+
+      assert.deepEqual(withGap.builder, withoutGap.builder, 'builder lane untouched');
+      assert.deepEqual(withGap.inspector, withoutGap.inspector, 'inspector lane untouched');
+      assert.deepEqual(withGap.evaluator, withoutGap.evaluator, 'evaluator lane untouched');
+
+      // The architect lane's non-backlog columns are also untouched — only the
+      // backlog gains the prepended gap items.
+      assert.deepEqual(withGap.architect.priorities, withoutGap.architect.priorities);
+      assert.deepEqual(withGap.architect.active, withoutGap.architect.active);
+      assert.deepEqual(withGap.architect.history, withoutGap.architect.history);
+    });
+
+    it('should_deep_equal_the_baseline_when_the_fourth_parameter_is_absent', () => {
+      const snapshot = makeSnapshot({
+        commits: [{ sha: 'aaa111', kind: 'SPEC', title: 'SPEC: draft WP-100' }],
+        throughput: {
+          byWeek: [],
+          byMonth: [],
+          byQuarter: [],
+          inFlight: [
+            { number: 50, title: 'Zone ops refactor', status: 'Draft' as const, dependencies: [] },
+          ],
+          blocked: [],
+          now: [{ number: 70, title: 'Pipeline page', status: 'Ready' as const, dependencies: [] }],
+        },
+      });
+      const sweepData = makeSweepData();
+
+      // Omitting the 4th arg and passing it as `undefined` are identical, and
+      // both equal the pre-WP-260 call shape — proving backward compatibility.
+      const omitted = useAgentPipeline(snapshot, sweepData);
+      const explicitUndefined = useAgentPipeline(snapshot, sweepData, undefined, undefined);
+      assert.deepEqual(explicitUndefined, omitted);
     });
   });
 });

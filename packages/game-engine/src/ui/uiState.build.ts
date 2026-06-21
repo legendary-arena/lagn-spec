@@ -32,13 +32,20 @@ import type {
   UISharedPilesState,
   UIKoPileState,
   UIPendingHeroChoice,
+  UIPendingKoHeroChoice,
+  UIPendingOptionalKoReward,
+  UIEligibleKoHeroCard,
 } from './uiState.types.js';
+// why: WP-258 — the projected hollow-effect record type is the engine's
+// canonical HollowEffectRecord (WP-257), reused directly, not a parallel UI type.
+import type { HollowEffectRecord } from '../diagnostics/hollowEffect.types.js';
 import { getAvailableAttack, getAvailableRecruit } from '../economy/economy.logic.js';
 import { resolveFightCost } from '../economy/economy.resolve.js';
 import { evaluateEndgame } from '../endgame/endgame.evaluate.js';
 import { computeFinalScores } from '../scoring/scoring.logic.js';
 import { BYSTANDER_EXT_ID, WOUND_EXT_ID } from '../setup/buildInitialGameState.js';
 import { ENDGAME_CONDITIONS } from '../endgame/endgame.types.js';
+import { buildKoEligibleTargets } from '../villain/villainEffects.execute.js';
 
 // why: exact structural contract — do not widen or add optional fields.
 // buildUIState MUST NOT depend on any other ctx fields.
@@ -132,6 +139,47 @@ function buildDisplayEntries(
     entries.push({ extId, display: resolveDisplay(extId, gameState) });
   }
   return entries;
+}
+
+// why: D-24020 — a SINGLE deterministic mapping from WP-248's reward
+// (rewardType + magnitude) to the player-facing label rendered in the
+// optional-KO-reward prompt. Defined ONCE here — never an ad-hoc or per-card
+// string at any call site — so the label cannot drift as the future sweep WP
+// marks more cards with this effect. The seeded rewardType set is
+// rescue / draw / attack / recruit (D-24019, deferred to — not re-declared
+// here). An unseeded value cannot occur (WP-248 filters at parse) but still
+// returns a safe generic label rather than crashing the projection.
+/**
+ * Derives the reward label shown in the optional-KO-reward prompt.
+ *
+ * @param rewardType - WP-248's PendingOptionalKoReward.rewardType (a HeroKeyword
+ *   string; the seeded set is rescue / draw / attack / recruit).
+ * @param rewardMagnitude - the reward magnitude (≥1 for the seeded reward set).
+ * @returns the single-mapping player-facing label string.
+ */
+function deriveOptionalKoRewardLabel(
+  rewardType: string,
+  rewardMagnitude: number,
+): string {
+  if (rewardType === 'rescue') {
+    return 'Rescue a Bystander';
+  }
+  if (rewardType === 'draw') {
+    if (rewardMagnitude > 1) {
+      return `Draw ${rewardMagnitude} cards`;
+    }
+    return 'Draw a card';
+  }
+  if (rewardType === 'attack') {
+    return `+${rewardMagnitude} Attack`;
+  }
+  if (rewardType === 'recruit') {
+    return `+${rewardMagnitude} Recruit`;
+  }
+  // why: D-24020 — an unseeded rewardType cannot occur (WP-248 filters at
+  // parse); the generic fallback keeps the projection total rather than
+  // returning undefined / crashing.
+  return 'Take the reward';
 }
 
 /**
@@ -393,6 +441,20 @@ export function buildUIState(
       };
     }
 
+    // why: WP-243 / D-24010 — full own-discard projection. discardCards is the
+    // verbatim discard ext_ids (spread copy prevents aliasing with
+    // G.playerZones[playerId].discard); discardDisplay is the parallel
+    // per-card resolveDisplay result (one entry per discard card, fresh shallow
+    // copy). Built in the SAME block (both or neither, length-matched).
+    // filterUIStateForAudience redacts both together for non-owner / spectator
+    // (the handCards privacy posture). Makes the buried discard targets
+    // renderable for the KO-a-Hero prompt and the "View all" discard view.
+    const discardCards = [...zones.discard];
+    const discardDisplay: UICardDisplay[] = [];
+    for (const cardExtId of zones.discard) {
+      discardDisplay.push(resolveDisplay(cardExtId, gameState));
+    }
+
     // why: WP-128 / D-12803 — VP cards are public knowledge by design;
     // not redacted by audience filter. WP-111 D-11105 aliasing-defense:
     // every entry is a fresh `{ extId, display }` with display itself
@@ -422,6 +484,12 @@ export function buildUIState(
       inPlayCards: [...zones.inPlay],
       inPlayDisplay,
       discardTopCard,
+      // why: WP-243 / D-24010 — own-player full discard contents; filter
+      // redacts both fields together for non-self / spectator. Assigned in
+      // the same object literal so they are always present together at build
+      // time (length-matched).
+      discardCards,
+      discardDisplay,
       victoryCards,
       victoryVP,
     });
@@ -658,6 +726,118 @@ export function buildUIState(
     };
   }
 
+  // --- 13b. Project pending KO-a-Hero choice (front of queue) ---
+  // why: D-24010 + WP-243 — project the FRONT entry of G.pendingKoHeroChoices
+  // with its eligible targets recomputed fresh from current G (no snapshot —
+  // WP-242 stores none). The eligible list spans the chooser's non-wound
+  // discard → hand → inPlay in array index order, deduped per (zone, cardId)
+  // by buildKoEligibleTargets. `remaining` = queue length (≥1 when present).
+  // resolveDisplay is spread fresh per entry so the projection holds no
+  // reference into G.cardDisplayData (aliasing defense, WP-111 D-11105).
+  // Redaction to the chooser-only audience is enforced by
+  // filterUIStateForAudience (D-24011 — the eligible list carries hand
+  // identities and must not leak to opponents/spectators).
+  let pendingKoHeroChoice: UIPendingKoHeroChoice | undefined;
+  if (gameState.pendingKoHeroChoices !== undefined && gameState.pendingKoHeroChoices.length > 0) {
+    const frontChoice = gameState.pendingKoHeroChoices[0]!;
+    const chooserZones = gameState.playerZones[frontChoice.playerID];
+    if (chooserZones !== undefined) {
+      const eligibleTargets = buildKoEligibleTargets(chooserZones);
+      const eligible: UIEligibleKoHeroCard[] = [];
+      for (const target of eligibleTargets) {
+        eligible.push({
+          zone: target.zone,
+          cardId: target.cardId,
+          display: { ...resolveDisplay(target.cardId, gameState) },
+        });
+      }
+      pendingKoHeroChoice = {
+        choiceType: frontChoice.choiceType,
+        playerID: frontChoice.playerID,
+        eligible,
+        remaining: gameState.pendingKoHeroChoices.length,
+      };
+    }
+  }
+
+  // --- 13c. Project pending optional-KO-then-reward choice (front of queue) ---
+  // why: D-24020 + WP-249 — project the FRONT entry of G.pendingOptionalKoRewards
+  // with the chooser's eligible hand + discard cards recomputed fresh from current
+  // G (no snapshot — WP-248 stores none). The eligible lists mirror
+  // G.playerZones[pid].hand / .discard in zone + index order with NO pre-filter
+  // and NO reorder, so the client's { zone, cardId } selection always maps to a
+  // card the engine resolve accepts (the round-trip rule — a filtered/reordered
+  // list lets the client submit a card the resolve rejects). resolveDisplay is
+  // spread fresh per entry so the projection holds no reference into
+  // G.cardDisplayData (aliasing defense, WP-111 D-11105). The reward label is
+  // derived once by deriveOptionalKoRewardLabel (the single mapping). Redaction
+  // to the chooser-only audience is enforced by filterUIStateForAudience
+  // (D-24011 analog — the eligible lists carry the chooser's private hand/discard).
+  let pendingOptionalKoReward: UIPendingOptionalKoReward | undefined;
+  if (
+    gameState.pendingOptionalKoRewards !== undefined &&
+    gameState.pendingOptionalKoRewards.length > 0
+  ) {
+    const frontReward = gameState.pendingOptionalKoRewards[0]!;
+    const chooserZones = gameState.playerZones[frontReward.playerID];
+    if (chooserZones !== undefined) {
+      const eligibleHand: UIEligibleKoHeroCard[] = [];
+      for (const cardId of chooserZones.hand) {
+        eligibleHand.push({
+          zone: 'hand',
+          cardId,
+          display: { ...resolveDisplay(cardId, gameState) },
+        });
+      }
+      const eligibleDiscard: UIEligibleKoHeroCard[] = [];
+      for (const cardId of chooserZones.discard) {
+        eligibleDiscard.push({
+          zone: 'discard',
+          cardId,
+          display: { ...resolveDisplay(cardId, gameState) },
+        });
+      }
+      pendingOptionalKoReward = {
+        playerID: frontReward.playerID,
+        rewardLabel: deriveOptionalKoRewardLabel(
+          frontReward.rewardType,
+          frontReward.rewardMagnitude,
+        ),
+        eligibleHand,
+        eligibleDiscard,
+      };
+    }
+  }
+
+  // --- 13d. Project hollow-effect diagnostics (read-only) ---
+  // why: WP-258 — surface the WP-257 runtime channel G.diagnostics.hollowEffects
+  // onto UIState. Read-only over G (buildUIState NEVER mutates G); per-record
+  // fresh objects so the projection holds no reference into G.diagnostics
+  // (aliasing defense, WP-111 D-11105). When the channel is absent (older
+  // snapshots / narrow test mocks never wrote it), the field is OMITTED — no
+  // empty-array injection that would dirty optional-field fixtures (mirrors the
+  // pendingHeroChoice / gameOver omit-when-absent posture). The records are
+  // public card/mechanic data, not hidden info, so the audience filter passes
+  // them through value-unchanged (D-12803).
+  let hollowEffects: HollowEffectRecord[] | undefined;
+  if (
+    gameState.diagnostics !== undefined &&
+    gameState.diagnostics.hollowEffects.length > 0
+  ) {
+    const projectedHollowEffects: HollowEffectRecord[] = [];
+    for (const record of gameState.diagnostics.hollowEffects) {
+      projectedHollowEffects.push({
+        cardId: record.cardId,
+        cardType: record.cardType,
+        timing: record.timing,
+        mechanic: record.mechanic,
+        reason: record.reason,
+        turn: record.turn,
+      });
+    }
+    hollowEffects = projectedHollowEffects;
+  }
+
   // --- 14. Project game over ---
   // why: endgame state derived from G counters via evaluateEndgame
   // (pure); scores reuse the finalScores already computed for victoryVP
@@ -702,5 +882,11 @@ export function buildUIState(
     koPile,
     ...(gameOver !== undefined ? { gameOver } : {}),
     ...(pendingHeroChoice !== undefined ? { pendingHeroChoice } : {}),
+    ...(pendingKoHeroChoice !== undefined ? { pendingKoHeroChoice } : {}),
+    ...(pendingOptionalKoReward !== undefined ? { pendingOptionalKoReward } : {}),
+    // why: WP-258 — conditional spread so an absent channel omits the field
+    // (no `hollowEffects: undefined` literal under exactOptionalPropertyTypes,
+    // and no empty-array injection that would dirty optional-field fixtures).
+    ...(hollowEffects !== undefined ? { hollowEffects } : {}),
   };
 }

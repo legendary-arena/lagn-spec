@@ -32,12 +32,46 @@ export type CardQuery       = z.infer<typeof CardQuerySchema>;
 
 // ── Flat "search result" card — useful for the viewer grid ───────────────────
 export interface FlatCard {
-  /** Unique key: "{setAbbr}-{cardType}-{slug}"  */
+  /**
+   * Unique key: "{setAbbr}-{cardType}-{slug}". Display/grid identity only —
+   * NOT a match-setup ext_id. The engine rejects flat-card keys (D-10014);
+   * use `extId` for loadout composition fields.
+   */
   key:       string;
+  /**
+   * Set-qualified ext_id "{setAbbr}/{slug}" the engine's match-setup
+   * validator requires (D-10014). For the five composition entity types the
+   * slug is the entity slug the engine derives — hero slug, mastermind group
+   * slug, villain group slug, henchman group slug, scheme slug — so a loadout
+   * authored here is accepted by Game.setup() rather than throwing an HTTP 500
+   * (D-24018).
+   */
+  extId:     string;
   cardType:  string;
   setAbbr:   string;
   setName:   string;
   name:      string;
+  /**
+   * Group/entity display name for the loadout picker (WP-091 builder).
+   * For the five composition entity types this is the GROUP the `extId`
+   * points at — hero name ("Black Widow"), mastermind name, villain group
+   * ("Brotherhood"), henchman group, scheme name — NOT a member card's
+   * name. The picker collapses a group's member cards into one entry by
+   * `extId`; labeling by `groupName` (rather than `name`) makes one click
+   * add the whole group instead of reading like an individual card.
+   * Absent on non-composition card types (bystander, wound, other), where
+   * the picker never renders.
+   */
+  groupName?: string;
+  /**
+   * Mastermind-only: the villain group slugs this mastermind "Always Leads".
+   * Bare entity slugs (e.g. `["brotherhood"]`), mirroring the card data's
+   * `Mastermind.alwaysLeads`. The loadout builder reads this to auto-include —
+   * and require — the led villain group(s) when the mastermind is selected
+   * (e.g. Magneto Always Leads the Brotherhood). Empty/absent for masterminds
+   * with no Always-Leads clause and for every non-mastermind card type.
+   */
+  alwaysLeads?: readonly string[];
   slug:      string;
   imageUrl:  string;
   /** Hero-only: image URL resolved from physicalCards[] (D-14103). */

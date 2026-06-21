@@ -179,10 +179,14 @@ export interface MastermindStrikeResolvedEvent {
 /**
  * Emitted by `moves/fightMastermind.ts` when a player defeats the final
  * tactic and vanquishes the Mastermind. Payload observes post-mutation
- * state: every bystander the Mastermind had captured has already been
- * moved into the defeating player's victory pile and `bystandersRescued`
- * is that count (>= 0). Added per D-20008 so the arena-client overlay can
- * surface the win + rescue — `G.messages` is not projected to clients.
+ * state. `bystandersRescued` is the count rescued on THIS vanquishing
+ * fight (>= 0) — bystanders captured earlier were already rescued on the
+ * fights that defeated the earlier tactics, since every tactic defeat
+ * rescues the Mastermind's currently-held bystanders (Universal Rules
+ * v23 §"When you fight a Mastermind/Commander"). It is therefore often 0
+ * if no Master Strike re-captured a bystander after the previous fight.
+ * Added per D-20008 so the arena-client overlay can surface the win +
+ * any final-blow rescue — `G.messages` is not projected to clients.
  */
 export interface MastermindDefeatedEvent {
   /** Discriminator. */
@@ -191,7 +195,7 @@ export interface MastermindDefeatedEvent {
   playerId: string;
   /** Config ext_id of the defeated mastermind (`G.mastermind.id`). */
   mastermindId: CardExtId;
-  /** Bystanders rescued into the player's victory pile on defeat (>= 0). */
+  /** Bystanders rescued into the player's victory pile on the vanquishing fight (>= 0). */
   bystandersRescued: number;
   /** Engine-composed single-sentence English narrative. */
   narrative: string;

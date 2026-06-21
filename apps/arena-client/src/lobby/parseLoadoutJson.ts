@@ -56,6 +56,34 @@ export function renderUnsupportedModeMessage(value: unknown): string {
   );
 }
 
+// why: single-home message for the WP-254 (D-24025) lobby qualified-form
+// ext_id guard. Unlike UNSUPPORTED_HERO_SELECTION_MODE_TEMPLATE above, this
+// message is DELIBERATELY NOT part of the WP-093 five-copy byte-identity gate
+// (D-9301): it lives in exactly this one place and carries no cross-file lock,
+// so it is documented (not byte-locked) in MATCH-SETUP-VALIDATION.md. Do not
+// add it to the five-copy gate, and do not reuse or paraphrase the
+// heroSelectionMode template. The template uses literal angle brackets
+// (<field>, <value>, <setAbbr>/<slug>) — mirroring the literal <value> in the
+// template above — never HTML entities; <field> and <value> are the only
+// permitted substitutions.
+const UNQUALIFIED_EXT_ID_TEMPLATE =
+  'The loadout field "<field>" value "<value>" is not a set-qualified ext_id of the form "<setAbbr>/<slug>" (for example, "core/black-widow"). This usually means the loadout was exported before the qualified-ext_id fix; re-export it from the Registry Viewer loadout builder at cards.barefootbetters.com.';
+
+/**
+ * Substitutes the failing field path and the offending value into the
+ * single-home WP-254 message. Module-private (unlike the exported
+ * renderUnsupportedModeMessage): the new message has no cross-file contract,
+ * so nothing outside this module constructs it. `<field>` is substituted
+ * before `<value>`; field paths never contain the literal "<value>", so the
+ * substitution order is unambiguous.
+ */
+function renderUnqualifiedExtIdMessage(field: string, value: string): string {
+  return UNQUALIFIED_EXT_ID_TEMPLATE.replace('<field>', field).replace(
+    '<value>',
+    value,
+  );
+}
+
 /**
  * Successful parse output. The composition block matches MatchSetupConfig's
  * 9-field lock from docs/ai/REFERENCE/00.2-data-requirements.md §7. The
@@ -86,7 +114,12 @@ export interface ParsedLoadout {
   heroSelectionMode: HeroSelectionMode;
 }
 
-/** Locked enum of nine error codes; expansion requires a new WP. */
+/**
+ * Locked enum of ten error codes; expansion requires a new WP. The tenth
+ * member, "unqualified_ext_id", was added by WP-254 (D-24025) — the lobby
+ * qualified-form ext_id guard. The original nine are byte-unchanged in
+ * spelling and declaration order.
+ */
 export type ParseErrorCode =
   | 'invalid_json'
   | 'not_object'
@@ -96,7 +129,8 @@ export type ParseErrorCode =
   | 'wrong_type'
   | 'missing_player_count'
   | 'player_count_out_of_range'
-  | 'unsupported_hero_selection_mode';
+  | 'unsupported_hero_selection_mode'
+  | 'unqualified_ext_id';
 
 /**
  * A single parse error. `field` is a dot-path (e.g.,
@@ -175,6 +209,70 @@ function describeKind(kind: CompositionFieldSpec['kind']): string {
     return 'an array of non-empty string ext_ids';
   }
   return 'a non-negative integer';
+}
+
+/**
+ * True iff `value` is in the set-qualified `<setAbbr>/<slug>` envelope form:
+ * no surrounding whitespace, exactly one slash, and a non-empty part on each
+ * side of it. Mirrors the engine's authoritative qualified-ID envelope
+ * grammar (parseQualifiedId in matchSetup.validate.ts, D-10014).
+ */
+// why: re-derived by hand rather than imported. parseQualifiedId lives on the
+// engine setup-tooling surface (@legendary-arena/game-engine/setup), and the
+// arena-client layer must not import the registry or that engine surface at
+// runtime (.claude/rules/architecture.md Import Rules; D-14401). This module
+// already re-derives its other shape predicates for the same reason.
+// why: the check is the slash ENVELOPE only — never a [a-z0-9-] charset check.
+// The engine owns charset/existence (D-10014, D-24025); a lobby charset check
+// could reject an id the engine would accept, the inverse of the D-24018 bug
+// this guard exists to keep from re-appearing. Grammar-only here is deliberate.
+function isQualifiedExtId(value: string): boolean {
+  if (value !== value.trim()) {
+    return false;
+  }
+  const firstSlashIndex = value.indexOf('/');
+  if (firstSlashIndex === -1) {
+    return false;
+  }
+  if (value.indexOf('/', firstSlashIndex + 1) !== -1) {
+    return false;
+  }
+  const setAbbr = value.slice(0, firstSlashIndex);
+  const slug = value.slice(firstSlashIndex + 1);
+  if (setAbbr.length === 0 || slug.length === 0) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Walks one composition array field (villainGroupIds, henchmanGroupIds, or
+ * heroDeckIds) and returns an `unqualified_ext_id` ParseError for the FIRST
+ * entry that fails the qualified-form envelope, or null if every entry is
+ * qualified. The offender's field uses bracket notation
+ * (`composition.<name>[<index>]`), mirroring the engine validator's
+ * checkArrayExtIds field style. Entries are already non-empty strings (the
+ * COMPOSITION_FIELDS type-check loop guarantees it before this runs).
+ */
+function findUnqualifiedArrayEntry(
+  fieldName: string,
+  entries: readonly string[],
+): ParseError | null {
+  // why: iterate with .entries() rather than an indexed for: under
+  // noUncheckedIndexedAccess, entries[index] is `string | undefined`, but
+  // .entries() yields the element type (`string`) alongside the index, so no
+  // non-null assertion is needed. Entries are already non-empty strings.
+  for (const [index, entry] of entries.entries()) {
+    if (!isQualifiedExtId(entry)) {
+      const field = `composition.${fieldName}[${index}]`;
+      return {
+        code: 'unqualified_ext_id',
+        message: renderUnqualifiedExtIdMessage(field, entry),
+        field,
+      };
+    }
+  }
+  return null;
 }
 
 /**
@@ -278,6 +376,60 @@ export function parseLoadoutJson(input: string): ParseResult {
           field: fieldPath,
         },
       };
+    }
+  }
+
+  // why: this qualified-form pass runs ONLY after the COMPOSITION_FIELDS
+  // type-check loop above has fully succeeded — every entity-id is now known
+  // to be a string (scalars) or an array of non-empty strings (arrays), so the
+  // <setAbbr>/<slug> envelope grammar is meaningful (checking it earlier could
+  // dereference a non-string). It runs BEFORE the playerCount checks so a
+  // stale id-space loadout — the WP-254 defect: pre-D-24018 flat keys
+  // ("core-scheme-midtown-bank-robbery") or bare slugs ("black-widow") that
+  // 500 inside Game.setup() — fails in the lobby as soon as the composition is
+  // structurally valid. Fail-fast and deterministic: the two scalars first,
+  // then the arrays in declaration order (villain → henchman → hero), first
+  // offender returned.
+  const schemeIdValue = compositionRaw['schemeId'] as string;
+  if (!isQualifiedExtId(schemeIdValue)) {
+    return {
+      ok: false,
+      error: {
+        code: 'unqualified_ext_id',
+        message: renderUnqualifiedExtIdMessage(
+          'composition.schemeId',
+          schemeIdValue,
+        ),
+        field: 'composition.schemeId',
+      },
+    };
+  }
+
+  const mastermindIdValue = compositionRaw['mastermindId'] as string;
+  if (!isQualifiedExtId(mastermindIdValue)) {
+    return {
+      ok: false,
+      error: {
+        code: 'unqualified_ext_id',
+        message: renderUnqualifiedExtIdMessage(
+          'composition.mastermindId',
+          mastermindIdValue,
+        ),
+        field: 'composition.mastermindId',
+      },
+    };
+  }
+
+  const qualifiedArrayFieldNames = [
+    'villainGroupIds',
+    'henchmanGroupIds',
+    'heroDeckIds',
+  ];
+  for (const arrayFieldName of qualifiedArrayFieldNames) {
+    const entries = compositionRaw[arrayFieldName] as string[];
+    const arrayError = findUnqualifiedArrayEntry(arrayFieldName, entries);
+    if (arrayError !== null) {
+      return { ok: false, error: arrayError };
     }
   }
 

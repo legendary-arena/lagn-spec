@@ -108,6 +108,52 @@ function isLockedEffectKeyword(keyword) {
   return VILLAIN_EFFECT_KEYWORDS.includes(keyword);
 }
 
+// why: WP-252 / D-24023 — local hand-synced copy of the engine's
+// VILLAIN_EFFECT_PRIMITIVES (packages/game-engine/src/rules/villainAbility.types.ts).
+// Same no-import-from-packages discipline and loud-fail-on-drift posture as
+// VILLAIN_EFFECT_KEYWORDS above. The 5 primitives back the parameterized
+// [effect:<primitive>:<param>...] grammar the engine parser also accepts.
+const VILLAIN_EFFECT_PRIMITIVES = [
+  'ko-hero',
+  'gain-wound',
+  'capture-hq-hero',
+  'hero-deck-top-to-escape',
+  'capture-bystander',
+];
+
+/**
+ * Returns true when a token is a well-formed parameterized effect token
+ * `<primitive>[:<param>...]`, mirroring the engine parser's grammar
+ * (parseParameterizedEffect in setup/villainAbility.setup.ts). Forward-compatible:
+ * no curated map entry uses this grammar yet, so the emitter output is unchanged,
+ * but a future magnitude (e.g. ko-hero:each:3) validates without a vocabulary
+ * expansion.
+ *
+ * @param {string} token - The candidate effect token.
+ * @returns {boolean} True when the token is a valid parameterized effect.
+ */
+function isValidParameterizedEffectToken(token) {
+  const parts = token.split(':');
+  const primitive = parts[0];
+  if (!VILLAIN_EFFECT_PRIMITIVES.includes(primitive)) return false;
+  if (primitive === 'ko-hero') {
+    if (parts.length === 2 && parts[1] === 'current') return true;
+    if (parts.length === 3 && parts[1] === 'each' && /^[1-9][0-9]*$/.test(parts[2])) return true;
+    return false;
+  }
+  if (primitive === 'gain-wound') {
+    return parts.length === 2 && (parts[1] === 'current' || parts[1] === 'each');
+  }
+  if (primitive === 'capture-hq-hero') {
+    return (
+      parts.length === 2 &&
+      (parts[1] === 'rightmost' || parts[1] === 'highest-cost' || parts[1] === 'lowest-cost')
+    );
+  }
+  // why: hero-deck-top-to-escape and capture-bystander take no params.
+  return parts.length === 1;
+}
+
 /**
  * Builds the absolute path to a set's card-data JSON file.
  *
@@ -212,19 +258,31 @@ function findSingleTimingLineIndex(abilities, timing, entityLabel) {
  */
 function validateAndOrderKeywords(keywords, entityLabel) {
   for (const keyword of keywords) {
-    if (!isLockedEffectKeyword(keyword)) {
+    // why: WP-252 / D-24023 — a curated token is accepted if it is EITHER a
+    // legacy VillainEffectKeyword OR a well-formed parameterized token
+    // (<primitive>:<param>...), mirroring the engine parser's dual grammar.
+    // No curated map entry uses the parameterized form yet, so emitter output
+    // (and data/cards) stays byte-identical; the widening is forward-compat so
+    // a future magnitude (ko-hero:each:3) needs no vocabulary expansion.
+    if (!isLockedEffectKeyword(keyword) && !isValidParameterizedEffectToken(keyword)) {
       throw new Error(
-        `villain-effect-markers.json uses effect keyword "${keyword}" on ${entityLabel}, which is ` +
-          `not one of the five locked VillainEffectKeyword strings ` +
-          `[${VILLAIN_EFFECT_KEYWORDS.map((value) => `"${value}"`).join(', ')}]. Fix the typo in ` +
-          `the marker map, or — if a new effect is genuinely needed — expand WP-185's vocabulary ` +
-          `first (a separate WP) and then this local copy.`,
+        `villain-effect-markers.json uses effect token "${keyword}" on ${entityLabel}, which is ` +
+          `neither one of the locked VillainEffectKeyword strings ` +
+          `[${VILLAIN_EFFECT_KEYWORDS.map((value) => `"${value}"`).join(', ')}] nor a well-formed ` +
+          `parameterized token (<primitive>:<param>...). Fix the typo in the marker map.`,
       );
     }
   }
   const ordered = [];
   for (const canonicalKeyword of VILLAIN_EFFECT_KEYWORDS) {
     if (keywords.includes(canonicalKeyword)) ordered.push(canonicalKeyword);
+  }
+  // why: WP-252 — parameterized tokens (none in the current map) are not in the
+  // canonical legacy array; append them in input order after the legacy block
+  // so they are never dropped. For the current all-legacy map this loop adds
+  // nothing → emitter output is byte-identical.
+  for (const token of keywords) {
+    if (!isLockedEffectKeyword(token)) ordered.push(token);
   }
   return ordered;
 }

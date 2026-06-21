@@ -28,6 +28,7 @@ import type {
 } from "../registry/browser";
 import type { ThemeDefinition } from "../lib/themeClient";
 import { useLoadoutDraft } from "../composables/useLoadoutDraft";
+import { useLoadoutLagnExport } from "../composables/useLoadoutLagnExport";
 import { serializeSetupToUrl } from "../lib/setupUrlParams";
 
 // why: Verbatim WP-093 UI strings referenced via imported constants, but also
@@ -55,6 +56,8 @@ const {
   draft,
   errors,
   isValid,
+  requiredVillainGroupIds,
+  missingRequiredVillainGroupIds,
   setScheme,
   setMastermind,
   addVillainGroup,
@@ -73,6 +76,8 @@ const {
   exportFilename,
   resetDraft,
 } = draftApi;
+
+const lagnExportApi = useLoadoutLagnExport(draft);
 
 // ── Active slot (drives the picker filter) ─────────────────────────────────
 
@@ -108,9 +113,23 @@ const pickerOptions = computed<Array<{ id: string; label: string; cardType: Flat
   const needle = pickerSearch.value.trim().toLowerCase();
   const entriesById = new Map<string, { id: string; label: string; cardType: FlatCardType }>();
   for (const card of matching) {
-    const id = card.key;
+    // why: D-24018 — store the set-qualified ext_id (not the flat-card key)
+    // into the loadout so the exported document is accepted by the engine's
+    // Game.setup() instead of being rejected with an HTTP 500 (D-10014).
+    // Collapsing by extId also yields one picker chip per villain/henchman
+    // GROUP (every member shares the group's extId) rather than one per
+    // member card.
+    const id = card.extId;
     if (!entriesById.has(id)) {
-      entriesById.set(id, { id, label: card.name, cardType });
+      // why: label the collapsed entry by the GROUP/entity name carried on
+      // FlatCard.groupName (hero "Black Widow", villain "Brotherhood", …),
+      // NOT a member card's name. The cards already collapse into one entry
+      // per group above; labeling by card.name made that single entry read
+      // like an individual card (e.g. "Mission Accomplished"), so authors
+      // thought they had to pick each of a hero's 14 cards. groupName makes
+      // one click add the whole group. Falls back to card.name for any card
+      // type that doesn't carry a groupName (never a picker slot today).
+      entriesById.set(id, { id, label: card.groupName ?? card.name, cardType });
     }
   }
   const all = [...entriesById.values()];
@@ -217,11 +236,34 @@ const importErrors = ref<Array<{ field: string; message: string }>>([]);
 const importSuccessAt = ref<string | null>(null);
 
 function onDownload(): void {
+  // why: Belt-and-suspenders guard mirroring onDownloadLagn. The button is
+  // already `:disabled`, but guarding the handler too prevents a known-invalid
+  // document (e.g. a theme prefill with an unresolved bare slug, D-24018) or a
+  // loadout missing a mastermind's Always-Leads villain group from being
+  // downloaded, should the template binding ever be bypassed.
+  if (!isValid.value || missingRequiredVillainGroupIds.value.length > 0) {
+    return;
+  }
   const blob = exportToJsonBlob();
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
   anchor.download = exportFilename();
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
+  URL.revokeObjectURL(url);
+}
+
+function onDownloadLagn(): void {
+  if (!lagnExportApi.isValid.value || missingRequiredVillainGroupIds.value.length > 0) {
+    return;
+  }
+  const blob = lagnExportApi.exportToJsonBlob();
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = lagnExportApi.exportFilename();
   document.body.appendChild(anchor);
   anchor.click();
   document.body.removeChild(anchor);
@@ -437,11 +479,29 @@ function slotLabel(slot: PickerSlot): string {
             >Pick…</button>
           </div>
           <ul class="chip-list">
-            <li v-for="groupId in draft.composition.villainGroupIds" :key="groupId" class="chip">
+            <li
+              v-for="groupId in draft.composition.villainGroupIds"
+              :key="groupId"
+              class="chip"
+              :class="{ required: requiredVillainGroupIds.includes(groupId) }"
+            >
               {{ groupId }}
-              <button type="button" class="chip-close" @click="removeVillainGroup(groupId)">✕</button>
+              <!-- why: a villain group the selected mastermind Always Leads is
+                   mandatory (e.g. Magneto → Brotherhood) — show a lock instead
+                   of a remove button so it can't be taken out of the deck. -->
+              <span
+                v-if="requiredVillainGroupIds.includes(groupId)"
+                class="chip-lock"
+                title="Always Leads — the selected mastermind requires this villain group; it can't be removed."
+              >🔒</span>
+              <button v-else type="button" class="chip-close" @click="removeVillainGroup(groupId)">✕</button>
             </li>
           </ul>
+          <p v-if="missingRequiredVillainGroupIds.length > 0" class="requirement-warning" role="alert">
+            ⚠ The selected mastermind Always Leads
+            <strong>{{ missingRequiredVillainGroupIds.join(", ") }}</strong> — this villain
+            group is required and must be in the deck. Add it before exporting.
+          </p>
         </div>
 
         <div class="field">
@@ -504,11 +564,58 @@ function slotLabel(slot: PickerSlot): string {
       <!-- Download / Upload -->
       <div class="field-group">
         <div class="action-row">
-          <button type="button" class="primary-btn" @click="onDownload" :disabled="!isValid">
-            ⬇ Download JSON
+          <button
+            type="button"
+            class="primary-btn"
+            @click="onDownload"
+            :disabled="!isValid || missingRequiredVillainGroupIds.length > 0"
+          >
+            ⬇ Download MATCH-SETUP
+          </button>
+          <button
+            type="button"
+            class="primary-btn"
+            @click="onDownloadLagn"
+            :disabled="!isValid || !lagnExportApi.isValid.value || missingRequiredVillainGroupIds.length > 0"
+          >
+            ⬇ Download LAGN
           </button>
           <button type="button" class="mini-btn" @click="resetDraft">🔄 Reset draft</button>
           <button type="button" class="mini-btn" @click="onCopySetupLink">🔗 Copy Setup Link</button>
+        </div>
+
+        <!-- LAGN export options -->
+        <div v-if="isValid" class="lagn-options">
+          <div class="lagn-row">
+            <label class="field">
+              <span class="field-label">LAGN Variant</span>
+              <select v-model="lagnExportApi.variant.value">
+                <option value="classic">Classic</option>
+                <option value="custom">Custom</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field-label">Outcome</span>
+              <select v-model="lagnExportApi.outcome.value">
+                <option value="victory">Victory</option>
+                <option value="loss">Loss</option>
+              </select>
+            </label>
+          </div>
+          <div class="lagn-info">
+            <p class="lagn-game-id">
+              <span class="field-label">Game ID:</span>
+              <code>{{ lagnExportApi.gameId.value }}</code>
+              <button type="button" class="mini-btn" @click="lagnExportApi.regenerateGameId">
+                🔄 Regenerate
+              </button>
+            </p>
+            <ul v-if="lagnExportApi.validationErrors.value.length > 0" class="error-list">
+              <li v-for="(error, index) in lagnExportApi.validationErrors.value" :key="`lagn-${index}`">
+                {{ error }}
+              </li>
+            </ul>
+          </div>
         </div>
 
         <p v-if="copyLinkStatus === 'copied'" class="copy-link-success">
@@ -738,6 +845,19 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: #6060c0
   font-size: 0.75rem;
 }
 .chip-close:hover { color: #f87171; }
+.chip.required { border-color: #7070e0; background: #25254a; }
+.chip-lock { font-size: 0.7rem; cursor: help; }
+.requirement-warning {
+  margin: 0.45rem 0 0 0;
+  padding: 0.4rem 0.6rem;
+  background: #2a1f0a;
+  border: 1px solid #7a5a18;
+  border-radius: 6px;
+  color: #fcd34d;
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+.requirement-warning strong { font-family: ui-monospace, Consolas, monospace; color: #fde68a; }
 
 .action-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .primary-btn {
@@ -798,4 +918,11 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: #6060c0
 .picker-entry-name { font-weight: 600; font-size: 0.85rem; }
 .picker-entry-id { font-family: ui-monospace, Consolas, monospace; font-size: 0.72rem; color: #8888aa; }
 .picker-empty { color: #6666aa; font-size: 0.8rem; }
+
+.lagn-options { background: #12121a; border: 1px solid #22222e; border-radius: 6px; padding: 0.75rem; margin-top: 0.5rem; }
+.lagn-row { display: flex; gap: 0.75rem; margin-bottom: 0.5rem; }
+.lagn-row .field { flex: 1; }
+.lagn-info { font-size: 0.8rem; }
+.lagn-game-id { margin: 0; display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: #0f0f13; border-radius: 4px; font-family: ui-monospace, Consolas, monospace; color: #c8c8e0; }
+.lagn-game-id code { color: #60a5fa; flex: 1; word-break: break-all; }
 </style>

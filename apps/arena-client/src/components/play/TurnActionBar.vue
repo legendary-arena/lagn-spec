@@ -53,22 +53,41 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    // why: D-24012 — derived from UIState.pendingKoHeroChoice !== undefined at
+    // the page level; passed down so TurnActionBar blocks end-turn and
+    // pass-priority at EVERY stage while a KO-a-Hero choice is pending (the KO
+    // choice freezes the board, unlike the cleanup-only hero-reveal gate).
+    hasPendingKoChoice: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    // why: D-24020 — derived from UIState.pendingOptionalKoReward !== undefined at
+    // the page level; passed down so TurnActionBar blocks end-turn and
+    // pass-priority at EVERY stage while an optional-KO-then-reward choice is
+    // pending (mirrors hasPendingKoChoice — WP-248's block-all guard freezes the
+    // board until the player KOs a card or Declines).
+    hasPendingOptionalKoReward: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   setup(props) {
     function activeStep(): 1 | 2 | 3 {
-      return useTurnActions(props.currentStage, props.isViewerTurn, props.hasPendingChoice).activeStep;
+      return useTurnActions(props.currentStage, props.isViewerTurn, props.hasPendingChoice, props.hasPendingKoChoice, props.hasPendingOptionalKoReward).activeStep;
     }
 
     function revealGate(): { allowed: boolean; reason: string | null } {
-      return useTurnActions(props.currentStage, props.isViewerTurn, props.hasPendingChoice).canRevealVillain();
+      return useTurnActions(props.currentStage, props.isViewerTurn, props.hasPendingChoice, props.hasPendingKoChoice, props.hasPendingOptionalKoReward).canRevealVillain();
     }
 
     function passPriorityGate(): { allowed: boolean; reason: string | null } {
-      return useTurnActions(props.currentStage, props.isViewerTurn, props.hasPendingChoice).canPassPriority();
+      return useTurnActions(props.currentStage, props.isViewerTurn, props.hasPendingChoice, props.hasPendingKoChoice, props.hasPendingOptionalKoReward).canPassPriority();
     }
 
     function endTurnGate(): { allowed: boolean; reason: string | null } {
-      return useTurnActions(props.currentStage, props.isViewerTurn, props.hasPendingChoice).canEndTurn();
+      return useTurnActions(props.currentStage, props.isViewerTurn, props.hasPendingChoice, props.hasPendingKoChoice, props.hasPendingOptionalKoReward).canEndTurn();
     }
 
     function onReveal(): void {

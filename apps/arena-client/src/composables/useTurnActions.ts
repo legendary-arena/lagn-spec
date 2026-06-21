@@ -88,12 +88,19 @@ const NOT_YOUR_TURN: GatingResult = {
  *   (derived from `UIState.pendingKoHeroChoice !== undefined` at the call site).
  *   When true, blocks `canEndTurn` and `canPassPriority` at ANY stage. Defaults
  *   to false. When both pending choices are active, KO gate reason takes precedence.
+ * @param hasPendingOptionalKoReward Whether the viewer has an unresolved
+ *   optional-KO-then-reward choice (derived from
+ *   `UIState.pendingOptionalKoReward !== undefined` at the call site). When true,
+ *   blocks `canEndTurn` and `canPassPriority` at ANY stage (the choice freezes the
+ *   board, mirroring `hasPendingKoChoice`). Defaults to false. WP-248's block-all
+ *   guard guarantees at most one pending-choice type is active at a time.
  */
 export function useTurnActions(
   currentStage: string,
   isViewerTurn: boolean = true,
   hasPendingChoice: boolean = false,
   hasPendingKoChoice: boolean = false,
+  hasPendingOptionalKoReward: boolean = false,
 ): {
   activeStep: TurnStep;
   canRevealVillain: () => GatingResult;
@@ -156,6 +163,16 @@ export function useTurnActions(
           reason: 'Choose a Hero to KO before taking another action.',
         };
       }
+      // why: D-24020 — block turn-end while an optional-KO-then-reward choice is
+      // pending (the board is frozen by WP-248's block-all guard, like the KO
+      // choice); surface a tooltip instead of a silent rejection. Decline is a
+      // first-class exit, so the reason names it.
+      if (hasPendingOptionalKoReward) {
+        return {
+          allowed: false,
+          reason: 'Choose a card to KO or Decline before taking another action.',
+        };
+      }
       if (currentStage === 'cleanup' && hasPendingChoice) {
         return {
           allowed: false,
@@ -174,6 +191,15 @@ export function useTurnActions(
         return {
           allowed: false,
           reason: 'Choose a Hero to KO before taking another action.',
+        };
+      }
+      if (hasPendingOptionalKoReward) {
+        // why: D-24020 — WP-248's block-all turn-end guard blocks endTurn while
+        // pendingOptionalKoRewards is non-empty; this client-side gate surfaces
+        // the reason so the player sees a tooltip instead of a silent rejection.
+        return {
+          allowed: false,
+          reason: 'Choose a card to KO or Decline before taking another action.',
         };
       }
       if (currentStage === 'cleanup' && hasPendingChoice) {

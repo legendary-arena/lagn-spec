@@ -10,7 +10,7 @@
     "registry:build":       "pnpm --filter @legendary-arena/registry build",
     "registry:upload":      "pnpm --filter @legendary-arena/registry upload",
     "viewer:dev":           "pnpm --filter registry-viewer dev",
-    "viewer:build":         "pnpm registry:build && pnpm --filter registry-viewer build",
+    "viewer:build":         "pnpm --filter @legendary-arena/lagn build && pnpm registry:build && pnpm --filter registry-viewer build",
 
     "wiki-viewer:project":     "node apps/wiki-viewer/scripts/project-wiki.mjs",
     "wiki-viewer:check-links": "node apps/wiki-viewer/scripts/check-links.mjs",
@@ -49,7 +49,18 @@
     "roadmap:counts":       "node scripts/roadmap-counts.mjs",
     "roadmap:counts:write": "node scripts/roadmap-counts.mjs --write",
     "roadmap:counts:check": "node scripts/roadmap-counts.mjs --check",
-    "roadmap:counts:test":  "node --import tsx --test scripts/roadmap-counts.test.ts"
+    "roadmap:counts:test":  "node --import tsx --test scripts/roadmap-counts.test.ts",
+
+    "sim:coverage":         "node scripts/hero-effect-coverage.mjs",
+    "sim:runtime-observed": "node scripts/runtime-observed-hollows.mjs",
+    "sim:runtime-observed:check": "node scripts/runtime-observed-hollows.mjs --check",
+    "ledger:heroes":        "node scripts/hero-mechanic-ledger.mjs",
+    "ledger:heroes:check":  "node scripts/hero-mechanic-ledger.mjs --check",
+    "mechanics:metadata":       "node scripts/build-card-mechanics-metadata.mjs",
+    "mechanics:metadata:check": "node scripts/build-card-mechanics-metadata.mjs --check",
+
+    "themes:check-slugs":   "node scripts/check-theme-slug-resolution.mjs",
+    "themes:check-slugs:check": "node scripts/check-theme-slug-resolution.mjs --check"
   },
   "workspaces": [
     "packages/*",

@@ -24,6 +24,7 @@ import type { SetData } from "./types/types-index.js";
 const fixtureCards: FlatCard[] = [
   {
     key:       "core-hero-spider-man-web-of-confusion",
+    extId:     "core/spider-man",
     cardType:  "hero",
     setAbbr:   "core",
     setName:   "Core Set",
@@ -34,6 +35,7 @@ const fixtureCards: FlatCard[] = [
   },
   {
     key:       "core-mastermind-dr-doom-main",
+    extId:     "core/dr-doom",
     cardType:  "mastermind",
     setAbbr:   "core",
     setName:   "Core Set",
@@ -580,5 +582,145 @@ describe("schema preservation through Zod parse (WP-170)", () => {
     assert.deepEqual(widow?.cardCounts, { "Silent Sniper": 1, "Covert Operation": 3 }, "cardCounts preserved");
     const blob = parsed.data.villains[0]?.cards[0];
     assert.equal((blob as { copies?: number })?.copies, 2, "villain copies preserved");
+  });
+});
+
+// ===========================================================================
+// Loadout picker group-name labels (FlatCard.groupName)
+// ===========================================================================
+//
+// why: the LoadoutBuilder picker collapses a group's member cards into one
+// entry by extId and labels it by FlatCard.groupName. groupName must carry
+// the GROUP/entity name (hero "Black Widow", villain "Brotherhood",
+// mastermind "Dr. Doom", henchman group), NOT a member card's name —
+// otherwise the single collapsed entry reads like an individual card and an
+// author thinks they have to pick each card of a hero's deck.
+
+describe("flattenSet groupName (loadout picker labels)", () => {
+  it("hero cards carry the hero name as groupName, not the per-card name", () => {
+    const setData = {
+      id: 1, abbr: "core",
+      heroes: [
+        {
+          name: "Black Widow",
+          slug: "black-widow",
+          cards: [
+            { name: "Mission Accomplished", slug: "mission-accomplished", abilities: [] },
+            { name: "Silent Sniper", slug: "silent-sniper", abilities: [] },
+          ],
+        },
+      ],
+      masterminds: [], villains: [], henchmen: [], schemes: [], bystanders: [], wounds: [], other: [],
+    } as unknown as SetData;
+
+    const result = flattenSet(setData, "Core Set");
+    assert.equal(result.length, 2, "two hero cards flattened");
+    for (const card of result) {
+      assert.equal(card.extId, "core/black-widow", "both cards share the hero group extId");
+      assert.equal(card.groupName, "Black Widow", "groupName is the hero name, not the card name");
+    }
+    assert.notEqual(result[0]!.name, result[0]!.groupName, "card name differs from groupName");
+  });
+
+  it("villain cards carry the group name, not a member card name", () => {
+    const setData = {
+      id: 1, abbr: "core",
+      heroes: [], masterminds: [],
+      villains: [
+        {
+          id: 1, name: "Brotherhood", slug: "brotherhood",
+          cards: [
+            { name: "Blob", slug: "blob", copies: 2, abilities: [] },
+            { name: "Mystique", slug: "mystique", copies: 2, abilities: [] },
+          ],
+        },
+      ],
+      henchmen: [], schemes: [], bystanders: [], wounds: [], other: [],
+    } as unknown as SetData;
+
+    const result = flattenSet(setData, "Core Set");
+    const blob = result.find((c) => c.slug === "blob");
+    assert.ok(blob, "blob must exist");
+    assert.equal(blob.name, "Blob", "card name is the member card");
+    assert.equal(blob.groupName, "Brotherhood", "groupName is the villain group");
+  });
+
+  it("mastermind cards carry the mastermind group name as groupName", () => {
+    const setData = {
+      id: 1, abbr: "core",
+      heroes: [],
+      masterminds: [
+        {
+          name: "Dr. Doom", slug: "dr-doom",
+          cards: [
+            { name: "Dr. Doom", slug: "dr-doom-main", abilities: [] },
+            { name: "Secret of Doom", slug: "secret-of-doom", abilities: [] },
+          ],
+        },
+      ],
+      villains: [], henchmen: [], schemes: [], bystanders: [], wounds: [], other: [],
+    } as unknown as SetData;
+
+    const result = flattenSet(setData, "Core Set");
+    for (const card of result) {
+      assert.equal(card.groupName, "Dr. Doom", "groupName is the mastermind group name");
+    }
+  });
+
+  it("mastermind cards carry the mastermind's Always-Leads villain group slugs", () => {
+    const setData = {
+      id: 1, abbr: "core",
+      heroes: [],
+      masterminds: [
+        {
+          name: "Magneto", slug: "magneto",
+          alwaysLeads: ["brotherhood"],
+          cards: [
+            { name: "Magneto", slug: "magneto-main", abilities: [] },
+            { name: "Xavier's School", slug: "xaviers-school", abilities: [] },
+          ],
+        },
+      ],
+      villains: [], henchmen: [], schemes: [], bystanders: [], wounds: [], other: [],
+    } as unknown as SetData;
+
+    const result = flattenSet(setData, "Core Set");
+    assert.equal(result.length, 2);
+    for (const card of result) {
+      // why: Always-Leads is a group-level value carried on every mastermind
+      // card (like groupName) so the loadout builder can read it off the
+      // collapsed picker entry to auto-include + require the Brotherhood.
+      assert.deepEqual(card.alwaysLeads, ["brotherhood"]);
+    }
+  });
+
+  it("henchman group carries the group name as groupName", () => {
+    const setData = {
+      id: 1, abbr: "core",
+      heroes: [], masterminds: [], villains: [],
+      henchmen: [
+        { id: 1, name: "Doombot Legion", slug: "doombot-legion", imageUrl: "", abilities: [] },
+      ],
+      schemes: [], bystanders: [], wounds: [], other: [],
+    } as unknown as SetData;
+
+    const result = flattenSet(setData, "Core Set");
+    assert.equal(result.length, 1);
+    assert.equal(result[0]!.groupName, "Doombot Legion", "groupName is the henchman group");
+  });
+
+  it("scheme groupName mirrors the scheme name", () => {
+    const setData = {
+      id: 1, abbr: "core",
+      heroes: [], masterminds: [], villains: [], henchmen: [],
+      schemes: [
+        { name: "The Legacy Virus", slug: "the-legacy-virus", imageUrl: "", cards: [] },
+      ],
+      bystanders: [], wounds: [], other: [],
+    } as unknown as SetData;
+
+    const result = flattenSet(setData, "Core Set");
+    assert.equal(result.length, 1);
+    assert.equal(result[0]!.groupName, "The Legacy Virus", "scheme groupName mirrors its name");
   });
 });

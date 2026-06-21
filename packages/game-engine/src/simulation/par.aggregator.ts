@@ -57,6 +57,7 @@ import { computeFinalScores } from '../scoring/scoring.logic.js';
 import { computeRawScore, computeParScore } from '../scoring/parScoring.logic.js';
 import { ENDGAME_CONDITIONS } from '../endgame/endgame.types.js';
 import { resetTurnEconomy } from '../economy/economy.logic.js';
+import { applyOnBeginParity } from './onBeginParity.js';
 import { advanceTurnStage } from '../turn/turnLoop.js';
 
 // why: move function imports mirror the WP-036 runner (D-2705 static
@@ -495,6 +496,14 @@ function simulateOneGame(
   let turnsElapsed = 0;
   let movesDispatched = 0;
 
+  // why (WP-266): the real onBegin runs at the start of every turn including
+  // turn 1; mirror it before the first move-step so the opening hand is drawn
+  // (buildInitialGameState defers the opening draw to onBegin, which this
+  // observation-only loop never runs).
+  applyOnBeginParity(gameState, currentPlayer, {
+    random: { Shuffle: <T>(deck: T[]): T[] => shuffleWithPrng(deck, nextRandom) },
+  });
+
   while (turnsElapsed < MAX_TURNS_PER_GAME) {
     if (movesDispatched >= MAX_MOVES_PER_GAME) {
       // why: move-level stall trap escape. A deterministic policy that
@@ -574,6 +583,12 @@ function simulateOneGame(
       turnsElapsed += 1;
       gameState.currentStage = 'start';
       gameState.turnEconomy = resetTurnEconomy();
+      // why (WP-266): mirror the rest of onBegin for the incoming player —
+      // reset the once-per-turn flags and auto-draw their hand to HAND_SIZE so
+      // the next turn can actually play cards.
+      applyOnBeginParity(gameState, currentPlayer, {
+        random: { Shuffle: <T>(deck: T[]): T[] => shuffleWithPrng(deck, nextRandom) },
+      });
     }
   }
 

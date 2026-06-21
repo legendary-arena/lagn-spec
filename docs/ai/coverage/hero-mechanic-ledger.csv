@@ -1,0 +1,624 @@
+ext_id,hero_name,set,mechanic,status,wp,decision,handler
+2099/doctor-doom-2099,Doctor Doom 2099,2099,cyber-mod,unsupported,,,
+2099/doctor-doom-2099,Doctor Doom 2099,2099,fated-future,unsupported,,,
+2099/doctor-doom-2099,Doctor Doom 2099,2099,undercover,unsupported,,,
+2099/ghost-rider-2099,Ghost Rider 2099,2099,cyber-mod,unsupported,,,
+2099/ghost-rider-2099,Ghost Rider 2099,2099,fated-future,unsupported,,,
+2099/ghost-rider-2099,Ghost Rider 2099,2099,undercover,unsupported,,,
+2099/hulk-2099,Hulk 2099,2099,cyber-mod-4-wounds,unsupported,,,
+2099/hulk-2099,Hulk 2099,2099,cyber-mod-wound,unsupported,,,
+2099/hulk-2099,Hulk 2099,2099,fated-future,unsupported,,,
+2099/hulk-2099,Hulk 2099,2099,undercover,unsupported,,,
+2099/ravage-2099,Ravage 2099,2099,fated-future,unsupported,,,
+2099/ravage-2099,Ravage 2099,2099,reveal-attack-choose,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal-attack-choose
+2099/spider-man-2099,Spider-Man 2099,2099,cyber-mod,unsupported,,,
+2099/spider-man-2099,Spider-Man 2099,2099,fated-future,unsupported,,,
+2099/spider-man-2099,Spider-Man 2099,2099,undercover,unsupported,,,
+3dtc/black-widow,Black Widow,3dtc,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+3dtc/black-widow,Black Widow,3dtc,rescue,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#rescue
+3dtc/deadpool,Deadpool,3dtc,(unmarked),unmarked,,,
+3dtc/howard-the-duck,Howard the Duck,3dtc,(unmarked),unmarked,,,
+3dtc/hulk,Hulk,3dtc,(unmarked),unmarked,,,
+3dtc/man-thing,Man-Thing,3dtc,(unmarked),unmarked,,,
+amwp/ant-army,Ant Army,amwp,antics,unsupported,,,
+amwp/ant-army,Ant Army,amwp,heist,unsupported,,,
+amwp/ant-army,Ant Army,amwp,microscopic-size-changing,unsupported,,,
+amwp/ant-army,Ant Army,amwp,size-changing,unsupported,,,
+amwp/ant-man,Ant-Man,amwp,antics,unsupported,,,
+amwp/ant-man,Ant-Man,amwp,heist,unsupported,,,
+amwp/ant-man,Ant-Man,amwp,microscopic-size-changing,unsupported,,,
+amwp/ant-man,Ant-Man,amwp,size-changing,unsupported,,,
+amwp/cassie-lang,Cassie Lang,amwp,microscopic-size-changing,unsupported,,,
+amwp/cassie-lang,Cassie Lang,amwp,size-changing,unsupported,,,
+amwp/freedom-fighters,Freedom Fighters,amwp,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+amwp/janet-van-dyne,Janet van Dyne,amwp,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+amwp/jentorra,Jentorra,amwp,bridge-conqueror,unsupported,,,
+amwp/jentorra,Jentorra,amwp,explore,unsupported,,,
+amwp/jentorra,Jentorra,amwp,sewers-conqueror,unsupported,,,
+amwp/scott-lang-cat-burglar,"Scott Lang, Cat Burglar",amwp,(unmarked),unmarked,,,
+amwp/wasp,Wasp,amwp,(unmarked),unmarked,,,
+anni/brainstorm,Brainstorm,anni,woman-out-of-time,unsupported,,,
+anni/fantastic-four-united,Fantastic Four United,anni,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+anni/fantastic-four-united,Fantastic Four United,anni,focus,unsupported,,,
+anni/heralds-of-galactus,Heralds of Galactus,anni,bridge-conqueror,unsupported,,,
+anni/heralds-of-galactus,Heralds of Galactus,anni,conqueror,unsupported,,,
+anni/heralds-of-galactus,Heralds of Galactus,anni,focus,unsupported,,,
+anni/psi-lord,Psi-Lord,anni,focus,unsupported,,,
+anni/psi-lord,Psi-Lord,anni,man/woman-out-of-time,unsupported,,,
+anni/super-skrull,Super-Skrull,anni,bridge,unsupported,,,
+anni/super-skrull,Super-Skrull,anni,conqueror,unsupported,,,
+anni/super-skrull,Super-Skrull,anni,focus,unsupported,,,
+anni/super-skrull,Super-Skrull,anni,rooftops,unsupported,,,
+anni/super-skrull,Super-Skrull,anni,streets,unsupported,,,
+antm/ant-man,Ant-Man,antm,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+antm/ant-man,Ant-Man,antm,microscopic-size-changing,unsupported,,,
+antm/ant-man,Ant-Man,antm,size-changing,unsupported,,,
+antm/black-knight,Black Knight,antm,empowered,unsupported,WP-267,D-24044,
+antm/jocasta,Jocasta,antm,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+antm/jocasta,Jocasta,antm,empowered,executable,WP-267,D-24044,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+antm/jocasta,Jocasta,antm,size-changing,unsupported,,,
+antm/wasp,Wasp,antm,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+antm/wasp,Wasp,antm,microscopic-size-changing,unsupported,,,
+antm/wasp,Wasp,antm,size-changing,unsupported,,,
+antm/wonder-man,Wonder Man,antm,empowered,executable,WP-267,D-24044,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+antm/wonder-man,Wonder Man,antm,size-changing,unsupported,,,
+asrd/beta-ray-bill,Beta Ray Bill,asrd,thrown-artifact,unsupported,,,
+asrd/beta-ray-bill,Beta Ray Bill,asrd,worthy,unsupported,,,
+asrd/lady-sif,Lady Sif,asrd,thrown-artifact,unsupported,,,
+asrd/thor,Thor,asrd,thrown-artifact,unsupported,,,
+asrd/thor,Thor,asrd,worthy,unsupported,,,
+asrd/valkyrie,Valkyrie,asrd,bridge,unsupported,,,
+asrd/valkyrie,Valkyrie,asrd,conqueror,unsupported,,,
+asrd/valkyrie,Valkyrie,asrd,sewers-conqueror,unsupported,,,
+asrd/valkyrie,Valkyrie,asrd,streets,unsupported,,,
+asrd/valkyrie,Valkyrie,asrd,thrown-artifact,unsupported,,,
+asrd/warriors-three-the,"Warriors Three, The",asrd,bridge,unsupported,,,
+asrd/warriors-three-the,"Warriors Three, The",asrd,conqueror,unsupported,,,
+asrd/warriors-three-the,"Warriors Three, The",asrd,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+asrd/warriors-three-the,"Warriors Three, The",asrd,streets-conqueror,unsupported,,,
+bkpt/general-okoye,General Okoye,bkpt,ambush,unsupported,,,
+bkpt/general-okoye,General Okoye,bkpt,wound-a-villain,unsupported,,,
+bkpt/king-black-panther,King Black Panther,bkpt,ambush,unsupported,,,
+bkpt/king-black-panther,King Black Panther,bkpt,thrones-favor,unsupported,,,
+bkpt/princess-shuri,Princess Shuri,bkpt,ambush,unsupported,,,
+bkpt/princess-shuri,Princess Shuri,bkpt,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+bkpt/princess-shuri,Princess Shuri,bkpt,empowered,executable,WP-267,D-24044,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+bkpt/queen-storm-of-wakanda,Queen Storm of Wakanda,bkpt,ambush,unsupported,,,
+bkpt/queen-storm-of-wakanda,Queen Storm of Wakanda,bkpt,empowered,executable,WP-267,D-24044,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+bkpt/queen-storm-of-wakanda,Queen Storm of Wakanda,bkpt,thrones-favor,unsupported,,,
+bkpt/queen-storm-of-wakanda,Queen Storm of Wakanda,bkpt,wound-the-mastermind,unsupported,,,
+bkpt/white-wolf,White Wolf,bkpt,ambush,unsupported,,,
+bkpt/white-wolf,White Wolf,bkpt,villain-or-mastermind-has-any-wounds,unsupported,,,
+bkpt/white-wolf,White Wolf,bkpt,wound-a-villain,unsupported,,,
+bkpt/white-wolf,White Wolf,bkpt,wound-each-villain-and-the-mastermind,unsupported,,,
+bkpt/white-wolf,White Wolf,bkpt,wound-the-mastermind,unsupported,,,
+bkwd/black-widow,Black Widow,bkwd,dark-memories,unsupported,,,
+bkwd/black-widow,Black Widow,bkwd,dodge,unsupported,,,
+bkwd/black-widow,Black Widow,bkwd,undercover,unsupported,,,
+bkwd/falcon-winter-soldier,Falcon & Winter Soldier,bkwd,dark-memories,unsupported,,,
+bkwd/falcon-winter-soldier,Falcon & Winter Soldier,bkwd,dodge,unsupported,,,
+bkwd/falcon-winter-soldier,Falcon & Winter Soldier,bkwd,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+bkwd/red-guardian,Red Guardian,bkwd,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+bkwd/red-guardian,Red Guardian,bkwd,undercover,unsupported,,,
+bkwd/red-guardian,Red Guardian,bkwd,unleash,unsupported,,,
+bkwd/red-guardian,Red Guardian,bkwd,when-recruited,unsupported,,,
+bkwd/white-tiger,White Tiger,bkwd,dark-memories,unsupported,,,
+bkwd/white-tiger,White Tiger,bkwd,dodge,unsupported,,,
+bkwd/yelena-belova,Yelena Belova,bkwd,dodge,unsupported,,,
+bkwd/yelena-belova,Yelena Belova,bkwd,undercover,unsupported,,,
+bkwd/yelena-belova,Yelena Belova,bkwd,unleash,unsupported,,,
+ca75/agent-x-13,Agent X-13,ca75,savior,unsupported,,,
+ca75/agent-x-13,Agent X-13,ca75,woman-out-of-time,unsupported,,,
+ca75/captain-america-falcon,Captain America (Falcon),ca75,rescue,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#rescue
+ca75/captain-america-falcon,Captain America (Falcon),ca75,savior,unsupported,,,
+ca75/captain-america-1941,Captain America 1941,ca75,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+ca75/captain-america-1941,Captain America 1941,ca75,man-out-of-time,unsupported,,,
+ca75/captain-america-1941,Captain America 1941,ca75,rescue,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#rescue
+ca75/captain-america-1941,Captain America 1941,ca75,savior,unsupported,,,
+ca75/steve-rogers-director-of-shield,"Steve Rogers, Director of S.H.I.E.L.D.",ca75,man-out-of-time,unsupported,,,
+ca75/steve-rogers-director-of-shield,"Steve Rogers, Director of S.H.I.E.L.D.",ca75,rescue,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#rescue
+ca75/steve-rogers-director-of-shield,"Steve Rogers, Director of S.H.I.E.L.D.",ca75,savior,unsupported,,,
+ca75/winter-soldier,Winter Soldier,ca75,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+ca75/winter-soldier,Winter Soldier,ca75,man-out-of-time,unsupported,,,
+chmp/gwenpool,Gwenpool,chmp,cheering-crowds,unsupported,,,
+chmp/gwenpool,Gwenpool,chmp,demolish,unsupported,,,
+chmp/gwenpool,Gwenpool,chmp,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+chmp/gwenpool,Gwenpool,chmp,size-changing,unsupported,,,
+chmp/gwenpool,Gwenpool,chmp,versatile,unsupported,,,
+chmp/ms-marvel,Ms. Marvel,chmp,cheering-crowds,unsupported,,,
+chmp/ms-marvel,Ms. Marvel,chmp,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+chmp/ms-marvel,Ms. Marvel,chmp,rescue,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#rescue
+chmp/ms-marvel,Ms. Marvel,chmp,size-changing,unsupported,,,
+chmp/ms-marvel,Ms. Marvel,chmp,versatile,unsupported,,,
+chmp/nova,Nova,chmp,cheering-crowds,unsupported,,,
+chmp/nova,Nova,chmp,rescue,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#rescue
+chmp/nova,Nova,chmp,size-changing,unsupported,,,
+chmp/nova,Nova,chmp,versatile,unsupported,,,
+chmp/totally-awesome-hulk,Totally Awesome Hulk,chmp,cheering-crowds,unsupported,,,
+chmp/totally-awesome-hulk,Totally Awesome Hulk,chmp,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+chmp/totally-awesome-hulk,Totally Awesome Hulk,chmp,size-changing,unsupported,,,
+chmp/viv-vision,Viv Vision,chmp,cheering-crowds,unsupported,,,
+chmp/viv-vision,Viv Vision,chmp,size-changing,unsupported,,,
+chmp/viv-vision,Viv Vision,chmp,versatile,unsupported,,,
+core/black-widow,Black Widow,core,attack-per-count:victory-bystanders,unsupported,,,
+core/black-widow,Black Widow,core,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+core/black-widow,Black Widow,core,optional-ko-reward:rescue,unsupported,,,
+core/black-widow,Black Widow,core,rescue,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#rescue
+core/captain-america,Captain America,core,(unmarked),unmarked,,,
+core/cyclops,Cyclops,core,(unmarked),unmarked,,,
+core/deadpool,Deadpool,core,(unmarked),unmarked,,,
+core/emma-frost,Emma Frost,core,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+core/gambit,Gambit,core,reveal-cost-attack,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal-cost-attack
+core/hawkeye,Hawkeye,core,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+core/hulk,Hulk,core,(unmarked),unmarked,,,
+core/iron-man,Iron Man,core,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+core/nick-fury,Nick Fury,core,(unmarked),unmarked,,,
+core/rogue,Rogue,core,(unmarked),unmarked,,,
+core/spider-man,Spider-Man,core,rescue,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#rescue
+core/spider-man,Spider-Man,core,reveal,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal
+core/spider-man,Spider-Man,core,reveal-count,unsupported,,,
+core/spider-man,Spider-Man,core,reveal:cost-lte-2:draw,unsupported,,,
+core/storm,Storm,core,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+core/thor,Thor,core,(unmarked),unmarked,,,
+core/wolverine,Wolverine,core,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+cosm/adam-warlock,Adam Warlock,cosm,burn-2-shards,unsupported,,,
+cosm/adam-warlock,Adam Warlock,cosm,burn-4-shards,unsupported,,,
+cosm/adam-warlock,Adam Warlock,cosm,burn-8-shards,unsupported,,,
+cosm/captain-mar-vell,Captain Mar-Vell,cosm,danger-sense,unsupported,,,
+cosm/moondragon,Moondragon,cosm,danger-sense,unsupported,,,
+cosm/nebula,Nebula,cosm,(unmarked),unmarked,,,
+cosm/nova,Nova,cosm,cosmic-threat,unsupported,,,
+cosm/nova,Nova,cosm,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+cosm/phyla-vell,Phyla-Vell,cosm,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+cosm/quasar,Quasar,cosm,burn-2-shards,unsupported,,,
+cosm/quasar,Quasar,cosm,burn-4-shards,unsupported,,,
+cosm/quasar,Quasar,cosm,burn-a-shards,unsupported,,,
+cosm/ronan-the-accuser,Ronan the Accuser,cosm,burn-2-shards,unsupported,,,
+cosm/ronan-the-accuser,Ronan the Accuser,cosm,contest-of-champions,unsupported,,,
+cosm/ronan-the-accuser,Ronan the Accuser,cosm,rescue,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#rescue
+cosm/yondu,Yondu,cosm,burn-any-number-of-shards,unsupported,,,
+cosm/yondu,Yondu,cosm,danger-sense,unsupported,,,
+cvwr/captain-america-secret-avenger,"Captain America, Secret Avenger",cvwr,(unmarked),unmarked,,,
+cvwr/cloak-dagger,Cloak & Dagger,cvwr,phasing,unsupported,,,
+cvwr/cloak-dagger,Cloak & Dagger,cvwr,reveal-ko,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal-ko
+cvwr/cloak-dagger,Cloak & Dagger,cvwr,reveal-min,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal-min
+cvwr/daredevil,Daredevil,cvwr,(unmarked),unmarked,,,
+cvwr/falcon,Falcon,cvwr,(unmarked),unmarked,,,
+cvwr/goliath,Goliath,cvwr,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+cvwr/goliath,Goliath,cvwr,size-changing,unsupported,,,
+cvwr/hercules,Hercules,cvwr,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+cvwr/hercules,Hercules,cvwr,reveal-ko,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal-ko
+cvwr/hulkling,Hulkling,cvwr,size-changing,unsupported,,,
+cvwr/luke-cage,Luke Cage,cvwr,fortify,unsupported,,,
+cvwr/patriot,Patriot,cvwr,(unmarked),unmarked,,,
+cvwr/peter-parker,Peter Parker,cvwr,rescue,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#rescue
+cvwr/peter-parker,Peter Parker,cvwr,reveal,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal
+cvwr/speedball,Speedball,cvwr,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+cvwr/stature,Stature,cvwr,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+cvwr/stature,Stature,cvwr,size-changing,unsupported,,,
+cvwr/storm-black-panther,Storm & Black Panther,cvwr,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+cvwr/tigra,Tigra,cvwr,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+cvwr/vision,Vision,cvwr,phasing,unsupported,,,
+cvwr/vision,Vision,cvwr,size-changing,unsupported,,,
+cvwr/wiccan,Wiccan,cvwr,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+cvwr/wiccan,Wiccan,cvwr,phasing,unsupported,,,
+dead/bob-agent-of-hydra,"Bob, Agent of HYDRA",dead,excessive-violence,unsupported,,,
+dead/deadpool,Deadpool,dead,excessive-violence,unsupported,,,
+dead/slapstick,Slapstick,dead,excessive-violence,unsupported,,,
+dead/solo,Solo,dead,excessive-violence,unsupported,,,
+dead/stingray,Stingray,dead,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+dead/stingray,Stingray,dead,excessive-violence,unsupported,,,
+dims/howard-the-duck,Howard the Duck,dims,(unmarked),unmarked,,,
+dims/jessica-jones,Jessica Jones,dims,investigate,unsupported,,,
+dims/jessica-jones,Jessica Jones,dims,switcheroo,unsupported,,,
+dims/man-thing,Man-Thing,dims,teleport,unsupported,,,
+dims/ms-america,Ms. America,dims,investigate,unsupported,,,
+dims/ms-america,Ms. America,dims,teleport,unsupported,,,
+dims/squirrel-girl,Squirrel Girl,dims,investigate,unsupported,,,
+dims/squirrel-girl,Squirrel Girl,dims,switcheroo,unsupported,,,
+dkcy/angel,Angel,dkcy,(unmarked),unmarked,,,
+dkcy/bishop,Bishop,dkcy,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+dkcy/blade,Blade,dkcy,(unmarked),unmarked,,,
+dkcy/cable,Cable,dkcy,teleport,unsupported,,,
+dkcy/colossus,Colossus,dkcy,(unmarked),unmarked,,,
+dkcy/daredevil,Daredevil,dkcy,(unmarked),unmarked,,,
+dkcy/domino,Domino,dkcy,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+dkcy/domino,Domino,dkcy,versatile,unsupported,,,
+dkcy/elektra,Elektra,dkcy,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+dkcy/forge,Forge,dkcy,versatile,unsupported,,,
+dkcy/ghost-rider,Ghost Rider,dkcy,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+dkcy/iceman,Iceman,dkcy,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+dkcy/iron-fist,Iron Fist,dkcy,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+dkcy/iron-fist,Iron Fist,dkcy,versatile,unsupported,,,
+dkcy/jean-grey,Jean Grey,dkcy,rescue,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#rescue
+dkcy/nightcrawler,Nightcrawler,dkcy,teleport,unsupported,,,
+dkcy/professor-x,Professor X,dkcy,(unmarked),unmarked,,,
+dkcy/punisher,Punisher,dkcy,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+dkcy/punisher,Punisher,dkcy,reveal-ko,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal-ko
+dkcy/wolverine,Wolverine,dkcy,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+dstr/ancient-one-the,"Ancient One, The",dstr,astral-plane,unsupported,,,
+dstr/ancient-one-the,"Ancient One, The",dstr,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+dstr/ancient-one-the,"Ancient One, The",dstr,ritual-artifact,unsupported,,,
+dstr/clea,Clea,dstr,demonic-bargain,unsupported,,,
+dstr/clea,Clea,dstr,ritual-artifact,unsupported,,,
+dstr/doctor-strange,Doctor Strange,dstr,artifact,unsupported,,,
+dstr/doctor-strange,Doctor Strange,dstr,ritual-artifact,unsupported,,,
+dstr/doctor-voodoo,Doctor Voodoo,dstr,artifact,unsupported,,,
+dstr/doctor-voodoo,Doctor Voodoo,dstr,ritual-artifact,unsupported,,,
+dstr/vishanti-the,"Vishanti, The",dstr,demonic-bargain,unsupported,,,
+dstr/vishanti-the,"Vishanti, The",dstr,ritual-artifact,unsupported,,,
+fear/greithoth-breaker-of-wills,"Greithoth, Breaker of Wills",fear,artifact,unsupported,,,
+fear/greithoth-breaker-of-wills,"Greithoth, Breaker of Wills",fear,artifacts,unsupported,,,
+fear/greithoth-breaker-of-wills,"Greithoth, Breaker of Wills",fear,thrown-artifact,unsupported,,,
+fear/kuurth-breaker-of-stone,"Kuurth, Breaker of Stone",fear,thrown-artifact,unsupported,,,
+fear/nerkkod-breaker-of-oceans,"Nerkkod, Breaker of Oceans",fear,thrown-artifact,unsupported,,,
+fear/nul-breaker-of-worlds,"Nul, Breaker of Worlds",fear,demolish,unsupported,,,
+fear/nul-breaker-of-worlds,"Nul, Breaker of Worlds",fear,thrown-artifact,unsupported,,,
+fear/skadi,Skadi,fear,thrown-artifact,unsupported,,,
+fear/skirn-breaker-of-men,"Skirn, Breaker of Men",fear,thrown-artifact,unsupported,,,
+ff04/human-torch,Human Torch,ff04,focus,unsupported,,,
+ff04/invisible-woman,Invisible Woman,ff04,focus,unsupported,,,
+ff04/mr-fantastic,Mr. Fantastic,ff04,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+ff04/mr-fantastic,Mr. Fantastic,ff04,focus,unsupported,,,
+ff04/silver-surfer,Silver Surfer,ff04,focus,unsupported,,,
+ff04/thing,Thing,ff04,focus,unsupported,,,
+gotg/drax-the-destroyer,Drax the Destroyer,gotg,artifact--,unsupported,,,
+gotg/gamora,Gamora,gotg,artifact--,unsupported,,,
+gotg/groot,Groot,gotg,(unmarked),unmarked,,,
+gotg/rocket-raccoon,Rocket Raccoon,gotg,artifact--,unsupported,,,
+gotg/star-lord,Star-Lord,gotg,artifact--,unsupported,,,
+mdns/blade-daywalker,"Blade, Daywalker",mdns,blood-frenzy,unsupported,,,
+mdns/blade-daywalker,"Blade, Daywalker",mdns,moonlight,unsupported,,,
+mdns/blade-daywalker,"Blade, Daywalker",mdns,patrol-the-rooftops,unsupported,,,
+mdns/blade-daywalker,"Blade, Daywalker",mdns,patrol-the-sewers,unsupported,,,
+mdns/blade-daywalker,"Blade, Daywalker",mdns,sunlight,unsupported,,,
+mdns/elsa-bloodstone,Elsa Bloodstone,mdns,blood-frenzy,unsupported,,,
+mdns/elsa-bloodstone,Elsa Bloodstone,mdns,hunt-for-victims,unsupported,,,
+mdns/elsa-bloodstone,Elsa Bloodstone,mdns,patrol-any-city-space,unsupported,,,
+mdns/elsa-bloodstone,Elsa Bloodstone,mdns,patrol-the-streets,unsupported,,,
+mdns/morbius,Morbius,mdns,blood-frenzy,unsupported,,,
+mdns/morbius,Morbius,mdns,moonlight,unsupported,,,
+mdns/morbius,Morbius,mdns,sunlight,unsupported,,,
+mdns/werewolf-by-night,Werewolf by Night,mdns,blood-frenzy,unsupported,,,
+mdns/werewolf-by-night,Werewolf by Night,mdns,moonlight,unsupported,,,
+mdns/werewolf-by-night,Werewolf by Night,mdns,sunlight,unsupported,,,
+mdns/wong-master-of-the-mystic-arts,"Wong, Master of the Mystic Arts",mdns,patrol-the-bridge,unsupported,,,
+mdns/wong-master-of-the-mystic-arts,"Wong, Master of the Mystic Arts",mdns,sunlight,unsupported,,,
+mgtg/drax,Drax,mgtg,excessive-violence,unsupported,,,
+mgtg/drax,Drax,mgtg,triggered-artifact,unsupported,,,
+mgtg/gamora,Gamora,mgtg,artifact,unsupported,,,
+mgtg/gamora,Gamora,mgtg,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+mgtg/gamora,Gamora,mgtg,triggered-artifact,unsupported,,,
+mgtg/mantis,Mantis,mgtg,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+mgtg/mantis,Mantis,mgtg,excessive-kindness,unsupported,,,
+mgtg/rocket-groot,Rocket & Groot,mgtg,excessive-kindness,unsupported,,,
+mgtg/rocket-groot,Rocket & Groot,mgtg,excessive-violence,unsupported,,,
+mgtg/rocket-groot,Rocket & Groot,mgtg,triggered-artifact,unsupported,,,
+mgtg/star-lord,Star-Lord,mgtg,artifact,unsupported,,,
+mgtg/star-lord,Star-Lord,mgtg,triggered-artifact,unsupported,,,
+msis/black-panther,Black Panther,msis,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+msis/black-panther,Black Panther,msis,sacrifice,unsupported,,,
+msis/bruce-banner,Bruce Banner,msis,sacrifice,unsupported,,,
+msis/captain-marvel,Captain Marvel,msis,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+msis/captain-marvel,Captain Marvel,msis,endgame,unsupported,,,
+msis/doctor-strange,Doctor Strange,msis,phasing,unsupported,,,
+msis/doctor-strange,Doctor Strange,msis,sacrifice,unsupported,,,
+msis/wanda-vision,Wanda & Vision,msis,reveal-odd-draw,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal-odd-draw
+msis/wanda-vision,Wanda & Vision,msis,sacrifice,unsupported,,,
+msmc/m,M,msmc,clone,unsupported,,,
+msmc/m,M,msmc,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+msmc/m,M,msmc,investigate,unsupported,,,
+msmc/m,M,msmc,tactical-formation,unsupported,,,
+msmc/m,M,msmc,when-recruited,unsupported,,,
+msmc/multiple-man,Multiple Man,msmc,clone,unsupported,,,
+msmc/multiple-man,Multiple Man,msmc,investigate,unsupported,,,
+msmc/multiple-man,Multiple Man,msmc,tactical-formation,unsupported,,,
+msmc/rictor,Rictor,msmc,investigate,unsupported,,,
+msmc/rictor,Rictor,msmc,shatter,unsupported,,,
+msmc/shatterstar,Shatterstar,msmc,clone,unsupported,,,
+msmc/shatterstar,Shatterstar,msmc,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+msmc/shatterstar,Shatterstar,msmc,shatter,unsupported,,,
+msmc/shatterstar,Shatterstar,msmc,tactical-formation,unsupported,,,
+msmc/shatterstar,Shatterstar,msmc,when-recruited,unsupported,,,
+msmc/siryn,Siryn,msmc,investigate,unsupported,,,
+msmc/siryn,Siryn,msmc,shatter,unsupported,,,
+msmc/siryn,Siryn,msmc,tactical-formation,unsupported,,,
+msmc/stepford-cuckoos,Stepford Cuckoos,msmc,clone,unsupported,,,
+msmc/stepford-cuckoos,Stepford Cuckoos,msmc,investigate,unsupported,,,
+msmc/stepford-cuckoos,Stepford Cuckoos,msmc,tactical-formation,unsupported,,,
+msmc/stepford-cuckoos,Stepford Cuckoos,msmc,when-recruited,unsupported,,,
+msmc/strong-guy,Strong Guy,msmc,investigate,unsupported,,,
+msmc/strong-guy,Strong Guy,msmc,tactical-formation,unsupported,,,
+msmc/warpath,Warpath,msmc,investigate,unsupported,,,
+msmc/warpath,Warpath,msmc,tactical-formation,unsupported,,,
+msp1/black-widow,Black Widow,msp1,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+msp1/black-widow,Black Widow,msp1,rescue,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#rescue
+msp1/captain-america,Captain America,msp1,(unmarked),unmarked,,,
+msp1/hawkeye,Hawkeye,msp1,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+msp1/hulk,Hulk,msp1,(unmarked),unmarked,,,
+msp1/iron-man,Iron Man,msp1,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+msp1/nick-fury,Nick Fury,msp1,(unmarked),unmarked,,,
+msp1/thor,Thor,msp1,(unmarked),unmarked,,,
+nmut/karma,Karma,nmut,(unmarked),unmarked,,,
+nmut/mirage,Mirage,nmut,moonlight,unsupported,,,
+nmut/mirage,Mirage,nmut,waking-nightmare,unsupported,,,
+nmut/sunspot,Sunspot,nmut,moonlight,unsupported,,,
+nmut/sunspot,Sunspot,nmut,sunlight,unsupported,,,
+nmut/warlock,Warlock,nmut,moonlight,unsupported,,,
+nmut/warlock,Warlock,nmut,sunlight,unsupported,,,
+nmut/wolfsbane,Wolfsbane,nmut,moonlight,unsupported,,,
+nmut/wolfsbane,Wolfsbane,nmut,sunlight,unsupported,,,
+noir/angel-noir,Angel Noir,noir,investigate,unsupported,,,
+noir/daredevil-noir,Daredevil Noir,noir,investigate,unsupported,,,
+noir/iron-man-noir,Iron Man Noir,noir,investigate,unsupported,,,
+noir/luke-cage-noir,Luke Cage Noir,noir,investigate,unsupported,,,
+noir/spider-man-noir,Spider-Man Noir,noir,investigate,unsupported,,,
+pttr/black-cat,Black Cat,pttr,wall-crawl,unsupported,,,
+pttr/moon-knight,Moon Knight,pttr,wall-crawl,unsupported,,,
+pttr/scarlet-spider,Scarlet Spider,pttr,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+pttr/scarlet-spider,Scarlet Spider,pttr,wall-crawl,unsupported,,,
+pttr/spider-woman,Spider-Woman,pttr,wall-crawl,unsupported,,,
+pttr/symbiote-spider-man,Symbiote Spider-Man,pttr,wall-crawl,unsupported,,,
+rlmk/black-bolt,Black Bolt,rlmk,"""when-recruited""-abilities",unsupported,,,
+rlmk/black-bolt,Black Bolt,rlmk,don't-speak,unsupported,,,
+rlmk/black-bolt,Black Bolt,rlmk,speak,unsupported,,,
+rlmk/black-bolt,Black Bolt,rlmk,thrones-favor,unsupported,,,
+rlmk/crystal,Crystal,rlmk,"""when-recruited""-abilities",unsupported,,,
+rlmk/crystal,Crystal,rlmk,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+rlmk/crystal,Crystal,rlmk,thrones-favor,unsupported,,,
+rlmk/gorgon,Gorgon,rlmk,"""when-recruited""-abilities",unsupported,,,
+rlmk/gorgon,Gorgon,rlmk,abomination,unsupported,,,
+rlmk/gorgon,Gorgon,rlmk,highest-abomination,unsupported,,,
+rlmk/gorgon,Gorgon,rlmk,rooftops-abomination,unsupported,,,
+rlmk/gorgon,Gorgon,rlmk,streets-abomination,unsupported,,,
+rlmk/gorgon,Gorgon,rlmk,teleport,unsupported,,,
+rlmk/karnak,Karnak,rlmk,"""when-recruited""-abilities",unsupported,,,
+rlmk/medusa,Medusa,rlmk,"""when-recruited""-abilities",unsupported,,,
+rlmk/medusa,Medusa,rlmk,thrones-favor,unsupported,,,
+rvlt/captain-marvel-agent-of-shield,"Captain Marvel, Agent of S.H.I.E.L.D.",rvlt,last-stand,unsupported,,,
+rvlt/darkhawk,Darkhawk,rvlt,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+rvlt/darkhawk,Darkhawk,rvlt,hyperspeed,unsupported,,,
+rvlt/hellcat,Hellcat,rvlt,(unmarked),unmarked,,,
+rvlt/photon,Photon,rvlt,hyperspeed,unsupported,,,
+rvlt/photon,Photon,rvlt,last-stand,unsupported,,,
+rvlt/quicksilver,Quicksilver,rvlt,hyperspeed,unsupported,,,
+rvlt/ronin,Ronin,rvlt,dark-memories,unsupported,,,
+rvlt/ronin,Ronin,rvlt,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+rvlt/ronin,Ronin,rvlt,hyperspeed,unsupported,,,
+rvlt/scarlet-witch,Scarlet Witch,rvlt,dark-memories,unsupported,,,
+rvlt/speed,Speed,rvlt,hyperspeed,unsupported,,,
+rvlt/war-machine,War Machine,rvlt,hyperspeed,unsupported,,,
+shld/agent-phil-coulson,Agent Phil Coulson,shld,s.h.i.e.l.d.-level,unsupported,,,
+shld/agent-phil-coulson,Agent Phil Coulson,shld,s.h.i.e.l.d.-levels,unsupported,,,
+shld/agent-phil-coulson,Agent Phil Coulson,shld,undercover,unsupported,,,
+shld/deathlok,Deathlok,shld,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+shld/deathlok,Deathlok,shld,s.h.i.e.l.d.-level,unsupported,,,
+shld/deathlok,Deathlok,shld,undercover,unsupported,,,
+shld/dum-dum-dugan,Dum Dum Dugan,shld,undercover,unsupported,,,
+shld/gw-bridge,G.W. Bridge,shld,(unmarked),unmarked,,,
+shld/grant-ward,Grant Ward,shld,undercover,unsupported,,,
+shld/leo-fitz-and-jemma-simmons,Leo Fitz and Jemma Simmons,shld,(unmarked),unmarked,,,
+shld/melinda-may,Melinda May,shld,(unmarked),unmarked,,,
+shld/mockingbird,Mockingbird,shld,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+shld/mockingbird,Mockingbird,shld,s.h.i.e.l.d.-level,unsupported,,,
+shld/mockingbird,Mockingbird,shld,s.h.i.e.l.d.-levels,unsupported,,,
+shld/mockingbird,Mockingbird,shld,undercover,unsupported,,,
+shld/quake,Quake,shld,s.h.i.e.l.d.-level,unsupported,,,
+shld/quake,Quake,shld,undercover,unsupported,,,
+shld/sharon-carter,Sharon Carter,shld,undercover,unsupported,,,
+shld/victoria-hand,Victoria Hand,shld,undercover,unsupported,,,
+shld/yo-yo-rodriguez,Yo-Yo Rodriguez,shld,undercover,unsupported,,,
+smhc/happy-hogan,Happy Hogan,smhc,coordinate,unsupported,,,
+smhc/happy-hogan,Happy Hogan,smhc,danger-sense,unsupported,,,
+smhc/happy-hogan,Happy Hogan,smhc,double-striker,unsupported,,,
+smhc/happy-hogan,Happy Hogan,smhc,striker,unsupported,,,
+smhc/high-tech-spider-man,High Tech Spider-Man,smhc,coordinate,unsupported,,,
+smhc/high-tech-spider-man,High Tech Spider-Man,smhc,danger-sense,unsupported,,,
+smhc/high-tech-spider-man,High Tech Spider-Man,smhc,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+smhc/high-tech-spider-man,High Tech Spider-Man,smhc,reveal,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal
+smhc/high-tech-spider-man,High Tech Spider-Man,smhc,wall-crawl,unsupported,,,
+smhc/peter-parker-homecoming,"Peter Parker, Homecoming",smhc,coordinate,unsupported,,,
+smhc/peter-parker-homecoming,"Peter Parker, Homecoming",smhc,danger-sense,unsupported,,,
+smhc/peter-parker-homecoming,"Peter Parker, Homecoming",smhc,reveal,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal
+smhc/peter-parker-homecoming,"Peter Parker, Homecoming",smhc,wall-crawl,unsupported,,,
+smhc/peters-allies,Peter's Allies,smhc,coordinate,unsupported,,,
+smhc/tony-stark,Tony Stark,smhc,coordinate,unsupported,,,
+smhc/tony-stark,Tony Stark,smhc,danger-sense,unsupported,,,
+ssw1/apocalyptic-kitty-pryde,Apocalyptic Kitty Pryde,ssw1,(unmarked),unmarked,,,
+ssw1/black-bolt,Black Bolt,ssw1,(unmarked),unmarked,,,
+ssw1/black-panther,Black Panther,ssw1,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+ssw1/captain-marvel,Captain Marvel,ssw1,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+ssw1/dr-strange,Dr. Strange,ssw1,teleport,unsupported,,,
+ssw1/lady-thor,Lady Thor,ssw1,(unmarked),unmarked,,,
+ssw1/magik,Magik,ssw1,teleport,unsupported,,,
+ssw1/maximus,Maximus,ssw1,(unmarked),unmarked,,,
+ssw1/namor-the-sub-mariner,"Namor, the Sub-Mariner",ssw1,(unmarked),unmarked,,,
+ssw1/old-man-logan,Old Man Logan,ssw1,:-cross-dimensional-wolverine-rampage.,unsupported,,,
+ssw1/proxima-midnight,Proxima Midnight,ssw1,(unmarked),unmarked,,,
+ssw1/superior-iron-man,Superior Iron Man,ssw1,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+ssw1/thanos,Thanos,ssw1,teleport,unsupported,,,
+ssw1/ultimate-spider-man,Ultimate Spider-Man,ssw1,reveal,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal
+ssw2/agent-venom,Agent Venom,ssw2,patrol-the-bank,unsupported,,,
+ssw2/agent-venom,Agent Venom,ssw2,patrol-the-sewers,unsupported,,,
+ssw2/agent-venom,Agent Venom,ssw2,spectrum,unsupported,,,
+ssw2/agent-venom,Agent Venom,ssw2,wall-crawl,unsupported,,,
+ssw2/arkon-the-magnificent,Arkon the Magnificent,ssw2,patrol-the-rooftops,unsupported,,,
+ssw2/arkon-the-magnificent,Arkon the Magnificent,ssw2,patrol-the-sewers,unsupported,,,
+ssw2/arkon-the-magnificent,Arkon the Magnificent,ssw2,patrol-two-adjacent-city-spaces,unsupported,,,
+ssw2/arkon-the-magnificent,Arkon the Magnificent,ssw2,spectrum,unsupported,,,
+ssw2/arkon-the-magnificent,Arkon the Magnificent,ssw2,wall-crawl,unsupported,,,
+ssw2/beast,Beast,ssw2,patrol-any-city-space,unsupported,,,
+ssw2/beast,Beast,ssw2,wall-crawl,unsupported,,,
+ssw2/black-swan,Black Swan,ssw2,(unmarked),unmarked,,,
+ssw2/captain-britain,Captain Britain,ssw2,patrol-the-rooftops,unsupported,,,
+ssw2/captain-and-the-devil-the,"Captain and the Devil, The",ssw2,patrol-the-streets,unsupported,,,
+ssw2/captain-and-the-devil-the,"Captain and the Devil, The",ssw2,spectrum,unsupported,,,
+ssw2/corvus-glaive,Corvus Glaive,ssw2,patrol-the-escape-pile,unsupported,,,
+ssw2/dr-punisher-soldier-supreme,"Dr. Punisher, Soldier Supreme",ssw2,patrol-every-city-space,unsupported,,,
+ssw2/dr-punisher-soldier-supreme,"Dr. Punisher, Soldier Supreme",ssw2,patrol-the-streets,unsupported,,,
+ssw2/dr-punisher-soldier-supreme,"Dr. Punisher, Soldier Supreme",ssw2,reveal-ko-attack,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal-ko-attack
+ssw2/elsa-bloodstone,Elsa Bloodstone,ssw2,patrol-the-sewers,unsupported,,,
+ssw2/elsa-bloodstone,Elsa Bloodstone,ssw2,spectrum,unsupported,,,
+ssw2/elsa-bloodstone,Elsa Bloodstone,ssw2,wall-crawl,unsupported,,,
+ssw2/phoenix-force-cyclops,Phoenix Force Cyclops,ssw2,(unmarked),unmarked,,,
+ssw2/ruby-summers,Ruby Summers,ssw2,teleport,unsupported,,,
+ssw2/shang-chi,Shang-Chi,ssw2,patrol-the-rooftops,unsupported,,,
+ssw2/shang-chi,Shang-Chi,ssw2,patrol-your-discard-pile,unsupported,,,
+ssw2/shang-chi,Shang-Chi,ssw2,wall-crawl,unsupported,,,
+ssw2/silk,Silk,ssw2,reveal-ko-or-draw,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal-ko-or-draw
+ssw2/silk,Silk,ssw2,spectrum,unsupported,,,
+ssw2/silk,Silk,ssw2,wall-crawl,unsupported,,,
+ssw2/soulsword-colossus,Soulsword Colossus,ssw2,cross-dimensional-colossus-rampage,unsupported,,,
+ssw2/spider-gwen,Spider-Gwen,ssw2,patrol-the-bank,unsupported,,,
+ssw2/spider-gwen,Spider-Gwen,ssw2,patrol-the-bridge,unsupported,,,
+ssw2/spider-gwen,Spider-Gwen,ssw2,patrol-the-rooftops,unsupported,,,
+ssw2/spider-gwen,Spider-Gwen,ssw2,patrol-your-victory-pile,unsupported,,,
+ssw2/spider-gwen,Spider-Gwen,ssw2,wall-crawl,unsupported,,,
+ssw2/time-traveling-jean-grey,Time-Traveling Jean Grey,ssw2,patrol-any-city-space,unsupported,,,
+ssw2/time-traveling-jean-grey,Time-Traveling Jean Grey,ssw2,patrol-the-bridge,unsupported,,,
+vill/bullseye,Bullseye,vill,dodge,unsupported,,,
+vill/bullseye,Bullseye,vill,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+vill/dr-octopus,Dr. Octopus,vill,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+vill/electro,Electro,vill,dodge,unsupported,,,
+vill/enchantress,Enchantress,vill,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+vill/green-goblin,Green Goblin,vill,dodge,unsupported,,,
+vill/juggernaut,Juggernaut,vill,(unmarked),unmarked,,,
+vill/kingpin,Kingpin,vill,(unmarked),unmarked,,,
+vill/kraven,Kraven,vill,dodge,unsupported,,,
+vill/loki,Loki,vill,(unmarked),unmarked,,,
+vill/magneto,Magneto,vill,dodge,unsupported,,,
+vill/mysterio,Mysterio,vill,dodge,unsupported,,,
+vill/mystique,Mystique,vill,dodge,unsupported,,,
+vill/sabretooth,Sabretooth,vill,(unmarked),unmarked,,,
+vill/ultron,Ultron,vill,dodge,unsupported,,,
+vill/venom,Venom,vill,(unmarked),unmarked,,,
+vnom/carnage,Carnage,vnom,digest,unsupported,,,
+vnom/carnage,Carnage,vnom,excessive-violence,unsupported,,,
+vnom/carnage,Carnage,vnom,indigestion,unsupported,,,
+vnom/venom,Venom,vnom,digest,unsupported,,,
+vnom/venom,Venom,vnom,excessive-violence,unsupported,,,
+vnom/venom,Venom,vnom,indigestion,unsupported,,,
+vnom/venom-rocket,Venom Rocket,vnom,digest,unsupported,,,
+vnom/venom-rocket,Venom Rocket,vnom,excessive-violence,unsupported,,,
+vnom/venomized-dr-strange,Venomized Dr. Strange,vnom,digest,unsupported,,,
+vnom/venompool,Venompool,vnom,digest,unsupported,,,
+vnom/venompool,Venompool,vnom,excessive-violence,unsupported,,,
+vnom/venompool,Venompool,vnom,indigestion,unsupported,,,
+wpnx/fantomex,Fantomex,wpnx,weapon-x-sequence,unsupported,,,
+wpnx/marrow,Marrow,wpnx,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+wpnx/marrow,Marrow,wpnx,weapon-x-sequence,unsupported,,,
+wpnx/weapon-h,Weapon H,wpnx,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+wpnx/weapon-h,Weapon H,wpnx,weapon-x-sequence,unsupported,,,
+wpnx/weapon-x-wolverine,Weapon X (Wolverine),wpnx,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+wpnx/weapon-x-wolverine,Weapon X (Wolverine),wpnx,weapon-x-sequence,unsupported,,,
+wtif/apocalyptic-black-widow,Apocalyptic Black Widow,wtif,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+wtif/apocalyptic-black-widow,Apocalyptic Black Widow,wtif,liberate,unsupported,,,
+wtif/apocalyptic-black-widow,Apocalyptic Black Widow,wtif,what-if...?,unsupported,,,
+wtif/captain-carter,Captain Carter,wtif,liberate,unsupported,,,
+wtif/captain-carter,Captain Carter,wtif,what-if...?,unsupported,,,
+wtif/doctor-strange-supreme,Doctor Strange Supreme,wtif,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+wtif/doctor-strange-supreme,Doctor Strange Supreme,wtif,soulbind,unsupported,,,
+wtif/doctor-strange-supreme,Doctor Strange Supreme,wtif,soulbind-a-bystander-or-villain,unsupported,,,
+wtif/doctor-strange-supreme,Doctor Strange Supreme,wtif,what-if...?,unsupported,,,
+wtif/gamora-destroyer-of-thanos,"Gamora, Destroyer of Thanos",wtif,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+wtif/gamora-destroyer-of-thanos,"Gamora, Destroyer of Thanos",wtif,soulbind,unsupported,,,
+wtif/gamora-destroyer-of-thanos,"Gamora, Destroyer of Thanos",wtif,soulbind-six-villains,unsupported,,,
+wtif/gamora-destroyer-of-thanos,"Gamora, Destroyer of Thanos",wtif,what-if...?,unsupported,,,
+wtif/killmonger-spec-ops,"Killmonger, Spec Ops",wtif,liberate,unsupported,,,
+wtif/killmonger-spec-ops,"Killmonger, Spec Ops",wtif,what-if...?,unsupported,,,
+wtif/party-thor,Party Thor,wtif,cross-dimensional-party-rampage,unsupported,,,
+wtif/party-thor,Party Thor,wtif,what-if...?,unsupported,,,
+wtif/star-lord-tchalla,Star-Lord T'Challa,wtif,empowered,unsupported,WP-267,D-24044,
+wtif/star-lord-tchalla,Star-Lord T'Challa,wtif,what-if...?,unsupported,,,
+wtif/uatu-the-watcher,"Uatu, The Watcher",wtif,empowered,unsupported,WP-267,D-24044,
+wtif/uatu-the-watcher,"Uatu, The Watcher",wtif,soulbind,unsupported,,,
+wtif/uatu-the-watcher,"Uatu, The Watcher",wtif,what-if...?,unsupported,,,
+wwhk/amadeus-cho,Amadeus Cho,wwhk,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+wwhk/amadeus-cho,Amadeus Cho,wwhk,outwit,unsupported,,,
+wwhk/amadeus-cho,Amadeus Cho,wwhk,transform,unsupported,,,
+wwhk/bruce-banner,Bruce Banner,wwhk,outwit,unsupported,,,
+wwhk/bruce-banner,Bruce Banner,wwhk,reveal-ko,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal-ko
+wwhk/bruce-banner,Bruce Banner,wwhk,smash,unsupported,,,
+wwhk/bruce-banner,Bruce Banner,wwhk,transform,unsupported,,,
+wwhk/caiera,Caiera,wwhk,outwit,unsupported,,,
+wwhk/caiera,Caiera,wwhk,smash,unsupported,,,
+wwhk/caiera,Caiera,wwhk,transform,unsupported,,,
+wwhk/gladiator-hulk,Gladiator Hulk,wwhk,cross-dimensional-hulk-rampage.,unsupported,,,
+wwhk/gladiator-hulk,Gladiator Hulk,wwhk,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+wwhk/gladiator-hulk,Gladiator Hulk,wwhk,smash,unsupported,,,
+wwhk/gladiator-hulk,Gladiator Hulk,wwhk,transform,unsupported,,,
+wwhk/gladiator-hulk,Gladiator Hulk,wwhk,wounded-fury,unsupported,,,
+wwhk/hiroim,Hiroim,wwhk,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+wwhk/hiroim,Hiroim,wwhk,transform,unsupported,,,
+wwhk/hulkbuster-iron-man,Hulkbuster Iron Man,wwhk,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+wwhk/hulkbuster-iron-man,Hulkbuster Iron Man,wwhk,outwit,unsupported,,,
+wwhk/hulkbuster-iron-man,Hulkbuster Iron Man,wwhk,smash,unsupported,,,
+wwhk/hulkbuster-iron-man,Hulkbuster Iron Man,wwhk,transform,unsupported,,,
+wwhk/joe-fixit-grey-hulk,"Joe Fixit, Grey Hulk",wwhk,smash,unsupported,,,
+wwhk/joe-fixit-grey-hulk,"Joe Fixit, Grey Hulk",wwhk,transform,unsupported,,,
+wwhk/korg,Korg,wwhk,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+wwhk/korg,Korg,wwhk,outwit,unsupported,,,
+wwhk/korg,Korg,wwhk,smash,unsupported,,,
+wwhk/korg,Korg,wwhk,transform,unsupported,,,
+wwhk/miek-the-unhived,"Miek, The Unhived",wwhk,feast,unsupported,,,
+wwhk/miek-the-unhived,"Miek, The Unhived",wwhk,smash,unsupported,,,
+wwhk/miek-the-unhived,"Miek, The Unhived",wwhk,transform,unsupported,,,
+wwhk/namora,Namora,wwhk,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+wwhk/namora,Namora,wwhk,smash,unsupported,,,
+wwhk/namora,Namora,wwhk,transform,unsupported,,,
+wwhk/no-name-brood-queen,"No-Name, Brood Queen",wwhk,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+wwhk/no-name-brood-queen,"No-Name, Brood Queen",wwhk,feast,unsupported,,,
+wwhk/no-name-brood-queen,"No-Name, Brood Queen",wwhk,transform,unsupported,,,
+wwhk/rick-jones,Rick Jones,wwhk,reveal-min,executable,WP-253,D-24024,packages/game-engine/src/hero/heroEffects.execute.ts#reveal-min
+wwhk/rick-jones,Rick Jones,wwhk,smash,unsupported,,,
+wwhk/rick-jones,Rick Jones,wwhk,transform,unsupported,,,
+wwhk/sentry,Sentry,wwhk,feast,unsupported,,,
+wwhk/sentry,Sentry,wwhk,transform,unsupported,,,
+wwhk/sentry,Sentry,wwhk,transformed,unsupported,,,
+wwhk/she-hulk,She-Hulk,wwhk,outwit,unsupported,,,
+wwhk/she-hulk,She-Hulk,wwhk,smash,unsupported,,,
+wwhk/she-hulk,She-Hulk,wwhk,transform,unsupported,,,
+wwhk/skaar-son-of-hulk,"Skaar, Son of Hulk",wwhk,smash,unsupported,,,
+wwhk/skaar-son-of-hulk,"Skaar, Son of Hulk",wwhk,transform,unsupported,,,
+wwhk/skaar-son-of-hulk,"Skaar, Son of Hulk",wwhk,wounded-fury,unsupported,,,
+xmen/aurora-northstar,Aurora & Northstar,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+xmen/aurora-northstar,Aurora & Northstar,xmen,lightshow,unsupported,,,
+xmen/aurora-northstar,Aurora & Northstar,xmen,soaring-flight,unsupported,,,
+xmen/banshee,Banshee,xmen,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+xmen/banshee,Banshee,xmen,piercing-energy,unsupported,,,
+xmen/banshee,Banshee,xmen,soaring-flight,unsupported,,,
+xmen/banshee,Banshee,xmen,x-gene,unsupported,,,
+xmen/beast,Beast,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+xmen/beast,Beast,xmen,x-gene,unsupported,,,
+xmen/cannonball,Cannonball,xmen,soaring-flight,unsupported,,,
+xmen/colossus-wolverine,Colossus & Wolverine,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+xmen/colossus-wolverine,Colossus & Wolverine,xmen,soaring-flight,unsupported,,,
+xmen/colossus-wolverine,Colossus & Wolverine,xmen,x-gene,unsupported,,,
+xmen/dazzler,Dazzler,xmen,lightshow,unsupported,,,
+xmen/dazzler,Dazzler,xmen,piercing-energy,unsupported,,,
+xmen/havok,Havok,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+xmen/havok,Havok,xmen,lightshow,unsupported,,,
+xmen/havok,Havok,xmen,x-gene,unsupported,,,
+xmen/jubilee,Jubilee,xmen,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+xmen/jubilee,Jubilee,xmen,lightshow,unsupported,,,
+xmen/kitty-pryde,Kitty Pryde,xmen,soaring-flight,unsupported,,,
+xmen/kitty-pryde,Kitty Pryde,xmen,x-gene,unsupported,,,
+xmen/legion,Legion,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+xmen/legion,Legion,xmen,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+xmen/legion,Legion,xmen,lightshow,unsupported,,,
+xmen/legion,Legion,xmen,piercing-energy,unsupported,,,
+xmen/legion,Legion,xmen,soaring-flight,unsupported,,,
+xmen/longshot,Longshot,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+xmen/phoenix,Phoenix,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+xmen/phoenix,Phoenix,xmen,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+xmen/phoenix,Phoenix,xmen,piercing-energy,unsupported,,,
+xmen/phoenix,Phoenix,xmen,soaring-flight,unsupported,,,
+xmen/polaris,Polaris,xmen,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+xmen/polaris,Polaris,xmen,piercing-energy,unsupported,,,
+xmen/polaris,Polaris,xmen,soaring-flight,unsupported,,,
+xmen/polaris,Polaris,xmen,x-gene,unsupported,,,
+xmen/psylocke,Psylocke,xmen,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
+xmen/psylocke,Psylocke,xmen,piercing-energy,unsupported,,,
+xmen/psylocke,Psylocke,xmen,x-gene,unsupported,,,
+xmen/x-23,X-23,xmen,berserk,executable,WP-256,D-24031,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+xmen/x-23,X-23,xmen,x-gene,unsupported,,,

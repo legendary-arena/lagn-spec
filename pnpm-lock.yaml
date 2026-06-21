@@ -173,6 +173,9 @@ importers:
 
   apps/registry-viewer:
     dependencies:
+      '@legendary-arena/lagn':
+        specifier: workspace:*
+        version: link:../../packages/lagn-spec
       '@legendary-arena/registry':
         specifier: workspace:*
         version: link:../../packages/registry

@@ -1,14 +1,23 @@
 import '../testing/jsdom-setup';
 
-import { describe, test, beforeEach, afterEach } from 'node:test';
+import { describe, test, beforeEach, afterEach, mock } from 'node:test';
 import assert from 'node:assert/strict';
 import { setActivePinia, createPinia } from 'pinia';
-import { mount, flushPromises } from '@vue/test-utils';
+import { mount, flushPromises, enableAutoUnmount } from '@vue/test-utils';
 import type { UIState } from '@legendary-arena/game-engine';
 
 import AutoplayControls from './AutoplayControls.vue';
-import type { AutoplayControlResponse } from '../services/autoplayPlayback';
+import {
+  STALL_POLL_INTERVAL_MS,
+  type AutoplayControlResponse,
+} from '../services/autoplayPlayback';
 import { useUiStateStore } from '../stores/uiState';
+
+// why: the WP-262 stall poll arms a setInterval on mount; without this, every
+// mounted-but-not-unmounted bar in the suites below would leak a live interval
+// and keep the node:test event loop alive (hang). enableAutoUnmount unmounts
+// each wrapper after its test, clearing the interval via onBeforeUnmount.
+enableAutoUnmount(afterEach);
 
 interface StubbedCall {
   url: string;
@@ -57,6 +66,7 @@ function status(
     mode: 'paused',
     speedMode: '1x',
     gameOver: false,
+    aborted: false,
     ...overrides,
   };
 }
@@ -650,5 +660,319 @@ describe('AutoplayControls — Feature 4: game-over review state', () => {
     );
 
     globalThis.fetch = originalFetchRef;
+  });
+});
+
+describe('AutoplayControls — Feature 5: abort banner + stall poll (WP-262)', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+  afterEach(() => {
+    restoreFetch();
+  });
+
+  test('an initial aborted status renders the banner immediately and does NOT start the poll', async () => {
+    mock.timers.enable({ apis: ['setInterval'] });
+    try {
+      installControlStub({}, status());
+      const wrapper = mountBar(
+        status({
+          aborted: true,
+          abortReason: 'The bot loop stopped after an unexpected server error.',
+        }),
+      );
+
+      const banner = wrapper.find('[data-testid="autoplay-aborted"]');
+      assert.equal(banner.exists(), true);
+      assert.match(banner.text(), /unexpected server error/);
+
+      // No poll started: ticking past several intervals issues no status probe.
+      mock.timers.tick(STALL_POLL_INTERVAL_MS * 3);
+      await flushPromises();
+      assert.equal(calls.filter((c) => c.url.endsWith('/status')).length, 0);
+    } finally {
+      mock.timers.reset();
+    }
+  });
+
+  test('a poll tick observing an aborted envelope shows the banner, disables live controls, keeps rewind, leaves the cursor put, and stops polling', async () => {
+    mock.timers.enable({ apis: ['setInterval'] });
+    try {
+      installControlStub(
+        {
+          // Live-edge values the poll MUST NOT apply (proves abort-state-only).
+          status: status({
+            aborted: true,
+            abortReason: 'The bot loop stopped: the start stage did not advance.',
+            paused: false,
+            mode: 'live',
+            cursor: 9,
+            historyLength: 10,
+          }),
+        },
+        status(),
+      );
+      // Mount paused + rewound (cursor 1 of 5) so a wrongful applyResponse would
+      // visibly jump the position label.
+      const wrapper = mountBar(
+        status({ paused: true, cursor: 1, historyLength: 5, mode: 'paused' }),
+      );
+      assert.equal(wrapper.find('[data-testid="autoplay-aborted"]').exists(), false);
+      assert.equal(
+        wrapper.find('[data-testid="autoplay-position"]').text(),
+        'Move 2 / 5',
+      );
+
+      mock.timers.tick(STALL_POLL_INTERVAL_MS);
+      await flushPromises();
+
+      const banner = wrapper.find('[data-testid="autoplay-aborted"]');
+      assert.equal(banner.exists(), true);
+      assert.match(banner.text(), /start stage did not advance/);
+
+      // Live-advancing controls disabled.
+      assert.notEqual(
+        wrapper.find('[data-testid="autoplay-toggle"]').attributes('disabled'),
+        undefined,
+      );
+      assert.notEqual(
+        wrapper.find('[data-testid="autoplay-step-forward"]').attributes('disabled'),
+        undefined,
+      );
+      assert.notEqual(
+        wrapper.find('[data-testid="autoplay-go-to-end"]').attributes('disabled'),
+        undefined,
+      );
+      // Rewind controls stay enabled (history present, cursor 1 > 0).
+      assert.equal(
+        wrapper.find('[data-testid="autoplay-step-back"]').attributes('disabled'),
+        undefined,
+      );
+      assert.equal(
+        wrapper.find('[data-testid="autoplay-restart"]').attributes('disabled'),
+        undefined,
+      );
+      // Cursor / position UNCHANGED — abort-state-only update.
+      assert.equal(
+        wrapper.find('[data-testid="autoplay-position"]').text(),
+        'Move 2 / 5',
+      );
+
+      // Poll stopped: no further /status probes after more intervals.
+      const probesAtAbort = calls.filter((c) => c.url.endsWith('/status')).length;
+      mock.timers.tick(STALL_POLL_INTERVAL_MS * 2);
+      await flushPromises();
+      assert.equal(
+        calls.filter((c) => c.url.endsWith('/status')).length,
+        probesAtAbort,
+      );
+    } finally {
+      mock.timers.reset();
+    }
+  });
+
+  test('a poll tick observing a game-over envelope stops the poll and shows no abort banner', async () => {
+    mock.timers.enable({ apis: ['setInterval'] });
+    try {
+      installControlStub({ status: status({ gameOver: true }) }, status());
+      const wrapper = mountBar(status({ paused: true, cursor: 4, historyLength: 5 }));
+
+      mock.timers.tick(STALL_POLL_INTERVAL_MS);
+      await flushPromises();
+
+      assert.equal(wrapper.find('[data-testid="autoplay-aborted"]').exists(), false);
+      const probesAtStop = calls.filter((c) => c.url.endsWith('/status')).length;
+      assert.equal(probesAtStop, 1);
+      mock.timers.tick(STALL_POLL_INTERVAL_MS * 2);
+      await flushPromises();
+      assert.equal(
+        calls.filter((c) => c.url.endsWith('/status')).length,
+        probesAtStop,
+      );
+    } finally {
+      mock.timers.reset();
+    }
+  });
+
+  test('a poll tick that 404s (controller torn down) stops the poll without an abort banner', async () => {
+    mock.timers.enable({ apis: ['setInterval'] });
+    try {
+      calls = [];
+      originalFetch = globalThis.fetch;
+      globalThis.fetch = (async (input: RequestInfo | URL) => {
+        const url = typeof input === 'string' ? input : input.toString();
+        calls.push({ url, init: undefined });
+        return new Response('', { status: 404 });
+      }) as typeof globalThis.fetch;
+
+      const wrapper = mountBar(status({ paused: true, cursor: 4, historyLength: 5 }));
+      mock.timers.tick(STALL_POLL_INTERVAL_MS);
+      await flushPromises();
+
+      assert.equal(wrapper.find('[data-testid="autoplay-aborted"]').exists(), false);
+      const probesAtStop = calls.length;
+      assert.equal(probesAtStop, 1);
+      mock.timers.tick(STALL_POLL_INTERVAL_MS * 2);
+      await flushPromises();
+      assert.equal(calls.length, probesAtStop);
+    } finally {
+      mock.timers.reset();
+    }
+  });
+
+  test('a thrown probe fault is logged and the poll keeps running without raising the banner', async () => {
+    mock.timers.enable({ apis: ['setInterval'] });
+    const originalConsoleError = console.error;
+    let probeCount = 0;
+    // why: silence the expected per-fault console.error so the suite output is
+    // not polluted; the poll-continues assertion is what proves the behavior.
+    console.error = (): void => {};
+    try {
+      originalFetch = globalThis.fetch;
+      globalThis.fetch = (async () => {
+        probeCount += 1;
+        // A 500 makes getStatus throw (a non-404 fault is never coerced to null).
+        return new Response('{}', { status: 500 });
+      }) as typeof globalThis.fetch;
+
+      const wrapper = mountBar(status({ paused: true, cursor: 4, historyLength: 5 }));
+
+      mock.timers.tick(STALL_POLL_INTERVAL_MS);
+      await flushPromises();
+      assert.equal(wrapper.find('[data-testid="autoplay-aborted"]').exists(), false);
+      assert.equal(probeCount, 1);
+
+      // The poll continues after a transient fault — the next tick probes again.
+      mock.timers.tick(STALL_POLL_INTERVAL_MS);
+      await flushPromises();
+      assert.equal(probeCount, 2);
+      assert.equal(wrapper.find('[data-testid="autoplay-aborted"]').exists(), false);
+    } finally {
+      console.error = originalConsoleError;
+      mock.timers.reset();
+    }
+  });
+
+  test('overlapping probes are skipped — a tick while a probe is in flight issues no new request', async () => {
+    mock.timers.enable({ apis: ['setInterval'] });
+    try {
+      let probeCount = 0;
+      // why: initialised to a no-op (not null) so vue-tsc keeps it callable —
+      // a closure-assigned `let` plus a null guard otherwise narrows to `never`.
+      let resolvePending: (value: Response) => void = () => undefined;
+      originalFetch = globalThis.fetch;
+      globalThis.fetch = (async () => {
+        probeCount += 1;
+        return new Promise<Response>((resolve) => {
+          resolvePending = resolve;
+        });
+      }) as typeof globalThis.fetch;
+
+      const wrapper = mountBar(status({ paused: true, cursor: 4, historyLength: 5 }));
+
+      // Tick 1: a probe is issued and stays in flight (the promise is pending).
+      mock.timers.tick(STALL_POLL_INTERVAL_MS);
+      await flushPromises();
+      assert.equal(probeCount, 1);
+
+      // Tick 2: the in-flight guard skips this tick — no second request.
+      mock.timers.tick(STALL_POLL_INTERVAL_MS);
+      await flushPromises();
+      assert.equal(probeCount, 1);
+
+      // Settle the first probe with a normal live envelope → 'continue'.
+      resolvePending(
+        new Response(JSON.stringify(status({ paused: false, mode: 'live' })), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+      );
+      await flushPromises();
+
+      // With the guard released, the next tick issues a fresh probe.
+      mock.timers.tick(STALL_POLL_INTERVAL_MS);
+      await flushPromises();
+      assert.equal(probeCount, 2);
+      assert.equal(wrapper.find('[data-testid="autoplay-aborted"]').exists(), false);
+    } finally {
+      mock.timers.reset();
+    }
+  });
+
+  test('a probe that resolves after unmount does not mutate state or emit warnings', async () => {
+    mock.timers.enable({ apis: ['setInterval'] });
+    const warnings: string[] = [];
+    const originalConsoleWarn = console.warn;
+    const originalConsoleError = console.error;
+    console.warn = (...messageParts: unknown[]): void => {
+      warnings.push(String(messageParts[0]));
+    };
+    console.error = (...messageParts: unknown[]): void => {
+      warnings.push(String(messageParts[0]));
+    };
+    try {
+      // why: initialised to a no-op (not null) so vue-tsc keeps it callable —
+      // a closure-assigned `let` plus a null guard otherwise narrows to `never`.
+      let resolvePending: (value: Response) => void = () => undefined;
+      originalFetch = globalThis.fetch;
+      globalThis.fetch = (async () =>
+        new Promise<Response>((resolve) => {
+          resolvePending = resolve;
+        })) as typeof globalThis.fetch;
+
+      const wrapper = mountBar(status({ paused: true, cursor: 4, historyLength: 5 }));
+      mock.timers.tick(STALL_POLL_INTERVAL_MS);
+      await flushPromises();
+
+      // Tear the bar down while the probe is still in flight.
+      wrapper.unmount();
+
+      // The probe resolves AFTER unmount with an aborted envelope; the disposal
+      // guard must drop it — no banner mutation, no post-unmount Vue warning.
+      resolvePending(
+        new Response(
+          JSON.stringify(
+            status({ aborted: true, abortReason: 'resolved after unmount' }),
+          ),
+          { status: 200, headers: { 'Content-Type': 'application/json' } },
+        ),
+      );
+      await flushPromises();
+
+      assert.deepEqual(
+        warnings,
+        [],
+        `expected no post-unmount warnings, got: ${warnings.join(' | ')}`,
+      );
+    } finally {
+      console.warn = originalConsoleWarn;
+      console.error = originalConsoleError;
+      mock.timers.reset();
+    }
+  });
+
+  test('the poll stops on unmount — no further status probes after the bar is destroyed', async () => {
+    mock.timers.enable({ apis: ['setInterval'] });
+    try {
+      installControlStub({}, status());
+      const wrapper = mountBar(status({ paused: true, cursor: 4, historyLength: 5 }));
+
+      mock.timers.tick(STALL_POLL_INTERVAL_MS);
+      await flushPromises();
+      const probesBeforeUnmount = calls.filter((c) =>
+        c.url.endsWith('/status'),
+      ).length;
+      assert.equal(probesBeforeUnmount, 1);
+
+      wrapper.unmount();
+      mock.timers.tick(STALL_POLL_INTERVAL_MS * 3);
+      await flushPromises();
+      assert.equal(
+        calls.filter((c) => c.url.endsWith('/status')).length,
+        probesBeforeUnmount,
+      );
+    } finally {
+      mock.timers.reset();
+    }
   });
 });

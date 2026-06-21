@@ -99,25 +99,25 @@
       "properties": {
         "schemeId": {
           "type": "string",
-          "description": "Scheme ext_id selected for this match.",
+          "description": "Scheme ext_id (set-qualified '{setAbbr}/{slug}') selected for this match. D-24018 / D-10014.",
           "minLength": 1,
-          "pattern": "^[a-z0-9-]+$"
+          "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"
         },
 
         "mastermindId": {
           "type": "string",
-          "description": "Mastermind ext_id selected for this match.",
+          "description": "Mastermind ext_id (set-qualified '{setAbbr}/{slug}') selected for this match. D-24018 / D-10014.",
           "minLength": 1,
-          "pattern": "^[a-z0-9-]+$"
+          "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"
         },
 
         "villainGroupIds": {
           "type": "array",
-          "description": "Villain group ext_ids included in the villain deck.",
+          "description": "Villain group ext_ids (set-qualified '{setAbbr}/{slug}') included in the villain deck. D-24018 / D-10014.",
           "items": {
             "type": "string",
             "minLength": 1,
-            "pattern": "^[a-z0-9-]+$"
+            "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"
           },
           "minItems": 1,
           "uniqueItems": true
@@ -125,11 +125,11 @@
 
         "henchmanGroupIds": {
           "type": "array",
-          "description": "Henchman group ext_ids included in the villain deck.",
+          "description": "Henchman group ext_ids (set-qualified '{setAbbr}/{slug}') included in the villain deck. D-24018 / D-10014.",
           "items": {
             "type": "string",
             "minLength": 1,
-            "pattern": "^[a-z0-9-]+$"
+            "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"
           },
           "minItems": 1,
           "uniqueItems": true
@@ -137,11 +137,11 @@
 
         "heroDeckIds": {
           "type": "array",
-          "description": "Hero deck ext_ids available in the HQ and player decks.",
+          "description": "Hero deck ext_ids (set-qualified '{setAbbr}/{slug}') available in the HQ and player decks. D-24018 / D-10014.",
           "items": {
             "type": "string",
             "minLength": 1,
-            "pattern": "^[a-z0-9-]+$"
+            "pattern": "^[a-z0-9-]+/[a-z0-9-]+$"
           },
           "minItems": 1,
           "uniqueItems": true

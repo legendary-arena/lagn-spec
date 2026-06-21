@@ -4,6 +4,7 @@ import { defineComponent, ref, type PropType } from 'vue';
 import PlayDesktop from './PlayDesktop.vue';
 import PlayMobile from './PlayMobile.vue';
 import DiagnosticExportButton from '../components/DiagnosticExportButton.vue';
+import HollowEffectsPanel from '../components/play/HollowEffectsPanel.vue';
 import { useViewport } from '../composables/useViewport';
 import { useSkinApplier } from '../composables/useSkinApplier';
 import type { SubmitMove } from '../components/play/uiMoveName.types';
@@ -34,7 +35,7 @@ import type { SubmitMove } from '../components/play/uiMoveName.types';
  */
 export default defineComponent({
   name: 'PlayViewport',
-  components: { PlayDesktop, PlayMobile, DiagnosticExportButton },
+  components: { PlayDesktop, PlayMobile, DiagnosticExportButton, HollowEffectsPanel },
   props: {
     submitMove: {
       type: Function as PropType<SubmitMove>,
@@ -48,21 +49,62 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    villainGroupIds: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
+    henchmanGroupIds: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
+    heroDeckIds: {
+      type: Array as PropType<string[]>,
+      default: () => [],
+    },
   },
   setup(props) {
     const { isMobile } = useViewport();
     const viewportRoot = ref<HTMLElement | null>(null);
     useSkinApplier(viewportRoot);
-    return { isMobile, viewportRoot, matchId: props.matchId };
+    return {
+      isMobile,
+      viewportRoot,
+      matchId: props.matchId,
+      villainGroupIds: props.villainGroupIds,
+      henchmanGroupIds: props.henchmanGroupIds,
+      heroDeckIds: props.heroDeckIds,
+    };
   },
 });
 </script>
 
 <template>
   <div ref="viewportRoot" class="play-viewport">
-    <PlayMobile v-if="isMobile" :submit-move="submitMove" />
-    <PlayDesktop v-else :submit-move="submitMove" :match-id="matchId" />
+    <PlayMobile
+      v-if="isMobile"
+      :submit-move="submitMove"
+      :villain-group-ids="villainGroupIds"
+      :henchman-group-ids="henchmanGroupIds"
+      :hero-deck-ids="heroDeckIds"
+    />
+    <PlayDesktop
+      v-else
+      :submit-move="submitMove"
+      :match-id="matchId"
+      :villain-group-ids="villainGroupIds"
+      :henchman-group-ids="henchmanGroupIds"
+      :hero-deck-ids="heroDeckIds"
+    />
     <DiagnosticExportButton />
+    <!--
+      // why: WP-258 — mounted ONCE here at the shared viewport root (the
+      // Mounting Rule's shared-child case), alongside <DiagnosticExportButton>,
+      // so a single fixed-position overlay covers BOTH the <PlayMobile> and
+      // <PlayDesktop> production play surfaces (whichever this viewport renders).
+      // The panel self-hides (v-if ≥1 record) so it adds no DOM during a clean
+      // match.
+    -->
+    <HollowEffectsPanel />
   </div>
 </template>
 
