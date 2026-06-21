@@ -25475,4 +25475,24 @@ The hero mechanic ledger classifies a **composition-marker** mechanic (`empowere
 
 **Supersedes / relates to.** Extends the WP-086 (`card-types.json`) / WP-183 / WP-184 metadata-publish precedent. Does not alter the dashboard `/coverage` ledger or its D-24026 verification posture.
 
+### D-24047 — Conditional-Prefix Class-Gated Empowered Resolves via a Structural Parse Gate + Suppress-One-Retain-Gate, Reusing the WP-256 Conditions-Gate Executor
+
+**Status:** **Drafted 2026-06-20; not yet landed.** Reserved by WP-272 / EC-302 from baseline `a54726b7`. Flips to **Active (post-execution)** when WP-272 executes.
+
+**Context.** WP-267 / D-24044 authored the unconditional core of **Empowered** (`[keyword:Empowered] by [hc:FIXEDCOLOR]` → `+Attack = count of that-class HQ cards`) and **explicitly deferred** every gated/variadic form, including the **conditional-prefix** form `[hc:X]: You get [keyword:Empowered] by [hc:Y]`, to keep its scope honest (the Honest-Partial Invariant). That deferral left a class of cards dead in real play — a 2026-06-20 live diagnostics capture (`gitSha 048e572`) shows `antm/wonder-man/ionic-energy` (`[hc:ranged]: … Empowered by [hc:ranged]`) firing `parse-unrecognized` on every play. The conditional-prefix form is the cheapest remaining Empowered variant: its composition is the same `buildEmpoweredComposition` output, its gate is an ordinary `heroClassMatch` condition, and the WP-256 executor already runs `hook.primitiveEffects` **inside the conditions-passed gate**.
+
+**Decision.** WP-272 lifts the conditional-prefix deferral **for the class-gated case only**, as a **parser-only** change (no new primitive, value expression, union, builder, executor, or contract-file edit):
+
+- **Structural resolve gate (not condition-counting).** A `[keyword:Empowered]` token resolves the conditional-prefix form only when ALL hold: (1) exactly one `[keyword:Empowered]` marker in the ability text; (2) the text begins with a single class-condition prefix `^\s*\[hc:([a-z0-9-]+)\]\s*:` (gate class `X`); (3) the text immediately after the marker matches the anchored tail `^\s*by\s*\[hc:([a-z0-9-]+)\]` (count color `Y`, fixed); (4) the text after the tail does not continue `and [hc:…]`; (5) no `[team:…]` token. A condition-counting gate ("residual conditions are all `heroClassMatch`") is **forbidden** — it mis-resolves `wtif/star-lord-tchalla/fight-or-flight` (`Choose one: Empowered by [hc:strength], or by [hc:covert]`) by treating the second choose-one branch's `[hc:covert]` as a gate. The single-marker guard (#1) is the structural defense.
+- **Suppress-one-retain-gate.** On resolve, push `buildEmpoweredComposition(normalizeTraitSlug(Y))` to `primitiveEffects`, push `empowered` to `resolvedMarkers` (the WP-268 by-hook provenance), remove **exactly one** `heroClassMatch(normalizeTraitSlug(Y))` (the consumed count param) and **retain** `heroClassMatch(normalizeTraitSlug(X))` (the gate). Retaining the prefix gate IS the conditional behavior — the WP-256 conditions-gate executor fires the effect only when it passes. Never clear all conditions on this path (that is the WP-267 core-path shortcut, valid only for the sole-condition case).
+- **Resolve order.** Attempt the unchanged WP-267 sole-condition core first; only then the conditional-prefix path; else the unchanged `unresolvedMarkers` fallback.
+
+**Honest-Partial Invariant preserved.** Color-of-choice, multi-class, choose-one, team-gated, Double/Triple, and hero-name/multicolored/team-target Empowered all fall through the structural gate to `unresolvedMarkers` → `parse-unrecognized` runtime hollows. WP-267's core-form behavior and `one-hit-wonder`/`fight-or-flight`'s pre-existing handling are unchanged (the single-marker + leading-prefix guards keep them off the new path).
+
+**Out of scope (named).** This decision does NOT correct WP-267's pre-existing **choose-one over-resolution** (`one-hit-wonder` / `fight-or-flight` resolve their `[keyword:Empowered] by [hc:COLOR]` tail unconditionally because the "Choose one: … or" prefix carries no markup the parser gates on) — that needs a choice model and is a separate WP. It adds no class-set count primitive (multi-class) and no player-choice primitive (color-of-choice / choose-one).
+
+**Determinism.** Parser-time text recognition over already-committed `data/cards/**` markup; the resolved effect reuses WP-267's index-ordered HQ count (deterministic, missing-state → 0, never throws). The `EMPTY_REGISTRY` replay harness keeps the sentinel `finalStateHash` unchanged; the only determinism-derived artifact that moves is `runtime-observed-hollows.json` (the conditional-prefix `empowered` hits clear).
+
+**Relates to.** Extends D-24044 (parameterized Empowered composition) and consumes D-24045 (by-hook `resolvedMarkers` ledger). Second Empowered form authored over the D-24029 composable-primitive substrate.
+
 Protect this file.
