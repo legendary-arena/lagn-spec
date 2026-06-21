@@ -53,9 +53,9 @@ anni/super-skrull,Super-Skrull,anni,streets,unsupported,,,
 antm/ant-man,Ant-Man,antm,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
 antm/ant-man,Ant-Man,antm,microscopic-size-changing,unsupported,,,
 antm/ant-man,Ant-Man,antm,size-changing,unsupported,,,
-antm/black-knight,Black Knight,antm,empowered,executable,WP-267,D-24044,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+antm/black-knight,Black Knight,antm,empowered,unsupported,WP-267,D-24044,
 antm/jocasta,Jocasta,antm,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
-antm/jocasta,Jocasta,antm,empowered,executable,WP-267,D-24044,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+antm/jocasta,Jocasta,antm,empowered,unsupported,WP-267,D-24044,
 antm/jocasta,Jocasta,antm,size-changing,unsupported,,,
 antm/wasp,Wasp,antm,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
 antm/wasp,Wasp,antm,microscopic-size-changing,unsupported,,,
@@ -82,9 +82,9 @@ bkpt/king-black-panther,King Black Panther,bkpt,ambush,unsupported,,,
 bkpt/king-black-panther,King Black Panther,bkpt,thrones-favor,unsupported,,,
 bkpt/princess-shuri,Princess Shuri,bkpt,ambush,unsupported,,,
 bkpt/princess-shuri,Princess Shuri,bkpt,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw
-bkpt/princess-shuri,Princess Shuri,bkpt,empowered,executable,WP-267,D-24044,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+bkpt/princess-shuri,Princess Shuri,bkpt,empowered,unsupported,WP-267,D-24044,
 bkpt/queen-storm-of-wakanda,Queen Storm of Wakanda,bkpt,ambush,unsupported,,,
-bkpt/queen-storm-of-wakanda,Queen Storm of Wakanda,bkpt,empowered,executable,WP-267,D-24044,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+bkpt/queen-storm-of-wakanda,Queen Storm of Wakanda,bkpt,empowered,unsupported,WP-267,D-24044,
 bkpt/queen-storm-of-wakanda,Queen Storm of Wakanda,bkpt,thrones-favor,unsupported,,,
 bkpt/queen-storm-of-wakanda,Queen Storm of Wakanda,bkpt,wound-the-mastermind,unsupported,,,
 bkpt/white-wolf,White Wolf,bkpt,ambush,unsupported,,,
@@ -528,9 +528,9 @@ wtif/killmonger-spec-ops,"Killmonger, Spec Ops",wtif,liberate,unsupported,,,
 wtif/killmonger-spec-ops,"Killmonger, Spec Ops",wtif,what-if...?,unsupported,,,
 wtif/party-thor,Party Thor,wtif,cross-dimensional-party-rampage,unsupported,,,
 wtif/party-thor,Party Thor,wtif,what-if...?,unsupported,,,
-wtif/star-lord-tchalla,Star-Lord T'Challa,wtif,empowered,executable,WP-267,D-24044,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+wtif/star-lord-tchalla,Star-Lord T'Challa,wtif,empowered,unsupported,WP-267,D-24044,
 wtif/star-lord-tchalla,Star-Lord T'Challa,wtif,what-if...?,unsupported,,,
-wtif/uatu-the-watcher,"Uatu, The Watcher",wtif,empowered,executable,WP-267,D-24044,packages/game-engine/src/hero/effectPrimitive.interpret.ts
+wtif/uatu-the-watcher,"Uatu, The Watcher",wtif,empowered,unsupported,WP-267,D-24044,
 wtif/uatu-the-watcher,"Uatu, The Watcher",wtif,soulbind,unsupported,,,
 wtif/uatu-the-watcher,"Uatu, The Watcher",wtif,what-if...?,unsupported,,,
 wwhk/amadeus-cho,Amadeus Cho,wwhk,draw,executable,,,packages/game-engine/src/hero/heroEffects.execute.ts#draw

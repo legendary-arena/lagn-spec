@@ -250,6 +250,7 @@ function parseAbilityText(abilityText: string): {
   effects: HeroEffectDescriptor[];
   primitiveEffects: EffectNode[];
   unresolvedMarkers: string[];
+  resolvedMarkers: string[];
   timing: HeroAbilityTiming;
 } {
   const keywords: HeroKeyword[] = [];
@@ -263,6 +264,12 @@ function parseAbilityText(abilityText: string): {
   // composition, or recognized modifier. The hollow detector reads this so an
   // unresolved marker flags `parse-unrecognized` while flavor text (no marker) does not.
   const unresolvedMarkers: string[] = [];
+  // why: D-24045 — the positive symmetric record of `unresolvedMarkers`: composition
+  // markers that RESOLVED on this line (a primitive attached). Pushed in the SAME two
+  // branches that push `primitiveEffects`; the mechanic ledger reads it to classify
+  // composition-marker status by-hook (per-card), not by-name (resolves the D-24044
+  // over-claim). Parse-time provenance only — never affects execution.
+  const resolvedMarkers: string[] = [];
 
   // Step 1a: Extract [hc:X] condition markup
   // why: defense-in-depth normalization on already-validated hc values — pipeline
@@ -321,6 +328,10 @@ function parseAbilityText(abilityText: string): {
       const empoweredComposition = tryResolveEmpoweredCore(textAfterMarker, conditions);
       if (empoweredComposition !== undefined) {
         primitiveEffects.push(empoweredComposition);
+        // why: D-24045 — record the resolved composition marker (same gate as the
+        // primitiveEffects push). A deferred variant takes the else branch and records an
+        // unresolved marker instead — the Honest-Partial symmetry the ledger reads by-hook.
+        resolvedMarkers.push(normalizedKeyword);
         // why: D-24044 — suppress the consumed [hc:COLOR] param so it does not ALSO gate the
         // hook (it is the count parameter, not a condition). The resolve gate guarantees it is
         // the line's sole condition, so clearing `conditions` removes exactly it — which also
@@ -338,6 +349,10 @@ function parseAbilityText(abilityText: string): {
       const composition = HERO_COMPOSITION_MARKERS[normalizedKeyword];
       if (composition !== undefined) {
         primitiveEffects.push(structuredClone(composition));
+        // why: D-24045 — record the resolved composition marker (same gate as the
+        // primitiveEffects push). A static composition (berserk) always resolves here, so it
+        // stays executable in the ledger; only deferred parameterized variants go unsupported.
+        resolvedMarkers.push(normalizedKeyword);
       }
     } else if (!RECOGNIZED_NON_KEYWORD_MARKERS.has(normalizedKeyword)) {
       // why: WP-257 / D-24034 — a `[keyword:X]` token that is NOT a valid keyword,
@@ -582,6 +597,7 @@ function parseAbilityText(abilityText: string): {
     effects: effects.length > 0 ? effects : [],
     primitiveEffects,
     unresolvedMarkers,
+    resolvedMarkers,
     timing,
   };
 }
@@ -1000,6 +1016,14 @@ export function buildHeroAbilityHooks(
         // which is exactly what keeps flavor text from flagging hollow at runtime.
         if (parsedAbility.unresolvedMarkers.length > 0) {
           hook.unresolvedMarkers = parsedAbility.unresolvedMarkers;
+        }
+
+        // why: D-24045 — assign resolvedMarkers only when non-empty (mirror the
+        // unresolvedMarkers conditional-assign verbatim — exactOptionalPropertyTypes forbids
+        // assigning `undefined`). Absent means "no composition resolved on this line"; the
+        // mechanic ledger reads this per card to classify composition markers by-hook.
+        if (parsedAbility.resolvedMarkers.length > 0) {
+          hook.resolvedMarkers = parsedAbility.resolvedMarkers;
         }
 
         hooks.push(hook);

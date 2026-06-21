@@ -62,6 +62,14 @@ export interface HeroAbilityHook {
   // makes `parse-unrecognized` detectable at runtime. Additive optional: absent or
   // empty means "no unresolved marker" (flavor text yields neither).
   unresolvedMarkers?: string[];
+  // why: D-24045 — the positive symmetric record of `unresolvedMarkers`: the
+  // composition markers (Berserk, Empowered) that RESOLVED on this hook (a primitive
+  // actually attached). The mechanic ledger reads it to classify composition-marker
+  // status by-hook (per-card) instead of by-name, so `/coverage` By-card stops
+  // over-claiming deferred-variant cards as Executable (resolves D-24044). Parse-time
+  // provenance only — never affects execution. Additive optional: absent or empty
+  // means "no composition resolved here" (legacy keywords + deferred markers yield neither).
+  resolvedMarkers?: string[];
 }
 
 // ---------------------------------------------------------------------------

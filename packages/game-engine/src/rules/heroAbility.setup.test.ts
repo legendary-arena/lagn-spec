@@ -797,6 +797,61 @@ describe('buildHeroAbilityHooks Empowered parameterized composition (WP-267 / D-
   });
 });
 
+// ---------------------------------------------------------------------------
+// WP-268 — resolvedMarkers: by-hook composition provenance (D-24045)
+//
+// The parser records a composition marker that RESOLVED (a primitive attached)
+// onto hook.resolvedMarkers — the positive symmetric record of unresolvedMarkers.
+// The mechanic ledger reads it to classify composition-marker status by-hook
+// (per-card), so /coverage By-card stops over-claiming deferred-variant cards
+// (resolves the WP-267 / D-24044 by-name limitation).
+// ---------------------------------------------------------------------------
+
+describe('buildHeroAbilityHooks — resolved composition markers (WP-268 / D-24045)', () => {
+  /** Builds a single-ability hook from one composition-bearing ability line. */
+  function resolvedMarkersHookFor(abilityText: string) {
+    const registry = makeHeroRegistry('core', 'resolved-hero', [
+      { slug: 'resolved-card', rarityLabel: 'Common 1', abilities: [abilityText] },
+    ]);
+    const config: MatchSetupConfig = { ...createTestConfig(), heroDeckIds: ['core/resolved-hero'] };
+    const hooks = buildHeroAbilityHooks(registry, config);
+    return hooks[0]!;
+  }
+
+  it('a resolved static composition (Berserk) records the marker on hook.resolvedMarkers', () => {
+    const hook = resolvedMarkersHookFor('[keyword:Berserk]');
+    assert.deepStrictEqual(hook.resolvedMarkers, ['berserk'], 'a resolved berserk is recorded by-hook');
+    // why: D-24045 — a resolved marker is never simultaneously unresolved (the two records
+    // are mutually exclusive per ability line — the Honest-Partial symmetry).
+    assert.equal(hook.unresolvedMarkers, undefined, 'a resolved marker is never also unresolved');
+  });
+
+  it('a resolved Empowered core form records empowered on hook.resolvedMarkers', () => {
+    const hook = resolvedMarkersHookFor('You get [keyword:Empowered] by [hc:strength].');
+    assert.deepStrictEqual(hook.resolvedMarkers, ['empowered'], 'a resolved empowered core is recorded by-hook');
+    assert.equal(hook.unresolvedMarkers, undefined, 'the resolved core records no unresolved marker');
+  });
+
+  it('a deferred Empowered variant excludes empowered from resolvedMarkers AND flags it unresolved', () => {
+    const hook = resolvedMarkersHookFor('[hc:strength]: You get [keyword:Empowered] by [hc:tech].');
+    assert.ok(
+      !(hook.resolvedMarkers ?? []).includes('empowered'),
+      'a deferred variant does not record empowered as resolved',
+    );
+    assert.ok(
+      (hook.unresolvedMarkers ?? []).includes('empowered'),
+      'a deferred variant flags empowered unresolved — the consistent Honest-Partial signal',
+    );
+  });
+
+  it('a non-composition keyword line records NO resolvedMarkers (absent)', () => {
+    const hook = resolvedMarkersHookFor('[keyword:rescue] a Bystander.');
+    // why: D-24045 — only the two composition-resolve branches push; legacy keywords
+    // (rescue) carry their identity on hook.keywords, never on resolvedMarkers.
+    assert.equal(hook.resolvedMarkers, undefined, 'only composition markers are recorded as resolved');
+  });
+});
+
 describe('HERO_ABILITY_TIMINGS drift-detection', () => {
   // why: same pattern as HERO_KEYWORDS drift detection
   it('contains exactly the 5 canonical timing values', () => {

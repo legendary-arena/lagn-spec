@@ -4,9 +4,9 @@
   "summary": {
     "totalRows": 623,
     "byStatus": {
-      "executable": 126,
+      "executable": 120,
       "deferred": 0,
-      "unsupported": 450,
+      "unsupported": 456,
       "unmarked": 47
     },
     "distinctMechanics": 134
@@ -557,10 +557,10 @@
       "heroName": "Black Knight",
       "set": "antm",
       "mechanic": "empowered",
-      "status": "executable",
+      "status": "unsupported",
       "wp": "WP-267",
       "decision": "D-24044",
-      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
+      "handler": ""
     },
     {
       "extId": "antm/jocasta",
@@ -577,10 +577,10 @@
       "heroName": "Jocasta",
       "set": "antm",
       "mechanic": "empowered",
-      "status": "executable",
+      "status": "unsupported",
       "wp": "WP-267",
       "decision": "D-24044",
-      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
+      "handler": ""
     },
     {
       "extId": "antm/jocasta",
@@ -847,10 +847,10 @@
       "heroName": "Princess Shuri",
       "set": "bkpt",
       "mechanic": "empowered",
-      "status": "executable",
+      "status": "unsupported",
       "wp": "WP-267",
       "decision": "D-24044",
-      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
+      "handler": ""
     },
     {
       "extId": "bkpt/queen-storm-of-wakanda",
@@ -867,10 +867,10 @@
       "heroName": "Queen Storm of Wakanda",
       "set": "bkpt",
       "mechanic": "empowered",
-      "status": "executable",
+      "status": "unsupported",
       "wp": "WP-267",
       "decision": "D-24044",
-      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
+      "handler": ""
     },
     {
       "extId": "bkpt/queen-storm-of-wakanda",
@@ -5307,10 +5307,10 @@
       "heroName": "Star-Lord T'Challa",
       "set": "wtif",
       "mechanic": "empowered",
-      "status": "executable",
+      "status": "unsupported",
       "wp": "WP-267",
       "decision": "D-24044",
-      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
+      "handler": ""
     },
     {
       "extId": "wtif/star-lord-tchalla",
@@ -5327,10 +5327,10 @@
       "heroName": "Uatu, The Watcher",
       "set": "wtif",
       "mechanic": "empowered",
-      "status": "executable",
+      "status": "unsupported",
       "wp": "WP-267",
       "decision": "D-24044",
-      "handler": "packages/game-engine/src/hero/effectPrimitive.interpret.ts"
+      "handler": ""
     },
     {
       "extId": "wtif/uatu-the-watcher",

@@ -287,7 +287,7 @@ mindmap
         ["WP-264 ✅ Parameterized simulation turn cap (maxTurns option; WP-265 enabler; optional trailing maxTurns default MAX_TURNS_PER_GAME on the six sim entry points runPerTurnLoop/buildGameOutcome/simulateOneGame/simulateOneGameAndCaptureMoves/runSimulation/sweepSetupMatrix → a downstream sweep runs short terminating games instead of grinding to the 200-turn safety cap; PARAM not a result field so field-set drift guards untouched; warm-up shares the same cap for PRNG parity; validity caller-owned no throw/clamp; finalStateHash unchanged replay-guarded; index.ts byte-unchanged; D-24040)"]
         ["WP-265 ✅ Real-signal runtime-observed hollows via a competent hero-diverse per-PR sweep (flips WP-259's /coverage overlay from zero-state to real signal via a competent-heuristic maxTurns-bounded WP-264 hero-diverse sweep — 39 hero-deck sets over the sentinel core × 8 seeds/board, the measured signal lever; enabled by WP-266/D-24043 onBegin parity; RE-SCOPE 2026-06-19 DROPPED the weekly cron — competent ~2.7ms/game so the per-PR sim:runtime-observed:check is kept, no runtime-observed-refresh.yml, no ci.yml change; matrix is a hardcoded locked value not a ledger read; artifact = 16 mechanics/176 obs/dropped 0/312 games, byte-identical; 2 files; no engine edit, dashboard untouched; D-24041 Active, D-24026 ✅ live-verified 2026-06-19 — /coverage Observed-in-play column populated, completes the hollow reporting loop end-to-end)"]
         ["WP-266 ✅ Simulation onBegin parity (WP-265 unblocker; the three observation-only per-turn loops runPerTurnLoop/par.aggregator simulateOneGame/runFixture rotateToNextTurn mirror the play-phase onBegin via ONE shared pure helper applyOnBeginParity = reset villainRevealedThisTurn+hasDrawnThisTurn + auto-draw to HAND_SIZE, rule hooks deferred D-0205, extracted at the third use since runFixture already had it inline WP-212+WP-236 but runner+aggregator did not → empty hand forever, playCard never legal; plus a one-shot reveal gate in getLegalMoves stage==='start' && !villainRevealedThisTurn ending the competent policy's turn-1 infinite re-reveal; game-determinism preserved, replay byte-behavior-identical, finalStateHash unchanged; scaffold-confirmed 1454/1454 + competent sweep surfaces ≥1 hero hollow in ~17ms; regenerates WP-259's runtime-observed-hollows.json off the zero-state; D-24043)"]
-        ["WP-268 📝 By-hook composition ledger (parser resolvedMarkers — the positive counterpart of WP-257's unresolvedMarkers — so the mechanic ledger marks a composition marker executable only when that card's hook resolved it, resolving the WP-267 by-name over-claim on /coverage By-card; parse-time provenance only, finalStateHash unchanged; D-24045)"]
+        ["WP-268 ✅ By-hook composition ledger (parser resolvedMarkers — the positive counterpart of WP-257's unresolvedMarkers — so the mechanic ledger marks a parameterized composition marker executable only when that card's hook resolved it, resolving the WP-267 by-name over-claim on /coverage By-card; parse-time provenance only, finalStateHash unchanged; D-24045)"]
         ["WP-267 ✅ Empowered via a class-count value primitive (first effect-authoring grind mechanic off /coverage; first PARAMETERIZED composition over the WP-256 substrate — new count-cards-by-class-in-zone value expr + its own shared-zone EffectCountZoneKind=['hq'] separate from per-player EFFECT_ZONE_KINDS, reads G.cardTraits[id].heroClass over G.hq no self-exclusion; buildEmpoweredComposition(color) + PARAMETERIZED_COMPOSITION_MARKER_NAMES deduped into HERO_COMPOSITION_MARKER_NAMES; parser parameterized-marker branch resolves the core ONLY on an anchored by-[hc:COLOR] tail whose color is the line's sole condition + suppresses it from heroClassConditions; Honest-Partial — deferred variants color-of-choice/Double-Triple/conditional-prefix/multi-class stay parse-unrecognized runtime hollows; no executor edit, no coverage-script edit, no HeroKeyword/node-type/EFFECT_ZONE_KINDS change, data/cards byte-unchanged; engine test 1462→1473/0, runtime-observed empowered cleared 16→15/176→163 dropped 0 byte-stable, coverage +5 core-form hooks, ledger 119→126 by-name over-claims ~4 deferred cards follow-up; finalStateHash unchanged EMPTY_REGISTRY; D-24044 Active, D-24026 ✅ live-verified 2026-06-20)"]
 
       Notable Events & Overlays
@@ -413,7 +413,7 @@ mindmap
 | Client Integration Cluster | 21/21 | — |
 | Auth Stack & Profile Surface | 14/14 | — |
 | Engine + Server Wiring & Leaderboard HTTP | 3/3 | — |
-| Registry Viewer Enhancements | 15/17 | 2 open |
+| Registry Viewer Enhancements | 16/17 | 1 open |
 | Phase 8 — Interactive Board Layout | 3/3 | — |
 | G-State Extensions | 4/4 | — |
 | Monetization Stack | 3/3 | — |
@@ -424,7 +424,7 @@ mindmap
 | Legends Public Scoreboard | 2/2 | — |
 | Villain Deck Pipeline | 5/5 | — |
 | Villain & Henchman Effects | 11/11 | — |
-| Hero Ability Coverage & Markup Pipeline | 28/29 | 1 open |
+| Hero Ability Coverage & Markup Pipeline | 29/29 | — |
 | Notable Events & Overlays | 4/4 | — |
 | Simulation Sweep & Analytics Pipeline | 7/7 | — |
 | Dashboard & Operator Analytics | 14/14 | — |
@@ -437,9 +437,9 @@ mindmap
 | Next Horizons | 0/5 | 5 📦 queued |
 | Phase 10 — Debugging, Testing & Troubleshooting | 0/8 | 8 📝 placeholders |
 | Governance Drafts | 2/3 | 1 ⏸ |
-| **Total** | **264/268 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸, 3 open |
+| **Total** | **266/268 WP ✅** (+ 4/4 Foundation Prompts) | 1 ⏸, 1 open |
 
-**Open / blocked WPs (derived from WORK_INDEX, 4):** WP-042.1 ⏸ blocked; WP-268 open; WP-270 open; WP-271 open.
+**Open / blocked WPs (derived from WORK_INDEX, 2):** WP-042.1 ⏸ blocked; WP-271 open.
 <!-- ROADMAP-COUNTS:END -->
 
 > Counts only. Description, deps, baselines, hashes — all in the mindmap line above or in `WORK_INDEX.md`. The table inside the markers above is **generated** by `scripts/roadmap-counts.mjs` (sole writer; D-24001), derived from `WORK_INDEX.md` status × mindmap cluster membership — it is no longer hand-maintained, so it no longer drifts. Status is authoritative from `WORK_INDEX.md`; cluster membership is authoritative from the mindmap nodes above. The generator **fails loudly** on a WORK_INDEX WP with no mindmap node (D-24002), so no work packet can be silently uncounted.

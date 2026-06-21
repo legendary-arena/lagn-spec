@@ -18,9 +18,13 @@
  *   handler    — where the code is (module#key) for executable mechanics
  *
  * Status meanings (the four kinds of state, not just done/not-done):
- *   executable   — mechanic ∈ MVP_KEYWORDS: it mutates G in a real game today
+ *   executable   — mechanic ∈ MVP_KEYWORDS (its executor mutates G today); a STATIC
+ *                  composition marker (berserk — by-name, every parsed one resolves, D-24031);
+ *                  OR a PARAMETERIZED composition marker THIS card's hook resolved (by-hook, D-24045)
  *   deferred     — mechanic ∈ HERO_KEYWORDS but not MVP: parsed, executor defers
- *   unsupported  — mechanic ∉ HERO_KEYWORDS: no handler exists (a CODE todo)
+ *   unsupported  — mechanic ∉ HERO_KEYWORDS with no handler (a CODE todo), OR a PARAMETERIZED
+ *                  composition marker this card's hook did NOT resolve — a deferred variant
+ *                  with no executable primitive yet (by-hook, D-24045)
  *   unmarked     — the card has ability text but no [keyword:X] tag (a DATA todo)
  *
  * Sources of truth (no duplicated vocabulary):
@@ -41,12 +45,23 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createRegistryFromLocalFiles } from '../packages/registry/dist/index.js';
+// why: D-24045 — the ledger builds each hero's hooks the same way the coverage probe does
+// (buildHeroAbilityHooks per hero) so it can read parse-time `resolvedMarkers` and classify
+// composition markers by-hook (per-card), not by-name. Imported from the engine dist — the
+// one-way Layer Boundary import the coverage probe already uses (the ledger never imports
+// engine source, and the engine never imports the ledger).
+import { buildHeroAbilityHooks } from '../packages/game-engine/dist/setup/heroAbility.setup.js';
 import { HERO_KEYWORDS } from '../packages/game-engine/dist/rules/heroKeywords.js';
 import { MVP_KEYWORDS } from '../packages/game-engine/dist/hero/heroEffects.execute.js';
 // why: D-24031 — composition markers (berserk) are executable via the primitive
 // interpreter (not a HeroKeyword/handler); sourced from the engine dist so the ledger
-// recognizes them without duplicating the vocabulary.
-import { HERO_COMPOSITION_MARKER_NAMES } from '../packages/game-engine/dist/rules/heroCompositions.js';
+// recognizes them without duplicating the vocabulary. D-24045 — the PARAMETERIZED subset
+// (empowered) is classified by-hook because it has deferred variants that resolve nothing;
+// the static markers (berserk) have no variants and stay executable by-name.
+import {
+  HERO_COMPOSITION_MARKER_NAMES,
+  PARAMETERIZED_COMPOSITION_MARKER_NAMES,
+} from '../packages/game-engine/dist/rules/heroCompositions.js';
 
 const SCRIPT_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = dirname(SCRIPT_DIRECTORY);
@@ -70,6 +85,13 @@ const UNMARKED_MECHANIC = '(unmarked)';
 
 const KNOWN_KEYWORDS = new Set(HERO_KEYWORDS);
 const COMPOSITION_MARKERS = new Set(HERO_COMPOSITION_MARKER_NAMES);
+// why: D-24045 — only the PARAMETERIZED composition markers (empowered) are classified
+// by-hook: they have deferred variants (color-of-choice / conditional-prefix) whose hooks
+// resolve nothing, the by-name over-claim this WP removes. Static markers (berserk) have no
+// variants — every PARSED berserk resolves — so they stay executable by-name; a berserk
+// printed on a transform-hero back face is a separate (out-of-scope) transform-modeling
+// concern, not a by-name over-claim, so by-name avoids under-claiming it.
+const PARAMETERIZED_COMPOSITION_MARKERS = new Set(PARAMETERIZED_COMPOSITION_MARKER_NAMES);
 
 /** Error type signalling a probe failure (exit code 2). */
 class ProbeFailure extends Error {}
@@ -115,20 +137,36 @@ function extractMechanics(abilities) {
 }
 
 /**
- * Classifies a mechanic token into one of the three keyword-derived states.
+ * Classifies a mechanic token into one of the keyword-derived states.
  * (`unmarked` is decided by the caller, since it is the absence of any token.)
  *
+ * Keyword mechanics (MVP / known) are classified by name — their status is the same
+ * for every card that bears them. A composition marker is classified by-hook (per-card):
+ * executable only when THIS card's hook actually resolved it.
+ *
  * @param {string} mechanic - a normalized mechanic name.
+ * @param {Set<string>} cardResolvedMarkers - the composition markers THIS card's hooks resolved.
  * @returns {'executable'|'deferred'|'unsupported'} the status.
  */
-function statusForMechanic(mechanic) {
+function statusForMechanic(mechanic, cardResolvedMarkers) {
   if (MVP_KEYWORDS.has(mechanic)) {
     return 'executable';
   }
-  // why: D-24031 — a composition marker is executable via the primitive interpreter; it is
-  // absent from MVP_KEYWORDS and KNOWN_KEYWORDS, so recognize it before the unsupported
-  // fallback (else berserk would mislabel as unsupported).
   if (COMPOSITION_MARKERS.has(mechanic)) {
+    // why: D-24045 — a PARAMETERIZED composition marker (empowered) is executable for THIS
+    // card only if its hook actually resolved it (by-hook, not by-name): a deferred variant
+    // (color-of-choice / conditional-prefix) resolved nothing, so it is `unsupported` — NOT
+    // `deferred` (a composition row means a resolved primitive, not mere parser recognition;
+    // absence matches the by-hook coverage probe + runtime hollow detector). This removes the
+    // WP-267 / D-24044 by-name over-claim.
+    if (PARAMETERIZED_COMPOSITION_MARKERS.has(mechanic)) {
+      return cardResolvedMarkers.has(mechanic) ? 'executable' : 'unsupported';
+    }
+    // why: D-24045 — a STATIC composition marker (berserk) has no deferred variants — every
+    // PARSED berserk resolves — so it stays executable by-name (D-24031). A berserk printed on
+    // a transform-hero back face is never built into a canonical-face hook, but that is a
+    // separate transform-modeling gap, not a by-name over-claim; by-name avoids under-claiming
+    // it here (operator decision, this WP).
     return 'executable';
   }
   if (KNOWN_KEYWORDS.has(mechanic)) {
@@ -222,8 +260,20 @@ function buildLedger(registry, provenance) {
       rows.push(buildRow(extId, info, UNMARKED_MECHANIC, 'unmarked', provenance));
       continue;
     }
+    // why: D-24045 — build THIS hero's hooks the same way the coverage probe does
+    // (buildHeroAbilityHooks per hero) and aggregate the composition markers its hooks
+    // resolved into a per-card Set. This is what makes composition-marker status by-hook
+    // (per-card) instead of by-name. Multiple hooks on one card may resolve the same marker;
+    // the Set collapses duplicates, so a duplicate-marker card yields exactly one row and the
+    // regen stays byte-stable (membership is order-independent; the row sort below is unchanged).
+    const cardResolvedMarkers = new Set();
+    for (const hook of buildHeroAbilityHooks(registry, { heroDeckIds: [extId] })) {
+      for (const marker of hook.resolvedMarkers ?? []) {
+        cardResolvedMarkers.add(marker);
+      }
+    }
     for (const mechanic of [...mechanics].sort()) {
-      rows.push(buildRow(extId, info, mechanic, statusForMechanic(mechanic), provenance));
+      rows.push(buildRow(extId, info, mechanic, statusForMechanic(mechanic, cardResolvedMarkers), provenance));
     }
   }
 
